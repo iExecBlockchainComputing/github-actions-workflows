@@ -30,7 +30,7 @@ jobs:
         id: branch-names
         uses: tj-actions/branch-names@v8
 
-      # Verify tag is on main or release branch and npm package version matches tag
+      # Verify tag is on main or release branch
       - name: Verify tag is on main or release branch
         if: env.IS_TAG_TRIGGER == 'true'
         run: |
