@@ -41,7 +41,7 @@ jobs:
           tags: ${{ inputs.image-name }}:${{ github.sha }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@v0.29.0
+        uses: aquasecurity/trivy-action@0.29.0
         with:
           image-ref: ${{ inputs.image-name }}:${{ github.sha }}
           format: 'table'
