@@ -4,12 +4,8 @@ This repository contains a reusable workflow for iExec. It is a monorepo that co
 
 ## Components
 
-### [Build Docker Image](./workflows/build-docker)
+### [Build Docker Image](./docker-build)
 This workflow builds a Docker image from a Dockerfile. It is a reusable workflow that can be used in other workflows.
 
-#### Inputs
-
-- `dockerhub-username`: The username of the Docker Hub account where the image will be pushed.
-- `dockerhub-pat`: The password of the Docker Hub account where the image will be pushed.
-- `dockerfile`: The path to the Dockerfile that will be used to build the image.
-- `image-name`: The name of the image that will be built.
+### [Release Please](./release-please)
+This workflow uses the [release-please-action](https://github.com/googleapis/release-please-action) to automate the release of a project.

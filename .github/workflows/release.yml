@@ -1,0 +1,62 @@
+name: release-please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  setup-release-context:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.check-files.outputs.packages }}
+      prev_sha: ${{ steps.check-files.outputs.prev_sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Get list of workflows with changes
+        id: check-files
+        run: |
+          # Get list of workflows
+          workflow_list=($(basename -a -s .yml $(find .github/workflows/ -type f -print | xargs -I{} grep -l "workflow_call:$" {})))
+          # Get list of workflows to release
+          workflow_with_changes=$(printf "/%s[./]\n" ${workflow_list[@]} | xargs -I{} sh -c "git diff --name-only ${{ github.sha }} ${{ github.sha }}^ | grep -om1 -e '{}' || true" | tr -d /.)
+          releases_with_changes=$(printf "^%s[./]\n" ${workflow_list[@]} | xargs -I{} sh -c "git diff --name-only ${{ github.sha }} ${{ github.sha }}^ | grep -om1 -e '{}' || true" | tr -d /.)
+          # Set list of workflows to release
+          echo "packages=$(jq -cn --args '$ARGS.positional' -- ${workflow_with_changes[@]} ${releases_with_changes[@]})" >> "$GITHUB_OUTPUT"
+          echo "prev_sha=$(git rev-parse ${{ github.sha }}^)" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+  release-please:
+    needs: setup-release-context
+    if: ${{ needs.setup-release-context.outputs.packages != '[]' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.setup-release-context.outputs.packages) }}
+    steps:
+      - uses: googleapis/release-please-action@v3
+        id: release
+        with:
+          default-branch: main
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          release-type: simple
+          package-name: ${{ matrix.package }}
+          version-file: ${{ matrix.package }}/version.txt
+          changelog-path: ${{ matrix.package }}/CHANGELOG.md
+          last-release-sha: ${{ needs.setup-release-context.outputs.prev_sha }}
+          labels: ${{ matrix.package }}
+          bump-patch-for-minor-pre-major: true
+          bump-minor-pre-major: true
+          monorepo-tags: true
+          release-as: ""
