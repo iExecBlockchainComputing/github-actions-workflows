@@ -11,6 +11,18 @@ on:
         description: 'Name of Docker Image'
         type: string
         required: true
+      image-tag:
+        description: 'Tag of Docker Image'
+        type: string
+        required: true
+      security-scan:
+        description: 'Enable Security Scan'
+        default: 'true'
+        type: boolean
+      push:
+        description: 'Push Docker Image to Registry'
+        default: 'false'
+        type: boolean
     secrets:
       dockerhub-username:
         required: true
@@ -18,8 +30,7 @@ on:
         required: true
 
 jobs:
-  build-test:
-    if: github.event_name == 'pull_request'
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -37,13 +48,14 @@ jobs:
           context: .
           file: ${{ inputs.dockerfile }}
           platforms: linux/amd64,linux/arm64
-          push: false
-          tags: ${{ inputs.image-name }}:${{ github.sha }}
+          push: ${{ inputs.push }}
+          tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
 
       - name: Run Trivy vulnerability scanner
+        if: ${{ inputs.security-scan }}
         uses: aquasecurity/trivy-action@0.29.0
         with:
-          image-ref: ${{ inputs.image-name }}:${{ github.sha }}
+          image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
@@ -53,6 +65,7 @@ jobs:
           output: trivy.txt
 
       - name: Publish Trivy Output to Summary
+        if: ${{ inputs.security-scan }}
         run: |
           if [[ -s trivy.txt ]]; then
             {
@@ -65,28 +78,3 @@ jobs:
               echo "</details>"
             } >> $GITHUB_STEP_SUMMARY
           fi
-
-  build-push:
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.dockerhub-username }}
-          password: ${{ secrets.dockerhub-pat }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Push Docker Image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ${{ inputs.dockerfile }}
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ inputs.image-name }}:${{ github.ref_name }}
