@@ -51,7 +51,6 @@ jobs:
           default-branch: main
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           release-type: simple
-          path: ${{ matrix.package }}
           package-name: ${{ matrix.package }}
           version-file: ${{ matrix.package }}/version.txt
           changelog-path: ${{ matrix.package }}/CHANGELOG.md
