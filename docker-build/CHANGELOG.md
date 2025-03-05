@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v1.1.1...docker-build-v1.2.0) (2025-03-05)
+
+
+### Features
+
+* **docker-build:** add some vars ([#14](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/14)) ([b56bba2](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/b56bba2f4ae61f67bcb2a442a119855cdb4a133d))
+
 ## [1.1.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v1.1.0...docker-build-v1.1.1) (2025-03-05)
 
 
