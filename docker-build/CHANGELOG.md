@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v1.1.0...docker-build-v1.1.1) (2025-03-05)
+
+
+### Bug Fixes
+
+* tag of aquasecurity ([#8](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/8)) ([1d3ff47](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/1d3ff475697b55b43dd42eb600d41cd42d8d0d37))
+
 ## [1.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v1.0.2...docker-build-v1.1.0) (2025-03-05)
 
 
