@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v1.0.2...docker-build-v1.1.0) (2025-03-05)
+
+
+### Features
+
+* add security scan ([#6](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/6)) ([4f91f55](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/4f91f5525d8c7986d9aa1b1273ec229da39a7dec))
+
 ## [1.0.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v1.0.1...docker-build-v1.0.2) (2025-03-05)
 
 
