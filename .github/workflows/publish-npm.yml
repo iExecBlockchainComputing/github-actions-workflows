@@ -1,0 +1,72 @@
+name: Publish Package NPM
+on:
+  workflow_call:
+    inputs:
+      scope:
+        description: 'NPM package scope (e.g., @iExecBlockchainComputing)'
+        required: true
+        type: string
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        default: '20'
+        type: string
+      registry:
+        description: 'NPM registry URL'
+        required: false
+        default: 'https://registry.npmjs.org'
+        type: string
+      access:
+        description: 'Package access level (public/restricted)'
+        required: false
+        default: 'public'
+        type: string
+      provenance:
+        description: 'Enable npm provenance'
+        required: false
+        default: true
+        type: boolean
+      install-command:
+        description: 'Command to install dependencies'
+        required: false
+        default: 'npm install'
+        type: string
+      environment:
+        description: 'GitHub environment to use for deployment'
+        required: false
+        default: 'production'
+        type: string
+    secrets:
+      npm-token:
+        description: 'NPM token for authentication'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: ${{ inputs.registry }}
+          scope: ${{ inputs.scope }}
+
+      - name: Install dependencies
+        run: ${{ inputs.install-command }}
+
+      - name: Publish package
+        run: |
+          if [ "${{ inputs.provenance }}" = "true" ]; then
+            npm publish --access ${{ inputs.access }} --provenance
+          else
+            npm publish --access ${{ inputs.access }}
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
