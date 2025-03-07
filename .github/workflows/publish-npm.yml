@@ -1,0 +1,39 @@
+name: Publish Package NPM
+on:
+  workflow_call:
+    inputs:
+      scope:
+        description: 'NPM package scope (e.g., @iExecBlockchainComputing)'
+        required: true
+        type: string
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        default: '20'
+        type: string
+      registry-url:
+        description: 'NPM registry URL'
+        required: false
+        default: 'https://registry.npmjs.org'
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup Node and configure .npmrc for publishing to GitHub Packages
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: ${{ inputs.registry-url }}
+          scope: ${{ inputs.scope }}
+
+      - run: npm ci
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

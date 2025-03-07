@@ -9,3 +9,6 @@ This workflow builds a Docker image from a Dockerfile. It is a reusable workflow
 
 ### [Release Please](./release-please)
 This workflow uses the [release-please-action](https://github.com/googleapis/release-please-action) to automate the release of a project.
+
+### [Publish NPM Package](./publish-npm)
+This workflow publishes an NPM package to the NPM registry.
