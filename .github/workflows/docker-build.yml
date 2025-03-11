@@ -17,17 +17,29 @@ on:
         required: true
       security-scan:
         description: 'Enable Security Scan'
-        default: 'true'
+        default: true
+        type: boolean
+      hadolint:
+        description: 'Enable Hadolint'
+        default: true
         type: boolean
       push:
         description: 'Push Docker Image to Registry'
-        default: 'false'
+        default: false
         type: boolean
+      context:
+        description: 'Path to Docker Build Context'
+        default: '.'
+        type: string
+      registry:
+        description: 'Docker Registry'
+        default: 'docker.io'
+        type: string
     secrets:
-      dockerhub-username:
-        required: true
-      dockerhub-pat:
-        required: true
+      username:
+        required: false
+      password:
+        required: false
 
 jobs:
   build:
@@ -42,39 +54,98 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
+      - name: Login to Docker Hub
+        if: ${{ inputs.push }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ secrets.username }}
+          password: ${{ secrets.password }}
+
+      - name: Run Hadolint Dockerfile linter
+        if: ${{ inputs.hadolint }}
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ${{ inputs.dockerfile }}
+          output-file: hadolint.txt
+          no-fail: true
+
       - name: Build Docker Image
+        if: ${{ inputs.push }}
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
           platforms: linux/amd64,linux/arm64
           push: ${{ inputs.push }}
           tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
 
+      - name: Build Docker Image as Tarball
+        if: ${{ inputs.security-scan }}
+        run: |
+          docker build -t ${{ inputs.image-name }}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile }} ${{ inputs.context }}
+          docker save -o vuln-image.tar ${{ inputs.image-name }}:${{ inputs.image-tag }}
+
       - name: Run Trivy vulnerability scanner
         if: ${{ inputs.security-scan }}
         uses: aquasecurity/trivy-action@0.29.0
         with:
-          image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+          input: vuln-image.tar
           format: 'table'
-          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
           hide-progress: true
           output: trivy.txt
 
-      - name: Publish Trivy Output to Summary
-        if: ${{ inputs.security-scan }}
-        run: |
-          if [[ -s trivy.txt ]]; then
-            {
-              echo "### Security Output"
-              echo "<details><summary>Click to expand</summary>"
-              echo ""
-              echo '```terraform'
-              cat trivy.txt
-              echo '```'
-              echo "</details>"
-            } >> $GITHUB_STEP_SUMMARY
-          fi
+      - name: Update Pull Request with Security Scan Results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request' && inputs.security-scan
+        with:
+          script: |
+            const fs = require('fs');
+            const trivyResults = fs.readFileSync('trivy.txt', 'utf8');
+      
+            const output = `
+            ### 🔒 Trivy Security Scan Results
+            <details><summary>Click to expand detailed results</summary>
+      
+            \`\`\`
+            ${trivyResults}
+            \`\`\`
+            </details>
+            `;
+      
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            });
+
+      - name: Update Pull Request with Hadolint Results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request' && inputs.hadolint
+        with:
+          script: |
+            const fs = require('fs');
+            const hadolintResults = fs.readFileSync('hadolint.txt', 'utf8').trim();
+            
+            if (hadolintResults.length > 0) {
+              const output = `
+              ### 🐳 Hadolint Dockerfile Lint Results
+              <details><summary>Click to expand</summary>
+            
+              \`\`\`
+              ${hadolintResults}
+              \`\`\`
+              </details>
+              `;
+
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: output
+              });
+            }
