@@ -27,6 +27,10 @@ on:
         description: 'Push Docker Image to Registry'
         default: false
         type: boolean
+      context:
+        description: 'Path to Docker Build Context'
+        default: '.'
+        type: string
       registry:
         description: 'Docker Registry'
         default: 'docker.io'
@@ -70,7 +74,7 @@ jobs:
         if: ${{ inputs.push }}
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
           platforms: linux/amd64,linux/arm64
           push: ${{ inputs.push }}
