@@ -83,7 +83,7 @@ jobs:
       - name: Build Docker Image as Tarball
         if: ${{ inputs.security-scan }}
         run: |
-          docker build -t ${{ inputs.image-name }}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile }} .
+          docker build -t ${{ inputs.image-name }}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile }} ${{ inputs.context }}
           docker save -o vuln-image.tar ${{ inputs.image-name }}:${{ inputs.image-tag }}
 
       - name: Run Trivy vulnerability scanner
