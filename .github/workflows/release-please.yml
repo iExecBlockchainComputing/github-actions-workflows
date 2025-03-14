@@ -3,9 +3,9 @@ name: Release Please
 on:
   workflow_call:
     secrets:
-      application-id:
+      RELEASE_PLEASE_APPLICATION_ID:
         required: true
-      private-key:
+      RELEASE_PLEASE_PRIVATE_KEY:
         required: true
 
 permissions:
@@ -18,10 +18,10 @@ jobs:
     steps:
       - name: Get Token
         id: get_token
-        uses: peter-murray/workflow-application-token-action@v3
+        uses: peter-murray/workflow-application-token-action@v4
         with:
-          application_id: "${{ secrets.release-please-application-id }}"
-          application_private_key: ${{ secrets.release-please-private-key }}
+          application_id: "${{ secrets.RELEASE_PLEASE_APPLICATION_ID }}"
+          application_private_key: ${{ secrets.RELEASE_PLEASE_PRIVATE_KEY }}
           organization: ${{ github.repository_owner }}
       - name: Run release-please
         uses: googleapis/release-please-action@v4
