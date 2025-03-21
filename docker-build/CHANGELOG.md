@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v1.2.0...docker-build-v2.0.0) (2025-03-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **docker-build:** make it more reusable ([#17](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/17))
+
+### Bug Fixes
+
+* **docker-build:** make it more reusable ([#17](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/17)) ([e11b377](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/e11b377b8ed53820151de5687ecac0b09c251810))
+
 ## [1.2.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v1.1.1...docker-build-v1.2.0) (2025-03-05)
 
 
