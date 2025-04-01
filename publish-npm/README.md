@@ -1,66 +1,50 @@
-# Publish Package NPM - Reusable Workflow Documentation
+# NPM Package Publish - Reusable Workflow Documentation 🚀
 
-## Overview
+## Overview 🌟
 
-This reusable GitHub Actions workflow automates the process of publishing an NPM package. It is configurable via inputs for the package scope, Node.js version, and registry URL. The workflow performs the following actions:
+This reusable GitHub Actions workflow automates the process of publishing an NPM package. It is configurable via inputs for the package scope, Node.js version, registry URL, and other options. The workflow performs the following actions:
 
-- Checks out your repository code.
-- Sets up Node.js and configures the `.npmrc` file.
-- Installs package dependencies using `npm ci`.
-- Publishes the package with provenance and public access using `npm publish`.
+- **Checks Out Your Repository**: Retrieves your code. 📥
+- **Sets Up Node.js**: Installs the specified Node.js version and configures the `.npmrc` file. ⚙️
+- **Installs Dependencies**: Uses `npm ci` to install the dependencies. 📦
+- **Publishes the Package**: Publishes the package with provenance (if enabled) and the specified access level using `npm publish`. 🎉
 
-## Detailed Explanation
+## Workflow Inputs 🛠️
 
-### Triggering the Workflow
+| **Input**         | **Description**                                                                               | **Required** | **Default**                          |
+|-------------------|-----------------------------------------------------------------------------------------------|--------------|--------------------------------------|
+| **scope**         | Defines the NPM package scope (e.g., `@iExecBlockchainComputing`).                             | Yes          | –                                    |
+| **node-version**  | Specifies the Node.js version to use.                                                         | No           | `20`                                 |
+| **registry**      | URL of the NPM registry.                                                                       | No           | `https://registry.npmjs.org`         |
+| **access**        | Package access level (public or restricted).                                                 | No           | `public`                             |
+| **provenance**    | Enable or disable npm provenance during publishing.                                          | No           | `true`                               |
+| **install-command** | Command to install dependencies.                                                           | No           | `npm ci`                             |
+| **environment**   | GitHub environment to use for deployment.                                                     | No           | `production`                         |
 
-- **`on: workflow_call`**  
-  This setting makes the workflow reusable, allowing it to be invoked by other workflows. Inputs can be passed during the call.
+### Secrets 🔐
 
-### Workflow Inputs
+| **Secret**    | **Description**                     | **Required** |
+|---------------|-------------------------------------|--------------|
+| **npm-token** | NPM token for authentication.       | Yes          |
 
-- **`scope`**
-    - **Description:** Defines the NPM package scope (e.g., `@iExecBlockchainComputing`).
-    - **Required:** Yes.
+## Job and Steps ⚙️
 
-- **`node-version`**
-    - **Description:** Specifies the version of Node.js to use.
-    - **Default:** `20`
-    - **Required:** No.
+### Job Name: `build`
 
-- **`registry-url`**
-    - **Description:** URL of the NPM registry.
-    - **Default:** `https://registry.npmjs.org`
-    - **Required:** No.
+- **Runs On**: `ubuntu-latest`.
+- **Environment**: Uses the environment specified in `inputs.environment`.
+- **Permissions**:
+  - `contents: read` – to access repository contents. 🔍
+  - `packages: write` – to allow package publication. ✨
+  - `id-token: write` – for authentication purposes. 🔑
 
-### Job and Steps
+## How to Use This Reusable Workflow 🔄
 
-- **Job Name (`build`):**
-    - Runs on `ubuntu-latest`.
-    - **Permissions:**
-        - `contents: read` – to access repository contents.
-        - `packages: write` – to allow package publication.
+1. **Save the Workflow File**  
+   Place this YAML file (e.g., `publish-npm.yml`) in the `.github/workflows/` directory of your repository. 💾
 
-- **Steps:**
-    - **Checkout Repository:**  
-      Uses `actions/checkout@v4` to retrieve your code.
-
-    - **Setup Node.js:**  
-      Uses `actions/setup-node@v4` to configure Node.js. This step also sets up the `.npmrc` file with the provided registry URL and scope.
-
-    - **Install Dependencies:**  
-      Executes `npm ci` to install dependencies from the `package-lock.json` file.
-
-    - **Publish Package:**  
-      Executes `npm publish --provenance --access public` to publish the package.
-        - The `NODE_AUTH_TOKEN` environment variable is set from `${{ secrets.NPM_TOKEN }}` for authentication.
-
-## How to Use This Reusable Workflow
-
-1. **Save the Workflow File:**  
-   Place this YAML file (e.g., `publish-npm.yml`) in the `.github/workflows/` directory of your repository.
-
-2. **Call the Reusable Workflow:**  
-   In another workflow file (for example, triggered by a release), invoke this reusable workflow as follows:
+2. **Call the Reusable Workflow**  
+   In another workflow file (e.g., triggered by a release), invoke this reusable workflow like so:
 
    ```yaml
    name: Call Publish Package NPM Workflow
@@ -74,10 +58,10 @@ This reusable GitHub Actions workflow automates the process of publishing an NPM
        with:
          scope: '@iExecBlockchainComputing'
          node-version: '20'
-         registry-url: 'https://registry.npmjs.org'
+         registry: 'https://registry.npmjs.org'
        secrets:
          npm-token: ${{ secrets.NPM_TOKEN }}
    ```
 
-3. **Configure Secrets:**  
-   Ensure that the `NPM_TOKEN` secret is added to your repository's settings. This token is required to authenticate with the NPM registry during publishing.
+3. **Configure Secrets**  
+   Ensure that the `NPM_TOKEN` secret is added to your repository’s settings. This token is required to authenticate with the NPM registry during publishing. 🔑
