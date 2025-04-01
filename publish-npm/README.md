@@ -76,7 +76,7 @@ This reusable GitHub Actions workflow automates the process of publishing an NPM
          node-version: '20'
          registry-url: 'https://registry.npmjs.org'
        secrets:
-         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+         npm-token: ${{ secrets.NPM_TOKEN }}
    ```
 
 3. **Configure Secrets:**  
