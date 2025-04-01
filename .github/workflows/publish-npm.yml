@@ -29,7 +29,7 @@ on:
       install-command:
         description: 'Command to install dependencies'
         required: false
-        default: 'npm install'
+        default: 'npm ci'
         type: string
       environment:
         description: 'GitHub environment to use for deployment'
