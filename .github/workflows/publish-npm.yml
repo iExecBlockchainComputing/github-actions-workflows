@@ -36,6 +36,11 @@ on:
         required: false
         default: 'production'
         type: string
+      tag:
+        description: 'NPM publish tag (e.g., latest, nightly)'
+        required: false
+        default: ''
+        type: string
     secrets:
       npm-token:
         description: 'NPM token for authentication'
@@ -63,10 +68,15 @@ jobs:
 
       - name: Publish package
         run: |
+          TAG_OPTION=""
+          if [ -n "${{ inputs.tag }}" ]; then
+            TAG_OPTION="--tag ${{ inputs.tag }}"
+          fi
+
           if [ "${{ inputs.provenance }}" = "true" ]; then
-            npm publish --access ${{ inputs.access }} --provenance
+            npm publish --access ${{ inputs.access }} $TAG_OPTION --provenance
           else
-            npm publish --access ${{ inputs.access }}
+            npm publish --access ${{ inputs.access }} $TAG_OPTION
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
