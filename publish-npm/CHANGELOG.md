@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.0.1...publish-npm-v1.1.0) (2025-04-03)
+
+
+### Features
+
+* **npm:** add tag ([#29](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/29)) ([bf2d7ab](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/bf2d7ab8fa561d36c00059895942b1ea7ed753d7))
+
 ## [1.0.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.0.0...publish-npm-v1.0.1) (2025-04-01)
 
 
