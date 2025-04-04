@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.1.0...publish-npm-v1.2.0) (2025-04-04)
+
+
+### Features
+
+* make NPM package scope optional with default value ([#31](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/31)) ([f5cc41e](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/f5cc41ef8638d3c6b726984b9750dccaba936e48))
+
 ## [1.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.0.1...publish-npm-v1.1.0) (2025-04-03)
 
 
