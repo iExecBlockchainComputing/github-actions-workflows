@@ -3,8 +3,9 @@ on:
   workflow_call:
     inputs:
       scope:
-        description: 'NPM package scope (e.g., @iExecBlockchainComputing)'
-        required: true
+        description: 'NPM package scope (e.g., @iexec)'
+        required: false
+        default: '@iexec'
         type: string
       node-version:
         description: 'Node.js version to use'
