@@ -13,7 +13,7 @@ This reusable GitHub Actions workflow automates the process of publishing an NPM
 
 | **Input**         | **Description**                                                                               | **Required** | **Default**                          |
 |-------------------|-----------------------------------------------------------------------------------------------|--------------|--------------------------------------|
-| **scope**         | Defines the NPM package scope (e.g., `@iExecBlockchainComputing`).                             | Yes          | –                                    |
+| **scope**         | Defines the NPM package scope (e.g., `@iexec`).                             | No          | `@iexec`                                    |
 | **node-version**  | Specifies the Node.js version to use.                                                         | No           | `20`                                 |
 | **registry**      | URL of the NPM registry.                                                                       | No           | `https://registry.npmjs.org`         |
 | **access**        | Package access level (public or restricted).                                                 | No           | `public`                             |
@@ -56,9 +56,7 @@ This reusable GitHub Actions workflow automates the process of publishing an NPM
      publish:
        uses: your-org/your-repo/.github/workflows/publish-npm.yml@main
        with:
-         scope: '@iExecBlockchainComputing'
-         node-version: '20'
-         registry: 'https://registry.npmjs.org'
+         node-version: '22'
        secrets:
          npm-token: ${{ secrets.NPM_TOKEN }}
    ```
