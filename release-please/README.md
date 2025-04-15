@@ -99,7 +99,7 @@ jobs:
 - **ruby**, **go**, **dotnet**  
   Additional types are available based on the nature of your project.
 
-> For more detailed information on each release type and additional configuration options, please visit the [release-please documentation](https://github.com/googleapis/release-please).
+> For more detailed information on each release type and additional configuration options, please visit the [release-please documentation](https://github.com/googleapis/release-please?tab=readme-ov-file#strategy-language-types-supported).
 
 ## 4. Use Cases: Single Project vs. Monorepo
 
