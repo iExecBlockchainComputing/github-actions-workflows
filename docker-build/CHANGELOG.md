@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.0.0...docker-build-v2.1.0) (2025-04-24)
+
+
+### Features
+
+* **docker-build:** add security report option and upload step ([#37](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/37)) ([5d6d470](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/5d6d470b30eb5be75ebb0c78b3477511bb9fa272))
+
 ## [2.0.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v1.2.0...docker-build-v2.0.0) (2025-03-21)
 
 
