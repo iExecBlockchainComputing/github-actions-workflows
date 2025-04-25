@@ -121,7 +121,6 @@ jobs:
             ${{ steps.trivy.outputs.report }}
             ```
             </details>
-            });
 
       - name: Upload Trivy scan results to GitHub Security tab
         if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'sarif'
@@ -148,7 +147,7 @@ jobs:
           body-includes: 'Hadolint Dockerfile Lint Results'
 
       - name: Create or update Hadolint comment
-        if: github.event_name == 'pull_request' && inputs.hadolint
+        if: github.event_name == 'pull_request' && inputs.hadolint && steps.hadolint.outputs.report != ''
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
