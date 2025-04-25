@@ -66,14 +66,6 @@ jobs:
           username: ${{ secrets.username }}
           password: ${{ secrets.password }}
 
-      - name: Run Hadolint Dockerfile linter
-        if: ${{ inputs.hadolint }}
-        uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: ${{ inputs.dockerfile }}
-          output-file: hadolint.txt
-          no-fail: true
-
       - name: Build Docker Image
         if: ${{ inputs.push }}
         uses: docker/build-push-action@v6
@@ -91,6 +83,7 @@ jobs:
           docker save -o vuln-image.tar ${{ inputs.image-name }}:${{ inputs.image-tag }}
 
       - name: Run Trivy vulnerability scanner
+        id: trivy
         if: ${{ inputs.security-scan }}
         uses: aquasecurity/trivy-action@0.29.0
         with:
@@ -102,29 +95,32 @@ jobs:
           hide-progress: true
           output: trivy.txt
 
-      - name: Update Pull Request with Security Scan Results
-        uses: actions/github-script@v7
+      - name: Find existing Trivy comment
         if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'comment'
+        id: find_trivy
+        uses: peter-evans/find-comment@v3
         with:
-          script: |
-            const fs = require('fs');
-            const trivyResults = fs.readFileSync('trivy.txt', 'utf8');
-      
-            const output = `
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Trivy Security Scan Results'
+
+      - name: Create or update Trivy comment
+        if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'comment'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find_trivy.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- trivy-scan -->
             ### 🔒 Trivy Security Scan Results
             <details><summary>Click to expand detailed results</summary>
-      
-            \`\`\`
-            ${trivyResults}
-            \`\`\`
+
+            ```bash
+            ${{ steps.trivy.outputs.report }}
+            ```
             </details>
-            `;
-      
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
             });
 
       - name: Upload Trivy scan results to GitHub Security tab
@@ -133,29 +129,38 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-      - name: Update Pull Request with Hadolint Results
-        uses: actions/github-script@v7
-        if: github.event_name == 'pull_request' && inputs.hadolint
+      - name: Run Hadolint Dockerfile linter
+        id: hadolint
+        if: ${{ inputs.hadolint }}
+        uses: hadolint/hadolint-action@v3.1.0
         with:
-          script: |
-            const fs = require('fs');
-            const hadolintResults = fs.readFileSync('hadolint.txt', 'utf8').trim();
-            
-            if (hadolintResults.length > 0) {
-              const output = `
-              ### 🐳 Hadolint Dockerfile Lint Results
-              <details><summary>Click to expand</summary>
-            
-              \`\`\`
-              ${hadolintResults}
-              \`\`\`
-              </details>
-              `;
+          dockerfile: ${{ inputs.dockerfile }}
+          output-file: hadolint.txt
+          no-fail: true
 
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: output
-              });
-            }
+      - name: Find existing Hadolint comment
+        if: github.event_name == 'pull_request' && inputs.hadolint
+        id: find_hadolint
+        uses: peter-evans/find-comment@v3
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Hadolint Dockerfile Lint Results'
+
+      - name: Create or update Hadolint comment
+        if: github.event_name == 'pull_request' && inputs.hadolint
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find_hadolint.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- hadolint-scan -->
+            ### 🐳 Hadolint Dockerfile Lint Results
+            <details><summary>Click to expand</summary>
+
+            ```bash
+            ${{ steps.hadolint.outputs.report }}
+            ```
+            </details>
