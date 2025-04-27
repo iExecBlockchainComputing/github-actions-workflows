@@ -95,6 +95,14 @@ jobs:
           hide-progress: true
           output: trivy.txt
 
+      - name: Read Trivy report file
+        id: read_trivy
+        if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'comment'
+        run: |
+          echo "report<<EOF" >> "$GITHUB_OUTPUT"
+          cat trivy.txt >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
       - name: Find existing Trivy comment
         if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'comment'
         id: find_trivy
@@ -118,7 +126,7 @@ jobs:
             <details><summary>Click to expand detailed results</summary>
 
             ```bash
-            ${{ steps.trivy.outputs.report }}
+            ${{ steps.read_trivy.outputs.report }}
             ```
             </details>
 
