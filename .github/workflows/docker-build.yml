@@ -145,6 +145,14 @@ jobs:
           output-file: hadolint.txt
           no-fail: true
 
+      - name: Read Hadolint report file
+        id: read_hadolint
+        if: ${{ inputs.hadolint }}
+        run: |
+          echo "report<<EOF" >> "$GITHUB_OUTPUT"
+          cat hadolint.txt >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
       - name: Find existing Hadolint comment
         if: github.event_name == 'pull_request' && inputs.hadolint
         id: find_hadolint
@@ -155,7 +163,7 @@ jobs:
           body-includes: 'Hadolint Dockerfile Lint Results'
 
       - name: Create or update Hadolint comment
-        if: github.event_name == 'pull_request' && inputs.hadolint && steps.hadolint.outputs.report != ''
+        if: github.event_name == 'pull_request' && inputs.hadolint && steps.read_hadolint.outputs.report != ''
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -165,9 +173,9 @@ jobs:
           body: |
             <!-- hadolint-scan -->
             ### 🐳 Hadolint Dockerfile Lint Results
-            <details><summary>Click to expand</summary>
+            <details><summary>Click to expand detailed results</summary>
 
             ```bash
-            ${{ steps.hadolint.outputs.report }}
+            ${{ steps.read_hadolint.outputs.report }}
             ```
             </details>
