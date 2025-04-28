@@ -153,14 +153,6 @@ jobs:
           cat hadolint.txt >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
-      - name: Read Hadolint report file
-        id: read_hadolint
-        if: ${{ inputs.hadolint }}
-        run: |
-          echo "report<<EOF" >> "$GITHUB_OUTPUT"
-          cat hadolint.txt >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
       - name: Find existing Hadolint comment
         id: find_hadolint
         if: ${{ inputs.hadolint }}
