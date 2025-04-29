@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.1.0...docker-build-v2.2.0) (2025-04-29)
+
+
+### Features
+
+* **docker-build:** enhance reporting ([#39](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/39)) ([298ec52](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/298ec521fe7ea48c81258dc259014b9182fa4cc3))
+
 ## [2.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.0.0...docker-build-v2.1.0) (2025-04-24)
 
 
