@@ -1,0 +1,60 @@
+name: "Reusable Reviewdog Workflow"
+
+on:
+  workflow_call:
+    inputs:
+      reviewdog_app_id:
+        description: "GitHub App ID for Reviewdog"
+        required: true
+        type: string
+      reviewdog_private_key:
+        description: "GitHub App private key for Reviewdog"
+        required: true
+        type: string
+      reporter:
+        description: "Reviewdog reporter (e.g., github-pr-review)"
+        required: false
+        type: string
+        default: "github-pr-review"
+      filter_mode:
+        description: "Filter mode (e.g., added, diff_context)"
+        required: false
+        type: string
+        default: "added"
+      tool_name:
+        description: "Name of the linter tool"
+        required: false
+        type: string
+        default: ""
+      tool_command:
+        description: "Command to run the linter"
+        required: true
+        type: string
+    secrets:
+      REVIEWDOG_APP_ID:
+        required: true
+      REVIEWDOG_PRIVATE_KEY:
+        required: true
+jobs:
+  reviewdog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get Token
+        id: get_token
+        uses: peter-murray/workflow-application-token-action@v4
+        with:
+          application_id: ${{ secrets.REVIEWDOG_APP_ID }}
+          application_private_key: ${{ secrets.REVIEWDOG_PRIVATE_KEY }}
+          organization:       ${{ github.repository_owner }}
+
+      - name: Run reviewdog
+        uses: reviewdog/action@v0.20.3
+        with:
+          github_token:      ${{ steps.get_token.outputs.token }}
+          reporter:          ${{ inputs.reporter }}
+          filter_mode:       ${{ inputs.filter_mode }}
+          tool_name:         ${{ inputs.tool_name }}
+          reviewdog_cmd:     ${{ inputs.tool_command }}
