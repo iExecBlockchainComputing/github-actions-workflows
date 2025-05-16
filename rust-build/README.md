@@ -14,15 +14,11 @@ A reusable GitHub Actions workflow for building, testing, and publishing Rust pa
 ```yaml
 name: Rust CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [pull_request]
 
 jobs:
   build-and-test:
-    uses: your-org/github-actions-workflows/.github/workflows/rust-build.yml@main
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
       rust-version: 'stable'
       build-target: 'release'
@@ -30,8 +26,6 @@ jobs:
       upload-artifact: true
       artifact-name: 'my-rust-app'
       artifact-path: 'target/release/my-app'
-    secrets:
-      CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
 ```
 
 ## Inputs
@@ -59,7 +53,7 @@ jobs:
 ```yaml
 jobs:
   build-and-test:
-    uses: your-org/github-actions-workflows/.github/workflows/rust-build.yml@main
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
 ```
 
 ### Build, Test, and Upload Artifact
@@ -67,7 +61,7 @@ jobs:
 ```yaml
 jobs:
   build-and-test:
-    uses: your-org/github-actions-workflows/.github/workflows/rust-build.yml@main
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
       upload-artifact: true
       artifact-name: 'my-rust-app'
@@ -79,7 +73,7 @@ jobs:
 ```yaml
 jobs:
   build-and-publish:
-    uses: your-org/github-actions-workflows/.github/workflows/rust-build.yml@main
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
       publish-crates-io: true
     secrets:
