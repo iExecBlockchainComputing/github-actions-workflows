@@ -1,0 +1,119 @@
+name: Build and Test Java
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: 'Java version to use'
+        default: '17'
+        type: string
+      java-distribution:
+        description: 'Java distribution to use (temurin, zulu, adopt, etc.)'
+        default: 'temurin'
+        type: string
+      build-tool:
+        description: 'Build tool to use (gradle or maven)'
+        default: 'gradle'
+        type: string
+      gradle-version:
+        description: 'Gradle version to use (only applicable if build-tool is gradle)'
+        default: 'wrapper'
+        type: string
+      gradle-build-task:
+        description: 'Gradle build task to run'
+        default: 'build'
+        type: string
+      gradle-build-file:
+        description: 'Gradle build file to use'
+        default: ''
+        type: string
+      maven-version:
+        description: 'Maven version to use (only applicable if build-tool is maven)'
+        default: '3.9.5'
+        type: string
+      maven-goals:
+        description: 'Maven goals to run'
+        default: 'clean package'
+        type: string
+      maven-args:
+        description: 'Additional Maven arguments'
+        default: ''
+        type: string
+      working-directory:
+        description: 'Working directory where the build commands will be run'
+        default: '.'
+        type: string
+      upload-artifacts:
+        description: 'Whether to upload build artifacts'
+        default: true
+        type: boolean
+      artifacts-name:
+        description: 'Name of the artifacts to upload'
+        default: 'build-artifacts'
+        type: string
+      artifacts-path:
+        description: 'Path to the artifacts to upload (relative to working-directory)'
+        default: ''
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: ${{ inputs.java-distribution }}
+          architecture: x64
+
+      # Gradle build
+      - name: Setup Gradle
+        if: ${{ inputs.build-tool == 'gradle' }}
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+        with:
+          gradle-version: ${{ inputs.gradle-version }}
+
+      - name: Build with Gradle
+        if: ${{ inputs.build-tool == 'gradle' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          if [ -n "${{ inputs.gradle-build-file }}" ]; then
+            ./gradlew -b ${{ inputs.gradle-build-file }} ${{ inputs.gradle-build-task }}
+          else
+            ./gradlew ${{ inputs.gradle-build-task }}
+          fi
+
+      # Maven build
+      - name: Setup Maven
+        if: ${{ inputs.build-tool == 'maven' }}
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: ${{ inputs.maven-version }}
+
+      - name: Build with Maven
+        if: ${{ inputs.build-tool == 'maven' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: mvn ${{ inputs.maven-goals }} ${{ inputs.maven-args }}
+
+      # Determine artifacts path based on build tool if not explicitly provided
+      - name: Set default artifacts path
+        if: ${{ inputs.upload-artifacts && inputs.artifacts-path == '' }}
+        id: set-artifacts-path
+        run: |
+          if [ "${{ inputs.build-tool }}" = "gradle" ]; then
+            echo "path=build/libs" >> $GITHUB_OUTPUT
+          else
+            echo "path=target" >> $GITHUB_OUTPUT
+          fi
+
+      # Upload artifacts
+      - name: Upload build artifacts
+        if: ${{ inputs.upload-artifacts }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifacts-name }}
+          path: ${{ inputs.working-directory }}/${{ inputs.artifacts-path != '' && inputs.artifacts-path || steps.set-artifacts-path.outputs.path }}
