@@ -12,3 +12,6 @@ This workflow uses the [release-please-action](https://github.com/googleapis/rel
 
 ### [Publish NPM Package](./publish-npm)
 This workflow publishes an NPM package to the NPM registry.
+
+### [SSH Deploy](./ssh-deploy)
+This workflow deploys files to a remote server using SSH and SCP. It supports running commands before and after deployment.

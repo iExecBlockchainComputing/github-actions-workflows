@@ -1,0 +1,77 @@
+name: SSH/SCP Deployment
+
+on:
+  workflow_call:
+    inputs:
+      host:
+        description: 'Hostname or IP address of the remote server'
+        type: string
+        required: true
+      username:
+        description: 'Username for SSH authentication'
+        type: string
+        required: true
+      port:
+        description: 'SSH port to connect to'
+        type: string
+        default: '22'
+      source:
+        description: 'Local file or directory to copy to the remote server'
+        type: string
+        required: true
+      target:
+        description: 'Destination path on the remote server'
+        type: string
+        required: true
+      pre-deploy-commands:
+        description: 'Commands to run on the remote server before copying files'
+        type: string
+        default: ''
+      post-deploy-commands:
+        description: 'Commands to run on the remote server after copying files'
+        type: string
+        default: ''
+      ssh-options:
+        description: 'Additional SSH options'
+        type: string
+        default: ''
+    secrets:
+      ssh_private_key:
+        required: true
+      ssh_passphrase:
+        required: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.ssh_private_key }}
+          ssh-passphrase: ${{ secrets.ssh_passphrase }}
+
+      - name: Add remote host to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ inputs.port }} ${{ inputs.host }} >> ~/.ssh/known_hosts
+
+      - name: Run pre-deploy commands
+        if: ${{ inputs.pre-deploy-commands != '' }}
+        run: |
+          ssh ${{ inputs.ssh-options }} -p ${{ inputs.port }} ${{ inputs.username }}@${{ inputs.host }} << 'EOF'
+          ${{ inputs.pre-deploy-commands }}
+          EOF
+
+      - name: Deploy with SCP
+        run: |
+          scp ${{ inputs.ssh-options }} -P ${{ inputs.port }} -r ${{ inputs.source }} ${{ inputs.username }}@${{ inputs.host }}:${{ inputs.target }}
+
+      - name: Run post-deploy commands
+        if: ${{ inputs.post-deploy-commands != '' }}
+        run: |
+          ssh ${{ inputs.ssh-options }} -p ${{ inputs.port }} ${{ inputs.username }}@${{ inputs.host }} << 'EOF'
+          ${{ inputs.post-deploy-commands }}
+          EOF
