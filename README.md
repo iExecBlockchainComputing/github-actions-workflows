@@ -12,3 +12,6 @@ This workflow uses the [release-please-action](https://github.com/googleapis/rel
 
 ### [Publish NPM Package](./publish-npm)
 This workflow publishes an NPM package to the NPM registry.
+
+### [Conventional Commits](./conventional-commits)
+This workflow checks that pull request titles follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
