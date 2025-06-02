@@ -22,7 +22,7 @@ on:
 
 jobs:
   lint-pr-title:
-    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/conventional-commits.yaml@conventional-commits-v1.0.0
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/conventional-commits.yml@conventional-commits-v1.0.0
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
