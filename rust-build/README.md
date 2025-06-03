@@ -1,15 +1,15 @@
-# Rust Build Workflow
+# 🦀 Rust Build Workflow
 
-A reusable GitHub Actions workflow for building, testing, and publishing Rust packages.
+📝 A reusable GitHub Actions workflow for building, testing, and publishing Rust packages.
 
-## Features
+## ✨ Features
 
 - Build and test Rust packages
 - Cache dependencies for faster builds
 - Publish packages to crates.io
 - Upload build artifacts
 
-## Usage
+## 📋 Usage
 
 ```yaml
 name: Rust CI
@@ -28,7 +28,7 @@ jobs:
       artifact-path: 'target/release/my-app'
 ```
 
-## Inputs
+## ⚙️ Inputs
 
 | Name                | Description                                        | Default   | Required                            |
 |---------------------|----------------------------------------------------|-----------|-------------------------------------|
@@ -40,13 +40,13 @@ jobs:
 | `artifact-name`     | Name of the artifact to upload                     | -         | Only if `upload-artifact` is `true` |
 | `artifact-path`     | Path to the artifact to upload                     | -         | Only if `upload-artifact` is `true` |
 
-## Secrets
+## 🔒 Secrets
 
 | Name              | Description                       | Required                              |
 |-------------------|-----------------------------------|---------------------------------------|
 | `CRATES_IO_TOKEN` | Token for publishing to crates.io | Only if `publish-crates-io` is `true` |
 
-## Examples
+## 📚 Examples
 
 ### Basic Build and Test
 

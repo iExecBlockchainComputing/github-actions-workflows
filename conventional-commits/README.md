@@ -1,14 +1,14 @@
-# Conventional Commits
+# ✅ Conventional Commits
 
-This workflow checks that pull request titles follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
+📝 This workflow checks that pull request titles follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
 
-## Secrets
+## 🔒 Secrets
 
 ### `GITHUB_TOKEN`
 
 **Required** The GitHub token to use for authentication.
 
-## Example usage
+## 📋 Example Usage
 
 ```yaml
 name: Lint PR Title
