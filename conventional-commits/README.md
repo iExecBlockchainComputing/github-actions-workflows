@@ -25,5 +25,4 @@ jobs:
     permissions:
       pull-requests: read
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/conventional-commits.yml@conventional-commits-v1.0.1
-    secrets: inherit
 ```
