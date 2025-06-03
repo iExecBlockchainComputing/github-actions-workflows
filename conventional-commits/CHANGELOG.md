@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/conventional-commits-v1.0.0...conventional-commits-v1.0.1) (2025-06-03)
+
+
+### Bug Fixes
+
+* **conventional-commits:** remove reserved name secret ([#53](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/53)) ([13ccbee](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/13ccbee116ea9c36dca3c7c6eb87561297d7841a))
+
 ## 1.0.0 (2025-05-27)
 
 
