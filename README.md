@@ -1,17 +1,23 @@
-# iExec reusable workflow repository
+# 🔄 iExec Reusable Workflow Repository
 
-This repository contains a reusable workflow for iExec. It is a monorepo that contains the following components:
+📝 This repository contains reusable workflows for iExec. It is a monorepo that contains the following components:
 
-## Components
+## 📦 Components
 
-### [Build Docker Image](./docker-build)
+### 🐳 [Build Docker Image](./docker-build)
 This workflow builds a Docker image from a Dockerfile. It is a reusable workflow that can be used in other workflows.
 
-### [Release Please](./release-please)
+### 🚀 [Release Please](./release-please)
 This workflow uses the [release-please-action](https://github.com/googleapis/release-please-action) to automate the release of a project.
 
-### [Publish NPM Package](./publish-npm)
+### 📦 [Publish NPM Package](./publish-npm)
 This workflow publishes an NPM package to the NPM registry.
 
-### [Conventional Commits](./conventional-commits)
+### ✅ [Conventional Commits](./conventional-commits)
 This workflow checks that pull request titles follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
+
+### 🦀 [Rust Build](./rust-build)
+This workflow builds and tests Rust projects.
+
+### 🧹 [Stale](./stale)
+This workflow marks and closes stale issues and pull requests.

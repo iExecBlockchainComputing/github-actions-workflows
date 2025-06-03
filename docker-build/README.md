@@ -1,6 +1,8 @@
-# Docker build
+# 🐳 Docker Build
 
-## Inputs
+📝 This workflow builds a Docker image from a Dockerfile and pushes it to Docker Hub.
+
+## ⚙️ Inputs
 
 ### `dockerfile`
 
@@ -10,7 +12,7 @@
 
 **Required** The tag to apply to the built image.
 
-## Secrets
+## 🔒 Secrets
 
 ### `dockerhub_username`
 
@@ -20,7 +22,7 @@
 
 **Required** The personal access token to use to log in to Docker Hub.
 
-## Example usage
+## 📋 Example Usage
 
 ```yaml
 uses: iExecBlockchainComputing/github-actions-workflows/docker-build@docker-build-v1.1.1
