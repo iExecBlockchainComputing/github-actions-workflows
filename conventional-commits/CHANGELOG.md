@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/conventional-commits-v1.0.1...conventional-commits-v1.1.0) (2025-06-10)
+
+
+### Features
+
+* **conventional-commits:** add sticky comments for PR title linting ([#57](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/57)) ([01a8e06](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/01a8e0659352b5660d4241e5b1b92f18faa6a4eb))
+
 ## [1.0.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/conventional-commits-v1.0.0...conventional-commits-v1.0.1) (2025-06-03)
 
 
