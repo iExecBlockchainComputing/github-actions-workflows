@@ -42,6 +42,10 @@ on:
         required: false
         default: ''
         type: string
+      working-directory:
+        description: "Change the workspace"
+        default: ''
+        type: string
     secrets:
       npm-token:
         description: 'NPM token for authentication'
@@ -65,9 +69,11 @@ jobs:
           scope: ${{ inputs.scope }}
 
       - name: Install dependencies
+        working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.install-command }}
 
       - name: Publish package
+        working-directory: ${{ inputs.working-directory }}
         run: |
           TAG_OPTION=""
           if [ -n "${{ inputs.tag }}" ]; then
