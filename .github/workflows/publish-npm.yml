@@ -1,54 +1,59 @@
 name: Publish Package NPM
+
 on:
   workflow_call:
     inputs:
       scope:
         description: 'NPM package scope (e.g., @iexec)'
-        required: false
         default: '@iexec'
         type: string
       node-version:
         description: 'Node.js version to use'
-        required: false
         default: '20'
         type: string
       registry:
         description: 'NPM registry URL'
-        required: false
         default: 'https://registry.npmjs.org'
         type: string
       access:
-        description: 'Package access level (public/restricted)'
-        required: false
+        description: 'Package access (public/restricted)'
         default: 'public'
         type: string
       provenance:
         description: 'Enable npm provenance'
-        required: false
         default: true
         type: boolean
       install-command:
-        description: 'Command to install dependencies'
-        required: false
+        description: 'Install dependencies command'
         default: 'npm ci'
         type: string
+      test-command:
+        description: 'Run unit tests command'
+        default: 'npm test --if-present'
+        type: string
+      type-check-command:
+        description: 'Run type-checking command'
+        default: 'npm run type-check --if-present'
+        type: string
       environment:
-        description: 'GitHub environment to use for deployment'
-        required: false
+        description: 'GitHub environment'
         default: 'production'
         type: string
       tag:
-        description: 'NPM publish tag (e.g., latest, nightly)'
-        required: false
+        description: 'npm publish tag (e.g., latest, nightly)'
         default: ''
         type: string
+      tag-prefix:
+        description: 'Prefix for Git tag'
+        default: 'v'
+        type: string
       working-directory:
-        description: "Change the workspace"
+        description: 'Directory containing package.json'
         default: ''
         type: string
     secrets:
       npm-token:
-        description: 'NPM token for authentication'
+        description: 'NPM auth token'
         required: true
 
 jobs:
@@ -67,23 +72,32 @@ jobs:
           node-version: ${{ inputs.node-version }}
           registry-url: ${{ inputs.registry }}
           scope: ${{ inputs.scope }}
+          cache: npm
 
       - name: Install dependencies
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.install-command }}
 
+      - name: Run unit tests
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.test-command }}
+
+      - name: Run type checks
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.type-check-command }}
+
       - name: Publish package
         working-directory: ${{ inputs.working-directory }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
         run: |
-          TAG_OPTION=""
+          TAG_OPT=""
           if [ -n "${{ inputs.tag }}" ]; then
-            TAG_OPTION="--tag ${{ inputs.tag }}"
+            TAG_OPT="--tag ${{ inputs.tag }}"
           fi
 
           if [ "${{ inputs.provenance }}" = "true" ]; then
-            npm publish --access ${{ inputs.access }} $TAG_OPTION --provenance
+            npm publish --access ${{ inputs.access }} $TAG_OPT --provenance
           else
-            npm publish --access ${{ inputs.access }} $TAG_OPTION
+            npm publish --access ${{ inputs.access }} $TAG_OPT
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
