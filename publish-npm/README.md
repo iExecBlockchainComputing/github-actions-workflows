@@ -9,26 +9,28 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 - **Sets Up Node.js**: Installs the specified Node.js version and configures the `.npmrc` file. ⚙️
 - **Installs Dependencies**: Uses the specified install command (default: `npm ci`) to install the dependencies. 📦
 - **Runs Tests**: Executes unit tests if present. ✅
+- **Runs Linting**: Performs code linting if configured. 🧹
 - **Performs Type Checking**: Runs type checking if configured. 🔍
 - **Publishes the Package**: Publishes the package with provenance (if enabled) and the specified access level using
   `npm publish`. 🎉
 
 ## Workflow Inputs 🛠️
 
-| **Input**              | **Description**                          | **Required** | **Default**                       |
-|------------------------|------------------------------------------|--------------|-----------------------------------|
-| **scope**              | NPM package scope (e.g., `@iexec`).      | No           | `@iexec`                          |
-| **node-version**       | Node.js version to use.                  | No           | `20`                              |
-| **registry**           | NPM registry URL.                        | No           | `https://registry.npmjs.org`      |
-| **access**             | Package access (public or restricted).   | No           | `public`                          |
-| **provenance**         | Enable npm provenance.                   | No           | `true`                            |
-| **install-command**    | Install dependencies command.            | No           | `npm ci`                          |
-| **test-command**       | Run unit tests command.                  | No           | `npm test --if-present`           |
-| **type-check-command** | Run type-checking command.               | No           | `npm run type-check --if-present` |
-| **environment**        | GitHub environment.                      | No           | `production`                      |
-| **tag**                | npm publish tag (e.g., latest, nightly). | No           | `''` (empty string)               |
-| **tag-prefix**         | Prefix for Git tag.                      | No           | `v`                               |
-| **working-directory**  | Directory containing package.json.       | No           | `''` (empty string)               |
+| **Input**              | **Description**                          | **Required** | **Default**                        |
+|------------------------|------------------------------------------|--------------|------------------------------------|
+| **scope**              | NPM package scope (e.g., `@iexec`).      | No           | `@iexec`                           |
+| **node-version**       | Node.js version to use.                  | No           | `20`                               |
+| **registry**           | NPM registry URL.                        | No           | `https://registry.npmjs.org`       |
+| **access**             | Package access (public or restricted).   | No           | `public`                           |
+| **provenance**         | Enable npm provenance.                   | No           | `true`                             |
+| **install-command**    | Install dependencies command.            | No           | `npm ci`                           |
+| **test-command**       | Run unit tests command.                  | No           | `npm test --if-present`            |
+| **lint-command**       | Run linting command.                     | No           | `npm run lint --if-present`        |
+| **type-check-command** | Run type-checking command.               | No           | `npm run check-types --if-present` |
+| **environment**        | GitHub environment.                      | No           | `production`                       |
+| **tag**                | npm publish tag (e.g., latest, nightly). | No           | `''` (empty string)                |
+| **tag-prefix**         | Prefix for Git tag.                      | No           | `v`                                |
+| **working-directory**  | Directory containing package.json.       | No           | `''` (empty string)                |
 
 ### Secrets 🔐
 
@@ -67,7 +69,8 @@ for the package scope, Node.js version, registry URL, and other options. The wor
        with:
          node-version: '22'
          test-command: 'npm run test:ci'
-         type-check-command: 'npm run type-check'
+         lint-command: 'npm run lint'
+         type-check-command: 'npm run check-types'
          tag-prefix: 'v'
        secrets:
          npm-token: ${{ secrets.NPM_TOKEN }}
@@ -83,5 +86,6 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 2. **Setup Node.js**: Configures Node.js with `actions/setup-node@v4`, including npm cache.
 3. **Install Dependencies**: Runs the specified install command (default: `npm ci`).
 4. **Run Unit Tests**: Executes tests using the specified test command (default: `npm test --if-present`).
-5. **Run Type Checks**: Performs type checking using the specified command (default: `npm run type-check --if-present`).
-6. **Publish Package**: Publishes the package to the NPM registry with the specified configuration.
+5. **Run Linting**: Performs code linting using the specified command (default: `npm run lint --if-present`).
+6. **Run Type Checks**: Performs type checking using the specified command (default: `npm run check-types --if-present`).
+7. **Publish Package**: Publishes the package to the NPM registry with the specified configuration.
