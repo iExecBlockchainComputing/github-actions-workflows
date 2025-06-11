@@ -31,6 +31,10 @@ on:
         description: 'Run unit tests command'
         default: 'npm test --if-present'
         type: string
+      lint-command:
+        description: 'Run linting command'
+        default: 'npm run lint --if-present'
+        type: string
       type-check-command:
         description: 'Run type-checking command'
         default: 'npm run type-check --if-present'
@@ -81,6 +85,10 @@ jobs:
       - name: Run unit tests
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.test-command }}
+
+      - name: Run linting
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.lint-command }}
 
       - name: Run type checks
         working-directory: ${{ inputs.working-directory }}
