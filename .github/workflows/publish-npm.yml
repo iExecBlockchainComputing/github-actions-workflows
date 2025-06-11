@@ -37,7 +37,7 @@ on:
         type: string
       type-check-command:
         description: 'Run type-checking command'
-        default: 'npm run type-check --if-present'
+        default: 'npm run check-types --if-present'
         type: string
       environment:
         description: 'GitHub environment'
