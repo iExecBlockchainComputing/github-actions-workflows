@@ -28,6 +28,11 @@ on:
         required: false
         type: string
         default: '18'
+      run-check-types:
+        description: 'Enable check types'
+        required: false
+        type: string
+        default: true
 
 jobs:
   test:
@@ -63,6 +68,10 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Check Types
+        if: ${{ inputs.run-check-types }}
+        run: npm run check-types
 
       - name: Install global & Test
         run: |
