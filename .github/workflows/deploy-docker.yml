@@ -1,0 +1,122 @@
+name: Build & Deploy Docker
+
+on:
+  workflow_call:
+    inputs:
+      dockerfile:
+        description: "Path to Dockerfile"
+        default: "Dockerfile"
+        required: false
+        type: string
+      image_name:
+        description: "Full image name (e.g. org/my-api)"
+        required: true
+        type: string
+      image_tag:
+        description: "Optional tag override (defaults to pushed Git tag)"
+        required: false
+        type: string
+      remote_host:
+        description: "SSH host (user@host)"
+        required: true
+        type: string
+      remote_path:
+        description: "Remote path where compose files live"
+        required: true
+        type: string
+      runner_group:
+        description: "Runner group or label"
+        required: false
+        default: "ubuntu-latest"
+        type: string
+    secrets:
+      dockerhub_username:
+        required: true
+      dockerhub_password:
+        required: true
+      ssh_private_key:
+        required: true
+    outputs:
+      tag:
+        description: "Tag effectively built/deployed"
+        value: ${{ jobs.get-tag.outputs.tag }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  get-tag:
+    runs-on: ${{ inputs.runner_group }}
+    outputs:
+      tag: ${{ steps.out.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute tag
+        id: out
+        run: |
+          TAG="${{ inputs.image_tag }}"
+          if [ -z "$TAG" ]; then
+            TAG="${GITHUB_REF##*/}"   # refs/tags/v1.2.3 → v1.2.3
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: get-tag
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@docker-build-v2.2.0
+    with:
+      dockerfile: ${{ inputs.dockerfile }}
+      image-name: ${{ inputs.image_name }}
+      image-tag: ${{ needs.get-tag.outputs.tag }}
+      hadolint: false
+      security-scan: false
+      push: true
+    secrets:
+      username: ${{ secrets.dockerhub_username }}
+      password: ${{ secrets.dockerhub_password }}
+
+  deploy:
+    needs: [build, get-tag]
+    runs-on: ${{ inputs.runner_group }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.ssh_private_key }}
+
+      - name: Add remote host to known_hosts
+        run: ssh-keyscan -H "${{ inputs.remote_host#*@ }}" >> ~/.ssh/known_hosts
+
+      - name: Prepare .env for Compose
+        run: |
+          cat <<EOF > .env
+IMAGE_NAME=${{ inputs.image_name }}
+IMAGE_TAG=${{ needs.get-tag.outputs.tag }}
+DOCKERHUB_USERNAME=${{ secrets.dockerhub_username }}
+DOCKERHUB_PASSWORD=${{ secrets.dockerhub_password }}
+EOF
+
+      - name: Copy compose files
+        run: |
+          scp docker-compose.yml .env "${{ inputs.remote_host }}":"${{ inputs.remote_path }}/"
+
+      - name: Pull & restart containers
+        run: |
+          ssh "${{ inputs.remote_host }}" bash -s <<'REMOTE'
+            cd "${{ inputs.remote_path }}"
+            set -e
+            export \$(grep -v '^#' .env | xargs)
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker compose pull
+            docker compose up -d
+REMOTE
