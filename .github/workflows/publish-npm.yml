@@ -47,6 +47,10 @@ on:
         description: 'Run type-checking command'
         default: 'npm run check-types --if-present'
         type: string
+      format-check-command:
+        description: 'Run type-checking command'
+        default: 'npm run check-format --if-present'
+        type: string
       environment:
         description: 'GitHub environment'
         default: 'production'
@@ -93,6 +97,10 @@ jobs:
       - name: Run type checks
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.type-check-command }}
+
+      - name: check format
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.format-check-command }}
 
       - name: Run linting
         working-directory: ${{ inputs.working-directory }}
