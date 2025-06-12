@@ -93,6 +93,10 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.install-command }}
 
+      - name: Run build
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.build-command }}
+
       - name: Run type checks
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.type-check-command }}
@@ -109,10 +113,6 @@ jobs:
         if: ${{ inputs.run-tests }}
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.test-command }}
-
-      - name: Run build
-        working-directory: ${{ inputs.working-directory }}
-        run: ${{ inputs.build-command }}
 
       - name: Publish package
         working-directory: ${{ inputs.working-directory }}
