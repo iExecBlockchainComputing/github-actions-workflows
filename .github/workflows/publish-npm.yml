@@ -67,6 +67,14 @@ on:
         description: 'Directory containing package.json'
         default: ''
         type: string
+      artifact-name:
+        description: 'Name of an artifact to download before the build (leave empty to skip)'
+        default: ''
+        type: string
+      artifact-path:
+        description: 'Destination path for the downloaded artifact'
+        default: ''
+        type: string
     secrets:
       npm-token:
         description: 'NPM auth token'
@@ -81,6 +89,13 @@ jobs:
       packages: write
       id-token: write
     steps:
+      - name: Download extra artifact
+        if: ${{ inputs.artifact-name != '' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ inputs.artifact-path }}
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
