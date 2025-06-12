@@ -29,7 +29,7 @@ on:
         type: string
       build-command:
         description: 'Build package command'
-        default: 'npm build'
+        default: 'npm run build'
         type: string
       test-command:
         description: 'Run unit tests command'
