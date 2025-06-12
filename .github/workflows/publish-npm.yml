@@ -31,6 +31,10 @@ on:
         description: 'Build package command'
         default: 'npm run build'
         type: string
+      run-tests:
+        description: 'Execute unit tests step'
+        default: false
+        type: boolean
       test-command:
         description: 'Run unit tests command'
         default: 'npm test --if-present'
@@ -90,13 +94,14 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.type-check-command }}
 
-      - name: Run unit tests
-        working-directory: ${{ inputs.working-directory }}
-        run: ${{ inputs.test-command }}
-
       - name: Run linting
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.lint-command }}
+
+      - name: Run unit tests
+        if: ${{ inputs.run-tests }}
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.test-command }}
 
       - name: Run build
         working-directory: ${{ inputs.working-directory }}
