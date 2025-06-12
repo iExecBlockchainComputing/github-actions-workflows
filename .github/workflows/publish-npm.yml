@@ -27,6 +27,10 @@ on:
         description: 'Install dependencies command'
         default: 'npm ci'
         type: string
+      build-command:
+        description: 'Build package command'
+        default: 'npm build'
+        type: string
       test-command:
         description: 'Run unit tests command'
         default: 'npm test --if-present'
@@ -82,6 +86,10 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.install-command }}
 
+      - name: Run type checks
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.type-check-command }}
+
       - name: Run unit tests
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.test-command }}
@@ -90,9 +98,9 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.lint-command }}
 
-      - name: Run type checks
+      - name: Run build
         working-directory: ${{ inputs.working-directory }}
-        run: ${{ inputs.type-check-command }}
+        run: ${{ inputs.build-command }}
 
       - name: Publish package
         working-directory: ${{ inputs.working-directory }}
