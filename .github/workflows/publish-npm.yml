@@ -48,7 +48,7 @@ on:
         default: 'npm run check-types --if-present'
         type: string
       format-check-command:
-        description: 'Run type-checking command'
+        description: 'Run format-checking command'
         default: 'npm run check-format --if-present'
         type: string
       environment:
