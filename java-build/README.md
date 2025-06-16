@@ -1,62 +1,95 @@
-# Java Build and Test
+# Java Build and Test - Reusable Workflow Documentation 🚀
 
-A reusable GitHub Actions workflow for building and testing Java applications with Gradle or Maven.
+## Overview 🌟
 
-## Inputs
+This reusable GitHub Actions workflow automates the process of building and testing Java applications. It supports both Gradle and Maven build tools and is highly configurable via inputs. The workflow performs the following actions:
 
-### `java-version`
+- **Checks Out Your Repository**: Retrieves your code. 📥
+- **Sets Up Java JDK**: Installs the specified Java version and distribution. ☕
+- **Sets Up Gradle/Maven**: Configures the specified build tool with the desired version. 🔧
+- **Builds Your Application**: Compiles and packages your Java application. 🔨
+- **Uploads Build Artifacts**: Optionally uploads the build artifacts for later use. 📦
 
-**Optional** The Java version to use. Default: `'17'`.
+## Workflow Inputs 🛠️
 
-### `java-distribution`
+| **Input**             | **Description**                                                      | **Required** | **Default**       |
+|-----------------------|--------------------------------------------------------------------|--------------|-------------------|
+| **java-version**      | Java version to use.                                                | No           | `17`              |
+| **java-distribution** | Java distribution to use (temurin, zulu, adopt, etc.).             | No           | `temurin`         |
+| **build-tool**        | Build tool to use (gradle or maven).                               | No           | `gradle`          |
+| **gradle-version**    | Gradle version to use (only applicable if build-tool is gradle).   | No           | `wrapper`         |
+| **gradle-build-task** | Gradle build task to run.                                          | No           | `build`           |
+| **gradle-build-file** | Gradle build file to use.                                          | No           | `''` (empty string) |
+| **maven-version**     | Maven version to use (only applicable if build-tool is maven).     | No           | `3.9.5`           |
+| **maven-goals**       | Maven goals to run.                                                | No           | `clean package`   |
+| **maven-args**        | Additional Maven arguments.                                        | No           | `''` (empty string) |
+| **working-directory** | Working directory where the build commands will be run.            | No           | `.`               |
+| **upload-artifacts**  | Whether to upload build artifacts.                                 | No           | `true`            |
+| **artifacts-name**    | Name of the artifacts to upload.                                   | No           | `build-artifacts` |
+| **artifacts-path**    | Path to the artifacts to upload (relative to working-directory).   | No           | `''` (auto-determined) |
 
-**Optional** The Java distribution to use (temurin, zulu, adopt, etc.). Default: `'temurin'`.
+## Job and Steps ⚙️
 
-### `build-tool`
+### Job Name: `build`
 
-**Optional** The build tool to use (gradle or maven). Default: `'gradle'`.
+- **Runs On**: `ubuntu-latest`.
+- **Steps**:
+  - **Checkout Repository**: Uses `actions/checkout@v4` to fetch your code. 📥
+  - **Set up JDK**: Configures Java with `actions/setup-java@v4`. ☕
+  - **Setup Gradle**: If using Gradle, sets up the specified Gradle version. 🔧
+  - **Build with Gradle**: If using Gradle, runs the specified build task. 🔨
+  - **Setup Maven**: If using Maven, sets up the specified Maven version. 🔧
+  - **Build with Maven**: If using Maven, runs the specified goals with arguments. 🔨
+  - **Set default artifacts path**: Determines the default artifacts path based on the build tool. 📁
+  - **Upload build artifacts**: If enabled, uploads the build artifacts. 📦
 
-### `gradle-version`
+## How to Use This Reusable Workflow 🔄
 
-**Optional** The Gradle version to use (only applicable if build-tool is gradle). Default: `'wrapper'` (uses the Gradle Wrapper).
+1. **Save the Workflow File**  
+   This workflow is already saved as `.github/workflows/java-build.yml` in the repository. 💾
 
-### `gradle-build-task`
+2. **Call the Reusable Workflow**  
+   In another workflow file, invoke this reusable workflow like so:
 
-**Optional** The Gradle build task to run. Default: `'build'`.
+   ```yaml
+   name: Build My Java Application
+   on:
+     push:
+       branches: [main]
 
-### `gradle-build-file`
+   jobs:
+     build:
+       uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/java-build.yml@java-build-v1.0.0
+       with:
+         java-version: '17'
+         build-tool: 'gradle'
+         gradle-build-task: 'build'
+   ```
 
-**Optional** The Gradle build file to use. Default: `''` (uses the default build.gradle file).
+## Workflow Steps in Detail 🔍
 
-### `maven-version`
+1. **Checkout Repository**:
+   - Uses `actions/checkout@v4` to fetch your code.
 
-**Optional** The Maven version to use (only applicable if build-tool is maven). Default: `'3.9.5'`.
+2. **Set up JDK**:
+   - Uses `actions/setup-java@v4` to install and configure the specified Java version and distribution.
+   - Sets the architecture to x64.
 
-### `maven-goals`
+3. **Gradle Build** (if build-tool is 'gradle'):
+   - Sets up Gradle using `gradle/actions/setup-gradle@v4.0.0`.
+   - Runs the specified Gradle build task, using a custom build file if provided.
 
-**Optional** The Maven goals to run. Default: `'clean package'`.
+4. **Maven Build** (if build-tool is 'maven'):
+   - Sets up Maven using `stCarolas/setup-maven@v5`.
+   - Runs the specified Maven goals with any additional arguments.
 
-### `maven-args`
+5. **Artifact Handling**:
+   - If no explicit artifacts path is provided, determines the default path based on the build tool:
+     - For Gradle: `build/libs`
+     - For Maven: `target`
+   - If artifact uploading is enabled, uploads the build artifacts using `actions/upload-artifact@v4`.
 
-**Optional** Additional Maven arguments. Default: `''`.
-
-### `working-directory`
-
-**Optional** The working directory where the build commands will be run. Default: `'.'`.
-
-### `upload-artifacts`
-
-**Optional** Whether to upload build artifacts. Default: `true`.
-
-### `artifacts-name`
-
-**Optional** The name of the artifacts to upload. Default: `'build-artifacts'`.
-
-### `artifacts-path`
-
-**Optional** The path to the artifacts to upload (relative to working-directory). Default: `''` (automatically determined based on build tool).
-
-## Example usage
+## Example Usage Scenarios 📋
 
 ### Basic usage with Gradle (default)
 
