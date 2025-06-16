@@ -19,26 +19,27 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
 ## Workflow Inputs 🛠️
 
-| **Input**              | **Description**                          | **Required** | **Default**                        |
-|------------------------|------------------------------------------|--------------|------------------------------------|
-| **scope**              | NPM package scope (e.g., `@iexec`).      | No           | `@iexec`                           |
-| **node-version**       | Node.js version to use.                  | No           | `20`                               |
-| **registry**           | NPM registry URL.                        | No           | `https://registry.npmjs.org`       |
-| **access**             | Package access (public or restricted).   | No           | `public`                           |
-| **provenance**         | Enable npm provenance.                   | No           | `true`                             |
-| **install-command**    | Install dependencies command.            | No           | `npm ci`                           |
-| **build-command**      | Build package command.                   | No           | `npm run build`                    |
-| **run-tests**          | Execute unit tests step.                 | No           | `false`                            |
-| **test-command**       | Run unit tests command.                  | No           | `npm test --if-present`            |
-| **lint-command**       | Run linting command.                     | No           | `npm run lint --if-present`        |
-| **type-check-command** | Run type-checking command.               | No           | `npm run check-types --if-present` |
-| **format-check-command** | Run format-checking command.           | No           | `npm run check-format --if-present` |
-| **environment**        | GitHub environment.                      | No           | `production`                       |
-| **tag**                | npm publish tag (e.g., latest, nightly). | No           | `''` (empty string)                |
-| **tag-prefix**         | Prefix for Git tag.                      | No           | `v`                                |
-| **working-directory**  | Directory containing package.json.       | No           | `''` (empty string)                |
-| **artifact-name**      | Name of an artifact to download before the build. | No  | `''` (empty string)                |
-| **artifact-path**      | Destination path for the downloaded artifact. | No      | `''` (empty string)                |
+| **Input**                | **Description**                                               | **Required** | **Default**                         |
+|--------------------------|---------------------------------------------------------------|--------------|-------------------------------------|
+| **scope**                | NPM package scope (e.g., `@iexec`).                           | No           | `@iexec`                            |
+| **node-version**         | Node.js version to use.                                       | No           | `20`                                |
+| **registry**             | NPM registry URL.                                             | No           | `https://registry.npmjs.org`        |
+| **access**               | Package access (public or restricted).                        | No           | `public`                            |
+| **provenance**           | Enable npm provenance.                                        | No           | `true`                              |
+| **install-command**      | Install dependencies command.                                 | No           | `npm ci`                            |
+| **build-command**        | Build package command.                                        | No           | `npm run build`                     |
+| **run-tests**            | Execute unit tests step.                                      | No           | `false`                             |
+| **test-command**         | Run unit tests command.                                       | No           | `npm test --if-present`             |
+| **lint-command**         | Run linting command.                                          | No           | `npm run lint --if-present`         |
+| **type-check-command**   | Run type-checking command.                                    | No           | `npm run check-types --if-present`  |
+| **format-check-command** | Run format-checking command.                                  | No           | `npm run check-format --if-present` |
+| **environment**          | GitHub environment.                                           | No           | `production`                        |
+| **tag**                  | npm publish tag (e.g., latest, nightly).                      | No           | `''` (empty string)                 |
+| **tag-prefix**           | Prefix for Git tag.                                           | No           | `v`                                 |
+| **working-directory**    | Directory containing package.json.                            | No           | `''` (empty string)                 |
+| **artifact-name**        | Name of an artifact to download before the build.             | No           | `''` (empty string)                 |
+| **artifact-path**        | Destination path for the downloaded artifact.                 | No           | `''` (empty string)                 |
+| **version**              | Version to publish (leave empty to use package.json version). | No           | `''` (empty string)                 |
 
 ### Secrets 🔐
 
