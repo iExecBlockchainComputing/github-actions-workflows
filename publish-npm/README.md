@@ -74,7 +74,7 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
    jobs:
      publish:
-       uses: your-org/your-repo/.github/workflows/publish-npm.yml@main
+       uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/publish-npm.yml@main
        with:
          node-version: '22'
          build-command: 'npm run build:prod'
