@@ -75,6 +75,10 @@ on:
         description: 'Destination path for the downloaded artifact'
         default: ''
         type: string
+      version:
+        description: 'Version to publish (leave empty to use package.json version)'
+        default: ''
+        type: string
     secrets:
       npm-token:
         description: 'NPM auth token'
@@ -108,13 +112,11 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.install-command }}
         
-      - name: Set nightly version from commit
-        if: ${{ inputs.tag == 'nightly' }}
+      - name: Override version
+        if: ${{ inputs.version != '' }}
         working-directory: ${{ inputs.working-directory }}
         run: |
-          CURRENT_VERSION=$(npm pkg get version | tr -d '"')
-          NIGHTLY_VERSION="${CURRENT_VERSION}-nightly-${GITHUB_SHA::7}"
-          npm pkg set version="$NIGHTLY_VERSION"
+          npm pkg set version="${{ inputs.version }}"
 
       - name: Run build
         working-directory: ${{ inputs.working-directory }}
