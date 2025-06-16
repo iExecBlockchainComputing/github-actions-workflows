@@ -31,7 +31,7 @@ on:
       run-check-types:
         description: 'Enable check types'
         required: false
-        type: string
+        type: boolean
         default: true
 
 jobs:
