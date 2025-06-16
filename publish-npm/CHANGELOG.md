@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.3.0...publish-npm-v1.4.0) (2025-06-16)
+
+
+### Features
+
+* **publish-npm:** enhance workflow ([#62](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/62)) ([27e1a51](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/27e1a51cf2c294fc97f498264ed8b2d958b31f04))
+
 ## [1.3.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.2.0...publish-npm-v1.3.0) (2025-06-10)
 
 
