@@ -7,6 +7,9 @@ This repository contains a comprehensive collection of reusable GitHub Actions w
 ### 🐳 [Build Docker Image](./docker-build)
 Automates the process of building, tagging, and pushing Docker images to Docker Hub. Perfect for projects that require containerization with minimal configuration overhead.
 
+### 🚀 [Deploy Docker](./deploy-docker)
+Automates the process of building a Docker image and deploying it to a remote server. Configurable for different Dockerfile paths, image names, tags, and remote hosts. Streamlines the deployment process with secure SSH connections.
+
 ### 📦 [Release Please](./release-please)
 Uses the [release-please-action](https://github.com/googleapis/release-please-action) to automate versioning and changelog generation based on Conventional Commits. This workflow streamlines your release process and ensures consistent version management.
 
