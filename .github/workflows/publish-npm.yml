@@ -1,54 +1,87 @@
 name: Publish Package NPM
+
 on:
   workflow_call:
     inputs:
       scope:
         description: 'NPM package scope (e.g., @iexec)'
-        required: false
         default: '@iexec'
         type: string
       node-version:
         description: 'Node.js version to use'
-        required: false
         default: '20'
         type: string
       registry:
         description: 'NPM registry URL'
-        required: false
         default: 'https://registry.npmjs.org'
         type: string
       access:
-        description: 'Package access level (public/restricted)'
-        required: false
+        description: 'Package access (public/restricted)'
         default: 'public'
         type: string
       provenance:
         description: 'Enable npm provenance'
-        required: false
         default: true
         type: boolean
       install-command:
-        description: 'Command to install dependencies'
-        required: false
+        description: 'Install dependencies command'
         default: 'npm ci'
         type: string
+      build-command:
+        description: 'Build package command'
+        default: 'npm run build'
+        type: string
+      run-tests:
+        description: 'Execute unit tests step'
+        default: false
+        type: boolean
+      test-command:
+        description: 'Run unit tests command'
+        default: 'npm test --if-present'
+        type: string
+      lint-command:
+        description: 'Run linting command'
+        default: 'npm run lint --if-present'
+        type: string
+      type-check-command:
+        description: 'Run type-checking command'
+        default: 'npm run check-types --if-present'
+        type: string
+      format-check-command:
+        description: 'Run format-checking command'
+        default: 'npm run check-format --if-present'
+        type: string
       environment:
-        description: 'GitHub environment to use for deployment'
-        required: false
+        description: 'GitHub environment'
         default: 'production'
         type: string
       tag:
-        description: 'NPM publish tag (e.g., latest, nightly)'
-        required: false
+        description: 'npm publish tag (e.g., latest, nightly)'
         default: ''
         type: string
+      tag-prefix:
+        description: 'Prefix for Git tag'
+        default: 'v'
+        type: string
       working-directory:
-        description: "Change the workspace"
+        description: 'Directory containing package.json'
+        default: ''
+        type: string
+      artifact-name:
+        description: 'Name of an artifact to download before the build (leave empty to skip)'
+        default: ''
+        type: string
+      artifact-path:
+        description: 'Destination path for the downloaded artifact'
+        default: ''
+        type: string
+      version:
+        description: 'Version to publish (leave empty to use package.json version)'
         default: ''
         type: string
     secrets:
       npm-token:
-        description: 'NPM token for authentication'
+        description: 'NPM auth token'
         required: true
 
 jobs:
@@ -60,6 +93,13 @@ jobs:
       packages: write
       id-token: write
     steps:
+      - name: Download extra artifact
+        if: ${{ inputs.artifact-name != '' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ inputs.artifact-path }}
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -71,19 +111,46 @@ jobs:
       - name: Install dependencies
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.install-command }}
+        
+      - name: Override version
+        if: ${{ inputs.version != '' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          npm pkg set version="${{ inputs.version }}"
+
+      - name: Run build
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.build-command }}
+
+      - name: Run type checks
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.type-check-command }}
+
+      - name: check format
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.format-check-command }}
+
+      - name: Run linting
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.lint-command }}
+
+      - name: Run unit tests
+        if: ${{ inputs.run-tests }}
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.test-command }}
 
       - name: Publish package
         working-directory: ${{ inputs.working-directory }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
         run: |
-          TAG_OPTION=""
+          TAG_OPT=""
           if [ -n "${{ inputs.tag }}" ]; then
-            TAG_OPTION="--tag ${{ inputs.tag }}"
+            TAG_OPT="--tag ${{ inputs.tag }}"
           fi
 
           if [ "${{ inputs.provenance }}" = "true" ]; then
-            npm publish --access ${{ inputs.access }} $TAG_OPTION --provenance
+            npm publish --access ${{ inputs.access }} $TAG_OPT --provenance
           else
-            npm publish --access ${{ inputs.access }} $TAG_OPTION
+            npm publish --access ${{ inputs.access }} $TAG_OPT
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
