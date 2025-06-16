@@ -107,6 +107,14 @@ jobs:
       - name: Install dependencies
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.install-command }}
+        
+      - name: Set nightly version from commit
+        if: ${{ inputs.tag == 'nightly' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          CURRENT_VERSION=$(npm pkg get version | tr -d '"')
+          NIGHTLY_VERSION="${CURRENT_VERSION}-nightly-${GITHUB_SHA::7}"
+          npm pkg set version="$NIGHTLY_VERSION"
 
       - name: Run build
         working-directory: ${{ inputs.working-directory }}
