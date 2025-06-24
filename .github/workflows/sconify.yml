@@ -147,7 +147,7 @@ jobs:
         run: |
           docker push $DEBUG_IMAGE
           echo "image=$DEBUG_IMAGE" >> "$GITHUB_OUTPUT"
-          echo "checksum=$(docker image inspect $DEBUG_IMAGE | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
+          echo "checksum=0x$(docker image inspect $DEBUG_IMAGE | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
           echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 $DEBUG_IMAGE)" >> "$GITHUB_OUTPUT"
 
       - name: Sconify Image Prod
@@ -181,5 +181,5 @@ jobs:
         run: |
           docker push $PROD_IMAGE
           echo "image=$PROD_IMAGE" >> "$GITHUB_OUTPUT"
-          echo "checksum=$(docker image inspect $PROD_IMAGE | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
+          echo "checksum=0x$(docker image inspect $PROD_IMAGE | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
           echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 $PROD_IMAGE)" >> "$GITHUB_OUTPUT"
