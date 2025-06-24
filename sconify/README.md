@@ -83,7 +83,7 @@ on:
 
 jobs:
   sconify:
-    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/sconify.yml@feat/sconify
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/sconify.yml@sconify-v1.0.0
     with:
       image-name: ${{ inputs.image-name }}
       image-tag: ${{ inputs.image-tag }}
