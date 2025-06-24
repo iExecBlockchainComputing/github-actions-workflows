@@ -1,0 +1,185 @@
+name: Build, Test and Push Docker Image
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: "Name of Docker Image to Sconify"
+        type: string
+        required: true
+      image-tag:
+        description: "Tag of Docker Image to Sconify"
+        type: string
+        required: true
+      docker-registry:
+        description: "Docker Registry of Docker Image to Sconify"
+        default: "docker.io"
+        type: string
+      sconify-version:
+        description: "Version of the Sconify Image to use"
+        type: string
+        required: true
+      fs-dir:
+        type: string
+        description: "File System Directory to Protect"
+        required: true
+      binary:
+        type: string
+        description: "Path to the Binary to Protect"
+        required: true
+      command:
+        type: string
+        description: "Command to Protect"
+        required: true
+      heap:
+        type: string
+        default: "1G"
+        description: "Enclave Heap size (default 1G)"
+      dlopen:
+        type: number
+        default: 1
+        description: "dlopen mode (default 1)"
+      sconify-debug:
+        description: "Create Scone Debug image (default true)"
+        default: true
+        type: boolean
+      sconify-prod:
+        description: "Create Scone Production image (default true)"
+        default: true
+        type: boolean
+      docker-username:
+        type: string
+        description: "Docker Registry Username"
+        required: true
+      scontain-username:
+        type: string
+        description: "Scontain Registry Username"
+        required: true
+    secrets:
+      docker-password:
+        description: "Docker Registry Password or Token"
+        required: true
+      scontain-password:
+        description: "Scontain Registry Password or Token"
+        required: true
+      scone-signing-key:
+        description: "Signing Key for Scone Production (not required with `sconify-prod: false`)"
+        required: false
+    outputs:
+      debug-image:
+        description: "Debug Sconified Image"
+        value: ${{ jobs.build.outputs.debug-image }}
+      debug-mrenclave:
+        description: "Debug Sconified Image MrEnclave Fingerprint"
+        value: ${{ jobs.build.outputs.debug-mrenclave }}
+      debug-checksum:
+        description: "Debug Sconified Image Checksum"
+        value: ${{ jobs.build.outputs.debug-checksum }}
+      prod-image:
+        description: "Prod Sconified Image"
+        value: ${{ jobs.build.outputs.prod-image }}
+      prod-mrenclave:
+        description: "Prod Sconified Image MrEnclave Fingerprint"
+        value: ${{ jobs.build.outputs.prod-mrenclave }}
+      prod-checksum:
+        description: "Prod Sconified Image Checksum"
+        value: ${{ jobs.build.outputs.prod-checksum }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      FROM_IMAGE: ${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
+      DEBUG_IMAGE: ${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}-scone-debug-${{ inputs.sconify-version }}
+      PROD_IMAGE: ${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}-scone-prod-${{ inputs.sconify-version }}
+    outputs:
+      debug-image: ${{ steps.push-debug.outputs.image }}
+      debug-mrenclave: ${{ steps.push-debug.outputs.mrenclave }}
+      debug-checksum: ${{ steps.push-debug.outputs.checksum }}
+      prod-image: ${{ steps.push-prod.outputs.image }}
+      prod-mrenclave: ${{ steps.push-prod.outputs.mrenclave }}
+      prod-checksum: ${{ steps.push-prod.outputs.checksum }}
+    steps:
+      - name: Login to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.docker-registry }}
+          username: ${{ inputs.docker-username }}
+          password: ${{ secrets.docker-password }}
+
+      - name: Login to Scontain Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: "registry.scontain.com"
+          username: ${{ inputs.scontain-username }}
+          password: ${{ secrets.scontain-password }}
+
+      - name: Pull Image to Sconify
+        run: docker pull ${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
+
+      - name: Pull Sconify Image
+        run: docker pull registry.scontain.com/scone-production/iexec-sconify-image:${{ inputs.sconify-version }}
+
+      - name: Sconify Image Debug
+        if: ${{ inputs.sconify-debug }}
+        run: |
+          docker run \
+          --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          registry.scontain.com/scone-production/iexec-sconify-image:${{ inputs.sconify-version }} \
+          sconify_iexec \
+          --from=$FROM_IMAGE \
+          --to=$DEBUG_IMAGE \
+          --binary-fs \
+          --fs-dir=${{ inputs.fs-dir }} \
+          --host-path=/etc/hosts \
+          --host-path=/etc/resolv.conf \
+          --binary=${{ inputs.binary }} \
+          --heap=${{ inputs.heap }} \
+          --dlopen=${{ inputs.dlopen }} \
+          --no-color \
+          --verbose \
+          --command="${{ inputs.command }}"
+
+      - name: Push Debug Image
+        if: ${{ inputs.sconify-debug }}
+        id: push-debug
+        run: |
+          docker push $DEBUG_IMAGE
+          echo "image=$DEBUG_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "checksum=$(docker image inspect $DEBUG_IMAGE | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
+          echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 $DEBUG_IMAGE)" >> "$GITHUB_OUTPUT"
+
+      - name: Sconify Image Prod
+        if: ${{ inputs.sconify-prod }}
+        run: |
+          mkdir -p $HOME/sig
+          echo "${{ secrets.scone-signing-key }}" > $HOME/sig/enclave-key.pem
+          docker run \
+          --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v $HOME/sig/enclave-key.pem:/sig/enclave-key.pem \
+          registry.scontain.com/scone-production/iexec-sconify-image:${{ inputs.sconify-version }} \
+          sconify_iexec \
+          --from=$FROM_IMAGE \
+          --to=$PROD_IMAGE \
+          --binary-fs \
+          --fs-dir=${{ inputs.fs-dir }} \
+          --host-path=/etc/hosts \
+          --host-path=/etc/resolv.conf \
+          --binary=${{ inputs.binary }} \
+          --heap=${{ inputs.heap }} \
+          --dlopen=${{ inputs.dlopen }} \
+          --no-color \
+          --verbose \
+          --command="${{ inputs.command }}" \
+          --scone-signer=/sig/enclave-key.pem
+
+      - name: Push Prod Image
+        if: ${{ inputs.sconify-prod }}
+        id: push-prod
+        run: |
+          docker push $PROD_IMAGE
+          echo "image=$PROD_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "checksum=$(docker image inspect $PROD_IMAGE | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
+          echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 $PROD_IMAGE)" >> "$GITHUB_OUTPUT"
