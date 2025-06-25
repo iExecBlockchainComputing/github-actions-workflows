@@ -36,10 +36,12 @@ The workflow performs the following actions:
 | **fs-file**           | [SCONE] Path of files to add to the binary file system (use multiline to add multiple files)             | No           | -                                |
 | **host-path**         | [SCONE] Host path, served directly from the host file system (use multiline to add multiple path)        | No           | -                                |
 | **heap**              | [SCONE] Enclave heap size                                                                                | No           | 1G                               |
-| **dlopen**            | [SCONE] Scone dlopen mode (0:disable; 1:enable and require authentication; 2:debug only)                 | No           | 1                                |
-| **sconify-debug**     | Create Scone debug image                                                                                 | No           | true                             |
-| **sconify-prod**      | Create Scone production image                                                                            | No           | true                             |
-| **runner**            | Runner to use (overrides `runs-on`) ⚠️ the specified runner must feature Ubuntu OS and docker CE         | No           | ubuntu-latest                    |
+| **dlopen**            | [SCONE] Scone dlopen mode (0:disable; 1:enable)                                                          | No           | 0                                |
+| **mprotect**          | [SCONE] Scone mprotect mode (0:disable; 1:enable)                                                        | No           | 0                                |
+
+| **sconify-debug** | Create Scone debug image | No | true |
+| **sconify-prod** | Create Scone production image | No | true |
+| **runner** | Runner to use (overrides `runs-on`) ⚠️ the specified runner must feature Ubuntu OS and docker CE | No | ubuntu-latest |
 
 > ℹ️ for more details about [SCONE] options see [Scone's documentation](https://sconedocs.github.io/ee_sconify_image/#all-supported-options)
 
@@ -109,6 +111,7 @@ jobs:
       fs-dir: /app
       heap: 1G
       dlopen: 1
+      mprotect: 1
       docker-username: ${{ vars.DOCKER_USERNAME }}
       scontain-username: ${{ vars.SCONTAIN_USERNAME }}
     secrets:
