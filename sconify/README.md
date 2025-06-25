@@ -88,6 +88,7 @@ jobs:
   sconify:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/sconify.yml@sconify-v1.0.0
     with:
+      # runner: your-runner-here ⚠️ control the runner used in the workflow to match your requirements
       image-name: ${{ inputs.image-name }}
       image-tag: ${{ inputs.image-tag }}
       sconify-debug: ${{ inputs.sconify-debug }}
