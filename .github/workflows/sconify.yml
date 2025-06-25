@@ -3,61 +3,69 @@ name: Build, Test and Push Docker Image
 on:
   workflow_call:
     inputs:
+      docker-registry:
+        description: "Docker registry of docker image to sconify"
+        default: "docker.io"
+        type: string
+      docker-username:
+        description: "Docker registry username"
+        type: string
+        required: true
       image-name:
-        description: "Name of Docker Image to Sconify"
+        description: "Name of docker image to sconify"
         type: string
         required: true
       image-tag:
-        description: "Tag of Docker Image to Sconify"
+        description: "Tag of docker image to sconify "
         type: string
-        required: true
-      docker-registry:
-        description: "Docker Registry of Docker Image to Sconify"
-        default: "docker.io"
-        type: string
-      sconify-version:
-        description: "Version of the Sconify Image to use"
-        type: string
-        required: true
-      fs-dir:
-        type: string
-        description: "File System Directory to Protect"
-        required: true
-      binary:
-        type: string
-        description: "Path to the Binary to Protect"
-        required: true
-      command:
-        type: string
-        description: "Command to Protect"
-        required: true
-      heap:
-        type: string
-        default: "1G"
-        description: "Enclave Heap size (default 1G)"
-      dlopen:
-        type: number
-        default: 1
-        description: "dlopen mode (default 1)"
-      sconify-debug:
-        description: "Create Scone Debug image (default true)"
-        default: true
-        type: boolean
-      sconify-prod:
-        description: "Create Scone Production image (default true)"
-        default: true
-        type: boolean
-      docker-username:
-        type: string
-        description: "Docker Registry Username"
         required: true
       scontain-username:
+        description: "Scontain registry username"
         type: string
-        description: "Scontain Registry Username"
         required: true
-      runner:
+      sconify-version:
+        description: "Version of the sconify image to use"
         type: string
+        required: true
+      binary:
+        description: "Path of the binary to use"
+        type: string
+        required: true
+      command:
+        description: "Command to execute (default: ENTRYPOINT + CMD of native image)"
+        type: string
+      binary-fs:
+        description: "Embed the file system into the binary via Scone binary file system (default: false)"
+        type: boolean
+        default: false
+      fs-dir:
+        description: "Path of directories to add to the binary file system (use multiline to add multiple directories)"
+        type: string
+      fs-file:
+        description: "Path of files to add to the binary file system (use multiline to add multiple files)"
+        type: string
+      host-path:
+        description: "Host path, served directly from the host file system (use multiline to add multiple path)"
+        type: string
+      heap:
+        description: "Enclave heap size (default 1G)"
+        type: string
+        default: "1G"
+      dlopen:
+        description: "Scoen dlopen mode (default 1)"
+        type: number
+        default: 1
+      sconify-debug:
+        description: "Create Scone debug image (default true)"
+        type: boolean
+        default: true
+      sconify-prod:
+        description: "Create Scone production image (default true)"
+        type: boolean
+        default: true
+      runner:
         description: "Runner to use (overrides `runs-on`) ⚠️ the specified runner must feature Ubuntu OS and docker CE"
+        type: string
         default: "ubuntu-latest"
     secrets:
       docker-password:
@@ -92,10 +100,6 @@ on:
 jobs:
   build:
     runs-on: ${{ inputs.runner }}
-    env:
-      FROM_IMAGE: ${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
-      DEBUG_IMAGE: ${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}-scone-debug-${{ inputs.sconify-version }}
-      PROD_IMAGE: ${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}-scone-prod-${{ inputs.sconify-version }}
     outputs:
       debug-image: ${{ steps.push-debug.outputs.image }}
       debug-mrenclave: ${{ steps.push-debug.outputs.mrenclave }}
@@ -106,6 +110,46 @@ jobs:
     steps:
       - name: Create Temporary Directory
         run: mkdir -p ${{github.workspace}}/tmp
+
+      - name: Prepare Sconify Command
+        id: prepare-command
+        run: |
+          FROM_IMAGE=${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
+          DEBUG_IMAGE=$FROM_IMAGE-scone-debug-${{ inputs.sconify-version }}
+          echo "debug-image=$DEBUG_IMAGE"
+          echo "debug-image=$DEBUG_IMAGE" >> "$GITHUB_OUTPUT"
+          PROD_IMAGE=$FROM_IMAGE-scone-prod-${{ inputs.sconify-version }}
+          echo "prod-image=$PROD_IMAGE"
+          echo "prod-image=$PROD_IMAGE" >> "$GITHUB_OUTPUT"
+          SCONIFY_CMD="sconify_iexec"
+          # REQUIRED:
+          # --from
+          SCONIFY_CMD+=" --from=$FROM_IMAGE"
+          # --to will be added later on
+          # --binary
+          SCONIFY_CMD+=" --binary=${{ inputs.binary }}"
+          # OPTIONAL:
+          # --command option
+          [[ -n '${{ inputs.command }}' ]] && SCONIFY_CMD+=" --command=${{ inputs.command }}"
+          # --host-path variadic option
+          while IFS= read -r line; do [[ -n "$line" ]] && SCONIFY_CMD+=" --host-path=$line" ; done <<< '${{ inputs.host-path }}'
+          # BINARY FILE SYSTEM (binary fs):
+          # --binary-fs option
+          if ${{ inputs.binary-fs }}; then SCONIFY_CMD+=" --binary-fs"; fi
+          # --fs-dir variadic option
+          while IFS= read -r line; do [[ -n "$line" ]] && SCONIFY_CMD+=" --fs-dir=$line" ; done <<< '${{ inputs.fs-dir }}'
+          # --fs-file variadic option
+          while IFS= read -r line; do [[ -n "$line" ]] && SCONIFY_CMD+=" --file=$line" ; done <<< '${{ inputs.fs-file }}'
+          # SCONE ENV VARS:
+          # --heap option
+          [[ -n '${{ inputs.heap }}' ]] && SCONIFY_CMD+=" --heap=${{ inputs.heap }}"
+          # --dlopen option
+          [[ -n '${{ inputs.dlopen }}' ]] && SCONIFY_CMD+=" --dlopen=${{ inputs.dlopen }}"
+          # DEBUG
+          # --verbose --no-color options
+          SCONIFY_CMD+=" --verbose --no-color"
+          echo "sconify-base-command=$SCONIFY_CMD"
+          echo "sconify-base-command=$SCONIFY_CMD" >> "$GITHUB_OUTPUT"
 
       - name: Login to Docker Registry
         uses: docker/login-action@v3
@@ -134,28 +178,17 @@ jobs:
           --rm \
           -v /var/run/docker.sock:/var/run/docker.sock \
           registry.scontain.com/scone-production/iexec-sconify-image:${{ inputs.sconify-version }} \
-          sconify_iexec \
-          --from=$FROM_IMAGE \
-          --to=$DEBUG_IMAGE \
-          --binary-fs \
-          --fs-dir=${{ inputs.fs-dir }} \
-          --host-path=/etc/hosts \
-          --host-path=/etc/resolv.conf \
-          --binary=${{ inputs.binary }} \
-          --heap=${{ inputs.heap }} \
-          --dlopen=${{ inputs.dlopen }} \
-          --no-color \
-          --verbose \
-          --command="${{ inputs.command }}"
+          ${{ steps.prepare-command.outputs.sconify-base-command }} \
+          --to=${{ steps.prepare-command.outputs.debug-image }}
 
       - name: Push Debug Image
         if: ${{ inputs.sconify-debug }}
         id: push-debug
         run: |
-          docker push $DEBUG_IMAGE
-          echo "image=$DEBUG_IMAGE" >> "$GITHUB_OUTPUT"
-          echo "checksum=0x$(docker image inspect $DEBUG_IMAGE | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
-          echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 $DEBUG_IMAGE)" >> "$GITHUB_OUTPUT"
+          docker push ${{ steps.prepare-command.outputs.debug-image }}
+          echo "image=${{ steps.prepare-command.outputs.debug-image }}" >> "$GITHUB_OUTPUT"
+          echo "checksum=0x$(docker image inspect ${{ steps.prepare-command.outputs.debug-image }} | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
+          echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 ${{ steps.prepare-command.outputs.debug-image }})" >> "$GITHUB_OUTPUT"
 
       - name: Sconify Image Prod
         if: ${{ inputs.sconify-prod }}
@@ -167,29 +200,18 @@ jobs:
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v ${{github.workspace}}/tmp/sig/enclave-key.pem:/sig/enclave-key.pem \
           registry.scontain.com/scone-production/iexec-sconify-image:${{ inputs.sconify-version }} \
-          sconify_iexec \
-          --from=$FROM_IMAGE \
-          --to=$PROD_IMAGE \
-          --binary-fs \
-          --fs-dir=${{ inputs.fs-dir }} \
-          --host-path=/etc/hosts \
-          --host-path=/etc/resolv.conf \
-          --binary=${{ inputs.binary }} \
-          --heap=${{ inputs.heap }} \
-          --dlopen=${{ inputs.dlopen }} \
-          --no-color \
-          --verbose \
-          --command="${{ inputs.command }}" \
+          ${{ steps.prepare-command.outputs.sconify-base-command }} \
+          --to=${{ steps.prepare-command.outputs.prod-image }} \
           --scone-signer=/sig/enclave-key.pem
 
       - name: Push Prod Image
         if: ${{ inputs.sconify-prod }}
         id: push-prod
         run: |
-          docker push $PROD_IMAGE
-          echo "image=$PROD_IMAGE" >> "$GITHUB_OUTPUT"
-          echo "checksum=0x$(docker image inspect $PROD_IMAGE | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
-          echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 $PROD_IMAGE)" >> "$GITHUB_OUTPUT"
+          docker push ${{ steps.prepare-command.outputs.prod-image }}
+          echo "image=${{ steps.prepare-command.outputs.prod-image }}" >> "$GITHUB_OUTPUT"
+          echo "checksum=0x$(docker image inspect ${{ steps.prepare-command.outputs.prod-image }} | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
+          echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 ${{ steps.prepare-command.outputs.prod-image }})" >> "$GITHUB_OUTPUT"
 
       - name: Clean Temporary Directory
         if: always()
