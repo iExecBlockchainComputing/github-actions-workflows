@@ -55,6 +55,10 @@ on:
         type: string
         description: "Scontain Registry Username"
         required: true
+      runner:
+        type: string
+        description: "Runner to use (overrides `runs-on`) ⚠️ the specified runner must feature Ubuntu OS and docker CE"
+        default: "ubuntu-latest"
     secrets:
       docker-password:
         description: "Docker Registry Password or Token"
@@ -87,7 +91,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     env:
       FROM_IMAGE: ${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
       DEBUG_IMAGE: ${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}-scone-debug-${{ inputs.sconify-version }}

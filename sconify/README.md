@@ -21,21 +21,22 @@ The workflow performs the following actions:
 
 ## Workflow Inputs 🛠️
 
-| **Input**             | **Description**                            | **Required** | **Default** |
-| --------------------- | ------------------------------------------ | ------------ | ----------- |
-| **docker-username**   | Docker Registry Username                   | Yes          | -           |
-| **scontain-username** | Scontain Registry Username                 | Yes          | -           |
-| **image-name**        | Name of Docker Image to Sconify            | Yes          | -           |
-| **image-tag**         | Tag of Docker Image to Sconify             | Yes          | -           |
-| **docker-registry**   | Docker Registry of Docker Image to Sconify | No           | docker.io   |
-| **sconify-version**   | Version of the Sconify Image to use        | Yes          | -           |
-| **fs-dir**            | File System Directory to Protect           | Yes          | -           |
-| **binary**            | Path to the Binary to Protect              | Yes          | -           |
-| **command**           | Command to Protect                         | Yes          | -           |
-| **heap**              | Enclave Heap size                          | No           | 1G          |
-| **dlopen**            | dlopen mode                                | No           | 1           |
-| **sconify-debug**     | Create Scone Debug image                   | No           | true        |
-| **sconify-prod**      | Create Scone Production image              | No           | true        |
+| **Input**             | **Description**                                                                                  | **Required** | **Default**   |
+| --------------------- | ------------------------------------------------------------------------------------------------ | ------------ | ------------- |
+| **docker-username**   | Docker Registry Username                                                                         | Yes          | -             |
+| **scontain-username** | Scontain Registry Username                                                                       | Yes          | -             |
+| **image-name**        | Name of Docker Image to Sconify                                                                  | Yes          | -             |
+| **image-tag**         | Tag of Docker Image to Sconify                                                                   | Yes          | -             |
+| **docker-registry**   | Docker Registry of Docker Image to Sconify                                                       | No           | docker.io     |
+| **sconify-version**   | Version of the Sconify Image to use                                                              | Yes          | -             |
+| **fs-dir**            | File System Directory to Protect                                                                 | Yes          | -             |
+| **binary**            | Path to the Binary to Protect                                                                    | Yes          | -             |
+| **command**           | Command to Protect                                                                               | Yes          | -             |
+| **heap**              | Enclave Heap size                                                                                | No           | 1G            |
+| **dlopen**            | dlopen mode                                                                                      | No           | 1             |
+| **sconify-debug**     | Create Scone Debug image                                                                         | No           | true          |
+| **sconify-prod**      | Create Scone Production image                                                                    | No           | true          |
+| **runner**            | Runner to use (overrides `runs-on`) ⚠️ the specified runner must feature Ubuntu OS and docker CE | No           | ubuntu-latest |
 
 ### Secrets 🔐
 
