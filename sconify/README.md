@@ -7,6 +7,7 @@ This reusable GitHub Actions workflow automates the process of sconifying a Dock
 The workflow performs the following actions:
 
 - **Create Temporary Directory**
+- **Prepare Sconify Command** and args
 - **Login to Docker Registry**
 - **Login to Scontain Docker Registry**
 - **Pull Image to Sconify** from Docker Registry
