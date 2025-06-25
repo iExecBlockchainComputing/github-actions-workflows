@@ -6,6 +6,7 @@ This reusable GitHub Actions workflow automates the process of sconifying a Dock
 
 The workflow performs the following actions:
 
+- **Create Temporary Directory**
 - **Login to Docker Registry**
 - **Login to Scontain Docker Registry**
 - **Pull Image to Sconify** from Docker Registry
@@ -14,8 +15,9 @@ The workflow performs the following actions:
   - **Sconify Image Debug**
   - **Push Debug Image** to Docker Registry and prepare outputs (`debug-image`,`debug-mrenclave`,`debug-checksum`)
 - [unless input `sconify-prod: false`]
-  - **Sconify Image Prod**
+  - **Sconify Image Prod** using scone-signing-key stored in the Temporary Directory
   - **Push Prod Image** to Docker Registry and prepare outputs (`prod-image`,`prod-mrenclave`,`prod-checksum`)
+- **Clean Temporary Directory** always
 
 ## Workflow Inputs 🛠️
 

@@ -100,6 +100,9 @@ jobs:
       prod-mrenclave: ${{ steps.push-prod.outputs.mrenclave }}
       prod-checksum: ${{ steps.push-prod.outputs.checksum }}
     steps:
+      - name: Create Temporary Directory
+        run: mkdir -p ${{github.workspace}}/tmp
+
       - name: Login to Docker Registry
         uses: docker/login-action@v3
         with:
@@ -153,12 +156,12 @@ jobs:
       - name: Sconify Image Prod
         if: ${{ inputs.sconify-prod }}
         run: |
-          mkdir -p $HOME/sig
-          echo "${{ secrets.scone-signing-key }}" > $HOME/sig/enclave-key.pem
+          mkdir -p ${{github.workspace}}/tmp/sig
+          echo "${{ secrets.scone-signing-key }}" > ${{github.workspace}}/tmp/sig/enclave-key.pem
           docker run \
           --rm \
           -v /var/run/docker.sock:/var/run/docker.sock \
-          -v $HOME/sig/enclave-key.pem:/sig/enclave-key.pem \
+          -v ${{github.workspace}}/tmp/sig/enclave-key.pem:/sig/enclave-key.pem \
           registry.scontain.com/scone-production/iexec-sconify-image:${{ inputs.sconify-version }} \
           sconify_iexec \
           --from=$FROM_IMAGE \
@@ -183,3 +186,7 @@ jobs:
           echo "image=$PROD_IMAGE" >> "$GITHUB_OUTPUT"
           echo "checksum=0x$(docker image inspect $PROD_IMAGE | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
           echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 $PROD_IMAGE)" >> "$GITHUB_OUTPUT"
+
+      - name: Clean Temporary Directory
+        if: always()
+        run: rm -rf ${{github.workspace}}/tmp
