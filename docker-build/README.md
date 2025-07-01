@@ -46,7 +46,7 @@ jobs:
           fetch-depth: 0  # Fetch all history for proper versioning
 
       - name: Build and Push Docker Image
-        uses: iExecBlockchainComputing/github-actions-workflows/docker-build@docker-build-v1.1.1
+        uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@docker-build-v2.2.0
         with:
           dockerfile: 'Dockerfile'
           tag: 'my-image:latest'
@@ -78,7 +78,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build and Push Docker Image
-        uses: iExecBlockchainComputing/github-actions-workflows/docker-build@docker-build-v1.1.1
+        uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@docker-build-v2.2.0
         with:
           dockerfile: 'Dockerfile'
           tag: 'myorg/myapp:${{ github.event.release.tag_name }}'
