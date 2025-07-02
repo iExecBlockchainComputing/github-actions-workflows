@@ -87,12 +87,12 @@ jobs:
         uses: aquasecurity/trivy-action@0.29.0
         with:
           input: vuln-image.tar
-          format: "table"
+          format: ${{ (inputs.security-report == 'sarif' && 'sarif') || 'table' }}
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
           hide-progress: true
-          output: trivy.txt
+          output: ${{ (inputs.security-report == 'sarif' && 'trivy-results.sarif') || 'trivy.txt' }}
 
       - name: Read Trivy report file
         id: read_trivy
