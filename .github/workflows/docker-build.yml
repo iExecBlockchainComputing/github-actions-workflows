@@ -3,41 +3,41 @@ name: Build, Test and Push Docker Image
 on:
   workflow_call:
     inputs:
-      dockerfile:
-        description: 'Path to Dockerfile'
-        default: 'Dockerfile'
-        type: string
       image-name:
-        description: 'Name of Docker Image'
+        description: "Name of Docker Image"
         type: string
         required: true
+      dockerfile:
+        description: "Path to Dockerfile"
+        default: "Dockerfile"
+        type: string
       image-tag:
-        description: 'Tag of Docker Image'
+        description: "Tag of Docker Image"
+        default: "latest"
         type: string
-        required: true
       security-scan:
-        description: 'Enable Security Scan'
+        description: "Enable Security Scan"
         default: true
         type: boolean
       security-report:
-        description: 'Enable Security Report'
-        default: 'sarif'
+        description: "Enable Security Report"
+        default: "sarif"
         type: string
       hadolint:
-        description: 'Enable Hadolint'
+        description: "Enable Hadolint"
         default: true
         type: boolean
       push:
-        description: 'Push Docker Image to Registry'
+        description: "Push Docker Image to Registry"
         default: false
         type: boolean
       context:
-        description: 'Path to Docker Build Context'
-        default: '.'
+        description: "Path to Docker Build Context"
+        default: "."
         type: string
       registry:
-        description: 'Docker Registry'
-        default: 'docker.io'
+        description: "Docker Registry"
+        default: "docker.io"
         type: string
     secrets:
       username:
@@ -88,10 +88,10 @@ jobs:
         uses: aquasecurity/trivy-action@0.29.0
         with:
           input: vuln-image.tar
-          format: 'table'
+          format: "table"
           ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
           hide-progress: true
           output: trivy.txt
 
@@ -109,8 +109,8 @@ jobs:
         uses: peter-evans/find-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: 'Trivy Security Scan Results'
+          comment-author: "github-actions[bot]"
+          body-includes: "Trivy Security Scan Results"
 
       - name: Create or update Trivy comment
         if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'comment'
@@ -134,7 +134,7 @@ jobs:
         if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'sarif'
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
       - name: Run Hadolint Dockerfile linter
         id: hadolint
@@ -159,8 +159,8 @@ jobs:
         uses: peter-evans/find-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: 'Hadolint Dockerfile Lint Results'
+          comment-author: "github-actions[bot]"
+          body-includes: "Hadolint Dockerfile Lint Results"
 
       - name: Create or update Hadolint comment
         if: ${{ inputs.hadolint && steps.read_hadolint.outputs.report != '' }}

@@ -1,9 +1,11 @@
 # 🐳 Docker Build Workflow
 
 ## 🔍 Overview
+
 This reusable GitHub Actions workflow automates the process of building and pushing Docker images to Docker Hub. It simplifies the Docker build process in your CI/CD pipeline by handling authentication, building, and tagging in a standardized way. Perfect for teams looking to streamline their containerization workflow with minimal configuration.
 
 ## ✨ Features
+
 - 🔐 Securely authenticates with Docker Hub using best practices
 - 🏗️ Builds optimized Docker images from a specified Dockerfile
 - 🏷️ Intelligently tags and pushes images to Docker Hub
@@ -13,17 +15,18 @@ This reusable GitHub Actions workflow automates the process of building and push
 
 ## ⚙️ Inputs
 
-| Name | Description | Required | Default |
-|------|-------------|----------|---------|
-| `dockerfile` | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile') | Yes | - |
-| `tag` | Tag to apply to the built image (e.g., 'myimage:latest', 'myorg/myimage:v1.2.3') | Yes | - |
+| Name         | Description                                                                      | Required | Default        |
+| ------------ | -------------------------------------------------------------------------------- | -------- | -------------- |
+| `image-name` | Tag to apply to the built image (e.g., 'myimage:latest', 'myorg/myimage:v1.2.3') | true     | -              |
+| `image-tag`  | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                       | No       | `"latest"`     |
+| `dockerfile` | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')    | No       | `"Dockerfile"` |
 
 ## 🔐 Secrets
 
-| Name | Description | Required |
-|------|-------------|----------|
-| `dockerhub_username` | Username for Docker Hub authentication | Yes |
-| `dockerhub_pat` | Personal Access Token for Docker Hub authentication (with appropriate permissions) | Yes |
+| Name                 | Description                                                                        | Required |
+| -------------------- | ---------------------------------------------------------------------------------- | -------- |
+| `dockerhub_username` | Username for Docker Hub authentication                                             | Yes      |
+| `dockerhub_pat`      | Personal Access Token for Docker Hub authentication (with appropriate permissions) | Yes      |
 
 ## 💻 Example Usage
 
@@ -32,10 +35,10 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   # Also trigger on tag creation for release versioning
   tags:
-    - 'v*.*.*'
+    - "v*.*.*"
 
 jobs:
   build:
@@ -43,14 +46,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all history for proper versioning
+          fetch-depth: 0 # Fetch all history for proper versioning
 
       - name: Build and Push Docker Image
         uses: iExecBlockchainComputing/github-actions-workflows/docker-build@docker-build-v1.1.1
         with:
-          dockerfile: 'Dockerfile'
-          tag: 'my-image:latest'
-        secrets: 
+          image-name: "username/my-image"
+          dockerfile: "Dockerfile"
+        secrets:
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub_pat: ${{ secrets.DOCKERHUB_PAT }}
 ```
@@ -58,6 +61,7 @@ jobs:
 ## 🔍 Advanced Usage
 
 ### Multi-Platform Build Example
+
 ```yaml
 name: Build Multi-Platform Docker Image
 
@@ -80,14 +84,15 @@ jobs:
       - name: Build and Push Docker Image
         uses: iExecBlockchainComputing/github-actions-workflows/docker-build@docker-build-v1.1.1
         with:
-          dockerfile: 'Dockerfile'
-          tag: 'myorg/myapp:${{ github.event.release.tag_name }}'
-        secrets: 
+          dockerfile: "Dockerfile"
+          tag: "myorg/myapp:${{ github.event.release.tag_name }}"
+        secrets:
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub_pat: ${{ secrets.DOCKERHUB_PAT }}
 ```
 
 ## 📝 Notes
+
 - 🔒 Ensure your Docker Hub credentials are stored securely as GitHub Secrets
 - 🔄 The workflow will automatically handle the Docker build and push process
 - 🏷️ You can specify any valid Docker tag format in the `tag` input
@@ -95,6 +100,7 @@ jobs:
 - 🧪 For testing purposes, you can use the `--dry-run` flag in your own implementation
 
 ## 🛠️ Troubleshooting
+
 - If you encounter authentication issues, verify your Docker Hub credentials are correct and have appropriate permissions
 - For build failures, check your Dockerfile syntax and ensure all referenced files exist
 - Large images may take longer to push - consider optimizing your Dockerfile with multi-stage builds
