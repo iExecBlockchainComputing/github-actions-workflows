@@ -35,7 +35,6 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 | **format-check-command** | Run format-checking command.                                  | No           | `npm run check-format --if-present` |
 | **environment**          | GitHub environment.                                           | No           | `production`                        |
 | **tag**                  | npm publish tag (e.g., latest, nightly).                      | No           | `''` (empty string)                 |
-| **tag-prefix**           | Prefix for Git tag.                                           | No           | `v`                                 |
 | **working-directory**    | Directory containing package.json.                            | No           | `''` (empty string)                 |
 | **artifact-name**        | Name of an artifact to download before the build.             | No           | `''` (empty string)                 |
 | **artifact-path**        | Destination path for the downloaded artifact.                 | No           | `''` (empty string)                 |
@@ -84,7 +83,6 @@ for the package scope, Node.js version, registry URL, and other options. The wor
          lint-command: "npm run lint"
          type-check-command: "npm run check-types"
          format-check-command: "npm run check-format"
-         tag-prefix: "v"
          # Optional: Download an artifact before building
          # artifact-name: 'my-build-artifact'
          # artifact-path: './dist'

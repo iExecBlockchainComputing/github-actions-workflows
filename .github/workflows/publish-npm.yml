@@ -59,10 +59,6 @@ on:
         description: "npm publish tag (e.g., latest, nightly)"
         default: ""
         type: string
-      tag-prefix:
-        description: "Prefix for Git tag"
-        default: "v"
-        type: string
       working-directory:
         description: "Directory containing package.json"
         default: ""
