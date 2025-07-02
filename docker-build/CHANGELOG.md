@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.3.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.2.0...docker-build-v2.3.0) (2025-07-02)
+
+
+### Features
+
+* **docker-build:** allow dry-runs by always running build (even if push is disabled) ([705ad86](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/705ad866bb4d832f5246f09d92dafab21a87de63))
+* **docker-build:** features and fixes ([#72](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/72)) ([705ad86](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/705ad866bb4d832f5246f09d92dafab21a87de63))
+* **docker-build:** make image-tag and dockerfile optional ([705ad86](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/705ad866bb4d832f5246f09d92dafab21a87de63))
+
+
+### Bug Fixes
+
+* **docker-build:** fix sarif security-report ([705ad86](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/705ad866bb4d832f5246f09d92dafab21a87de63))
+
 ## [2.2.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.1.0...docker-build-v2.2.0) (2025-04-29)
 
 
