@@ -15,11 +15,12 @@ This reusable GitHub Actions workflow automates the process of building and push
 
 ## ⚙️ Inputs
 
-| Name         | Description                                                                      | Required | Default        |
-| ------------ | -------------------------------------------------------------------------------- | -------- | -------------- |
-| `image-name` | Tag to apply to the built image (e.g., 'myimage:latest', 'myorg/myimage:v1.2.3') | true     | -              |
-| `image-tag`  | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                       | No       | `"latest"`     |
-| `dockerfile` | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')    | No       | `"Dockerfile"` |
+| Name         | Description                                                                   | Required | Default        |
+| ------------ | ----------------------------------------------------------------------------- | -------- | -------------- |
+| `image-name` | Name of Docker Image (e.g., 'myimage', 'myorg/myimage')                       | true     | -              |
+| `image-tag`  | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                    | No       | `"latest"`     |
+| `dockerfile` | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile') | No       | `"Dockerfile"` |
+| `push`       | Push Docker Image to Registry                                                 | No       | `false`        |
 
 ## 🔐 Secrets
 

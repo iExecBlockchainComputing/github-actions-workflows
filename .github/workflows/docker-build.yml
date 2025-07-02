@@ -67,7 +67,6 @@ jobs:
           password: ${{ secrets.password }}
 
       - name: Build Docker Image
-        if: ${{ inputs.push }}
         uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.context }}
