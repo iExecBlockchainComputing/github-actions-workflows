@@ -20,7 +20,7 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 ## Workflow Inputs 🛠️
 
 | **Input**                | **Description**                                               | **Required** | **Default**                         |
-|--------------------------|---------------------------------------------------------------|--------------|-------------------------------------|
+| ------------------------ | ------------------------------------------------------------- | ------------ | ----------------------------------- |
 | **scope**                | NPM package scope (e.g., `@iexec`).                           | No           | `@iexec`                            |
 | **node-version**         | Node.js version to use.                                       | No           | `20`                                |
 | **registry**             | NPM registry URL.                                             | No           | `https://registry.npmjs.org`        |
@@ -35,17 +35,17 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 | **format-check-command** | Run format-checking command.                                  | No           | `npm run check-format --if-present` |
 | **environment**          | GitHub environment.                                           | No           | `production`                        |
 | **tag**                  | npm publish tag (e.g., latest, nightly).                      | No           | `''` (empty string)                 |
-| **tag-prefix**           | Prefix for Git tag.                                           | No           | `v`                                 |
 | **working-directory**    | Directory containing package.json.                            | No           | `''` (empty string)                 |
 | **artifact-name**        | Name of an artifact to download before the build.             | No           | `''` (empty string)                 |
 | **artifact-path**        | Destination path for the downloaded artifact.                 | No           | `''` (empty string)                 |
 | **version**              | Version to publish (leave empty to use package.json version). | No           | `''` (empty string)                 |
+| **dry-run**              | Run in dry-run mode (the package will not be published).      | No           | `false`                             |
 
 ### Secrets 🔐
 
-| **Secret**    | **Description** | **Required** |
-|---------------|-----------------|--------------|
-| **npm-token** | NPM auth token. | Yes          |
+| **Secret**    | **Description**                                    | **Required** |
+| ------------- | -------------------------------------------------- | ------------ |
+| **npm-token** | NPM auth token (required unless `dry-run: true`)". | No           |
 
 ## Job and Steps ⚙️
 
@@ -54,9 +54,9 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 - **Runs On**: `ubuntu-latest`.
 - **Environment**: Uses the environment specified in `inputs.environment`.
 - **Permissions**:
-    - `contents: read` – to access repository contents. 🔍
-    - `packages: write` – to allow package publication. ✨
-    - `id-token: write` – for authentication purposes. 🔑
+  - `contents: read` – to access repository contents. 🔍
+  - `packages: write` – to allow package publication. ✨
+  - `id-token: write` – for authentication purposes. 🔑
 
 ## How to Use This Reusable Workflow 🔄
 
@@ -76,14 +76,13 @@ for the package scope, Node.js version, registry URL, and other options. The wor
      publish:
        uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/publish-npm.yml@main
        with:
-         node-version: '22'
-         build-command: 'npm run build:prod'
+         node-version: "22"
+         build-command: "npm run build:prod"
          run-tests: true
-         test-command: 'npm run test:ci'
-         lint-command: 'npm run lint'
-         type-check-command: 'npm run check-types'
-         format-check-command: 'npm run check-format'
-         tag-prefix: 'v'
+         test-command: "npm run test:ci"
+         lint-command: "npm run lint"
+         type-check-command: "npm run check-types"
+         format-check-command: "npm run check-format"
          # Optional: Download an artifact before building
          # artifact-name: 'my-build-artifact'
          # artifact-path: './dist'
