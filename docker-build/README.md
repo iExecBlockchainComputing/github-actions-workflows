@@ -1,29 +1,40 @@
 # 🐳 Docker Build Workflow
 
 ## 🔍 Overview
+
 This reusable GitHub Actions workflow automates the process of building and pushing Docker images to Docker Hub. It simplifies the Docker build process in your CI/CD pipeline by handling authentication, building, and tagging in a standardized way. Perfect for teams looking to streamline their containerization workflow with minimal configuration.
 
 ## ✨ Features
+
 - 🔐 Securely authenticates with Docker Hub using best practices
 - 🏗️ Builds optimized Docker images from a specified Dockerfile
 - 🏷️ Intelligently tags and pushes images to Docker Hub
+- 🔎 Scan for vulnerabilities
+- 👍 Lint dockerfile
 - 🛡️ Handles authentication securely using GitHub Secrets
 - 🚀 Optimizes build performance with layer caching
 - 📦 Supports multi-platform builds (AMD64, ARM64)
 
 ## ⚙️ Inputs
 
-| Name | Description | Required | Default |
-|------|-------------|----------|---------|
-| `dockerfile` | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile') | Yes | - |
-| `tag` | Tag to apply to the built image (e.g., 'myimage:latest', 'myorg/myimage:v1.2.3') | Yes | - |
+| Name              | Description                                                                        | Required | Default        |
+| ----------------- | ---------------------------------------------------------------------------------- | -------- | -------------- |
+| `image-name`      | Name of Docker Image (e.g., 'myimage', 'myorg/myimage')                            | true     | -              |
+| `image-tag`       | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                         | No       | `"latest"`     |
+| `dockerfile`      | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')      | No       | `"Dockerfile"` |
+| `context`         | Path to Docker Build Context                                                       | No       | `"."`          |
+| `registry`        | Docker Registry                                                                    | No       | `"docker.io"`  |
+| `push`            | Push Docker Image to Registry                                                      | No       | `false`        |
+| `security-scan`   | Enable Trivy Security Scan                                                         | No       | `true`         |
+| `security-report` | Security Report Mode (`"sarif"` \| `"comment"`; ignored if `security-scan: false`) | No       | `"sarif"`      |
+| `hadolint`        | Enable Hadolint                                                                    | No       | `true`         |
 
 ## 🔐 Secrets
 
-| Name | Description | Required |
-|------|-------------|----------|
-| `dockerhub_username` | Username for Docker Hub authentication | Yes |
-| `dockerhub_pat` | Personal Access Token for Docker Hub authentication (with appropriate permissions) | Yes |
+| Name       | Description                                                                                         | Required |
+| ---------- | --------------------------------------------------------------------------------------------------- | -------- |
+| `username` | Username for Docker Registry authentication                                                         | Yes      |
+| `password` | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | Yes      |
 
 ## 💻 Example Usage
 
@@ -32,62 +43,31 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   # Also trigger on tag creation for release versioning
   tags:
-    - 'v*.*.*'
+    - "v*.*.*"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for proper versioning
+          fetch-depth: 0 # Fetch all history for proper versioning
 
       - name: Build and Push Docker Image
-        uses: iExecBlockchainComputing/github-actions-workflows/docker-build@docker-build-v1.1.1
+        uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@main # ⚠️ use tagged version here
         with:
-          dockerfile: 'Dockerfile'
-          tag: 'my-image:latest'
-        secrets: 
-          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub_pat: ${{ secrets.DOCKERHUB_PAT }}
-```
-
-## 🔍 Advanced Usage
-
-### Multi-Platform Build Example
-```yaml
-name: Build Multi-Platform Docker Image
-
-on:
-  release:
-    types: [published]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build and Push Docker Image
-        uses: iExecBlockchainComputing/github-actions-workflows/docker-build@docker-build-v1.1.1
-        with:
-          dockerfile: 'Dockerfile'
-          tag: 'myorg/myapp:${{ github.event.release.tag_name }}'
-        secrets: 
-          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub_pat: ${{ secrets.DOCKERHUB_PAT }}
+          image-name: "username/my-image"
+          dockerfile: "Dockerfile"
+        secrets:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PAT }}
 ```
 
 ## 📝 Notes
+
 - 🔒 Ensure your Docker Hub credentials are stored securely as GitHub Secrets
 - 🔄 The workflow will automatically handle the Docker build and push process
 - 🏷️ You can specify any valid Docker tag format in the `tag` input
@@ -95,6 +75,7 @@ jobs:
 - 🧪 For testing purposes, you can use the `--dry-run` flag in your own implementation
 
 ## 🛠️ Troubleshooting
+
 - If you encounter authentication issues, verify your Docker Hub credentials are correct and have appropriate permissions
 - For build failures, check your Dockerfile syntax and ensure all referenced files exist
 - Large images may take longer to push - consider optimizing your Dockerfile with multi-stage builds
