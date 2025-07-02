@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.4.0...publish-npm-v1.5.0) (2025-07-02)
+
+
+### Features
+
+* **publish-npm:** add dry-run option ([#71](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/71)) ([d8a0c33](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/d8a0c3389b39c9f6d15c16716b030777dea694cd))
+
 ## [1.4.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.3.0...publish-npm-v1.4.0) (2025-06-16)
 
 
