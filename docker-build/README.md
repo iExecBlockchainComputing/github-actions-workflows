@@ -9,25 +9,32 @@ This reusable GitHub Actions workflow automates the process of building and push
 - 🔐 Securely authenticates with Docker Hub using best practices
 - 🏗️ Builds optimized Docker images from a specified Dockerfile
 - 🏷️ Intelligently tags and pushes images to Docker Hub
+- 🔎 Scan for vulnerabilities
+- 👍 Lint dockerfile
 - 🛡️ Handles authentication securely using GitHub Secrets
 - 🚀 Optimizes build performance with layer caching
 - 📦 Supports multi-platform builds (AMD64, ARM64)
 
 ## ⚙️ Inputs
 
-| Name         | Description                                                                   | Required | Default        |
-| ------------ | ----------------------------------------------------------------------------- | -------- | -------------- |
-| `image-name` | Name of Docker Image (e.g., 'myimage', 'myorg/myimage')                       | true     | -              |
-| `image-tag`  | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                    | No       | `"latest"`     |
-| `dockerfile` | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile') | No       | `"Dockerfile"` |
-| `push`       | Push Docker Image to Registry                                                 | No       | `false`        |
+| Name              | Description                                                                        | Required | Default        |
+| ----------------- | ---------------------------------------------------------------------------------- | -------- | -------------- |
+| `image-name`      | Name of Docker Image (e.g., 'myimage', 'myorg/myimage')                            | true     | -              |
+| `image-tag`       | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                         | No       | `"latest"`     |
+| `dockerfile`      | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')      | No       | `"Dockerfile"` |
+| `context`         | Path to Docker Build Context                                                       | No       | `"."`          |
+| `registry`        | Docker Registry                                                                    | No       | `"docker.io"`  |
+| `push`            | Push Docker Image to Registry                                                      | No       | `false`        |
+| `security-scan`   | Enable Trivy Security Scan                                                         | No       | `true`         |
+| `security-report` | Security Report Mode (`"sarif"` \| `"comment"`; ignored if `security-scan: false`) | No       | `"sarif"`      |
+| `hadolint`        | Enable Hadolint                                                                    | No       | `true`         |
 
 ## 🔐 Secrets
 
-| Name                 | Description                                                                        | Required |
-| -------------------- | ---------------------------------------------------------------------------------- | -------- |
-| `dockerhub_username` | Username for Docker Hub authentication                                             | Yes      |
-| `dockerhub_pat`      | Personal Access Token for Docker Hub authentication (with appropriate permissions) | Yes      |
+| Name       | Description                                                                                         | Required |
+| ---------- | --------------------------------------------------------------------------------------------------- | -------- |
+| `username` | Username for Docker Registry authentication                                                         | Yes      |
+| `password` | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | Yes      |
 
 ## 💻 Example Usage
 
@@ -45,51 +52,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for proper versioning
 
       - name: Build and Push Docker Image
-        uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@docker-build-v2.2.0
+        uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@main # ⚠️ use tagged version here
         with:
           image-name: "username/my-image"
           dockerfile: "Dockerfile"
         secrets:
-          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub_pat: ${{ secrets.DOCKERHUB_PAT }}
-```
-
-## 🔍 Advanced Usage
-
-### Multi-Platform Build Example
-
-```yaml
-name: Build Multi-Platform Docker Image
-
-on:
-  release:
-    types: [published]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build and Push Docker Image
-        uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@docker-build-v2.2.0
-        with:
-          dockerfile: "Dockerfile"
-          tag: "myorg/myapp:${{ github.event.release.tag_name }}"
-        secrets:
-          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub_pat: ${{ secrets.DOCKERHUB_PAT }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PAT }}
 ```
 
 ## 📝 Notes

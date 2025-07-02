@@ -7,30 +7,14 @@ on:
         description: "Name of Docker Image"
         type: string
         required: true
-      dockerfile:
-        description: "Path to Dockerfile"
-        default: "Dockerfile"
-        type: string
       image-tag:
         description: "Tag of Docker Image"
         default: "latest"
         type: string
-      security-scan:
-        description: "Enable Security Scan"
-        default: true
-        type: boolean
-      security-report:
-        description: "Enable Security Report"
-        default: "sarif"
+      dockerfile:
+        description: "Path to Dockerfile"
+        default: "Dockerfile"
         type: string
-      hadolint:
-        description: "Enable Hadolint"
-        default: true
-        type: boolean
-      push:
-        description: "Push Docker Image to Registry"
-        default: false
-        type: boolean
       context:
         description: "Path to Docker Build Context"
         default: "."
@@ -39,6 +23,22 @@ on:
         description: "Docker Registry"
         default: "docker.io"
         type: string
+      push:
+        description: "Push Docker Image to Registry"
+        default: false
+        type: boolean
+      security-scan:
+        description: "Enable Trivy Security Scan"
+        default: true
+        type: boolean
+      security-report:
+        description: 'Security Report Mode (`"sarif"` | `"comment"`; ignored if `security-scan: false`)'
+        default: "sarif"
+        type: string
+      hadolint:
+        description: "Enable Hadolint"
+        default: true
+        type: boolean
     secrets:
       username:
         required: false
