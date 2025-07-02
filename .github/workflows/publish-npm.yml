@@ -4,85 +4,89 @@ on:
   workflow_call:
     inputs:
       scope:
-        description: 'NPM package scope (e.g., @iexec)'
-        default: '@iexec'
+        description: "NPM package scope (e.g., @iexec)"
+        default: "@iexec"
         type: string
       node-version:
-        description: 'Node.js version to use'
-        default: '20'
+        description: "Node.js version to use"
+        default: "20"
         type: string
       registry:
-        description: 'NPM registry URL'
-        default: 'https://registry.npmjs.org'
+        description: "NPM registry URL"
+        default: "https://registry.npmjs.org"
         type: string
       access:
-        description: 'Package access (public/restricted)'
-        default: 'public'
+        description: "Package access (public/restricted)"
+        default: "public"
         type: string
       provenance:
-        description: 'Enable npm provenance'
+        description: "Enable npm provenance"
         default: true
         type: boolean
       install-command:
-        description: 'Install dependencies command'
-        default: 'npm ci'
+        description: "Install dependencies command"
+        default: "npm ci"
         type: string
       build-command:
-        description: 'Build package command'
-        default: 'npm run build'
+        description: "Build package command"
+        default: "npm run build"
         type: string
       run-tests:
-        description: 'Execute unit tests step'
+        description: "Execute unit tests step"
         default: false
         type: boolean
       test-command:
-        description: 'Run unit tests command'
-        default: 'npm test --if-present'
+        description: "Run unit tests command"
+        default: "npm test --if-present"
         type: string
       lint-command:
-        description: 'Run linting command'
-        default: 'npm run lint --if-present'
+        description: "Run linting command"
+        default: "npm run lint --if-present"
         type: string
       type-check-command:
-        description: 'Run type-checking command'
-        default: 'npm run check-types --if-present'
+        description: "Run type-checking command"
+        default: "npm run check-types --if-present"
         type: string
       format-check-command:
-        description: 'Run format-checking command'
-        default: 'npm run check-format --if-present'
+        description: "Run format-checking command"
+        default: "npm run check-format --if-present"
         type: string
       environment:
-        description: 'GitHub environment'
-        default: 'production'
+        description: "GitHub environment"
+        default: "production"
         type: string
       tag:
-        description: 'npm publish tag (e.g., latest, nightly)'
-        default: ''
+        description: "npm publish tag (e.g., latest, nightly)"
+        default: ""
         type: string
       tag-prefix:
-        description: 'Prefix for Git tag'
-        default: 'v'
+        description: "Prefix for Git tag"
+        default: "v"
         type: string
       working-directory:
-        description: 'Directory containing package.json'
-        default: ''
+        description: "Directory containing package.json"
+        default: ""
         type: string
       artifact-name:
-        description: 'Name of an artifact to download before the build (leave empty to skip)'
-        default: ''
+        description: "Name of an artifact to download before the build (leave empty to skip)"
+        default: ""
         type: string
       artifact-path:
-        description: 'Destination path for the downloaded artifact'
-        default: ''
+        description: "Destination path for the downloaded artifact"
+        default: ""
         type: string
       version:
-        description: 'Version to publish (leave empty to use package.json version)'
-        default: ''
+        description: "Version to publish (leave empty to use package.json version)"
+        default: ""
         type: string
+      dry-run:
+        description: "Run in dry-run mode (the package will not be published)"
+        default: false
+        type: boolean
     secrets:
       npm-token:
-        description: 'NPM auth token'
-        required: true
+        description: "NPM auth token (required unless `dry-run: true`)"
+        required: false
 
 jobs:
   build:
@@ -93,6 +97,16 @@ jobs:
       packages: write
       id-token: write
     steps:
+      - name: Ensure npm-token
+        if: ${{ !inputs.dry-run }}
+        run: |
+          if [ -n "${{ secrets.npm-token }}" ]; then
+            echo "`npm-token` secret is set"
+          else
+            echo "Missing `npm-token` secret (required unless `dry-run: true`)"
+            exit 1
+          fi
+
       - name: Download extra artifact
         if: ${{ inputs.artifact-name != '' }}
         uses: actions/download-artifact@v4
@@ -111,7 +125,7 @@ jobs:
       - name: Install dependencies
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.install-command }}
-        
+
       - name: Override version
         if: ${{ inputs.version != '' }}
         working-directory: ${{ inputs.working-directory }}
@@ -149,8 +163,14 @@ jobs:
             TAG_OPT="--tag ${{ inputs.tag }}"
           fi
 
-          if [ "${{ inputs.provenance }}" = "true" ]; then
-            npm publish --access ${{ inputs.access }} $TAG_OPT --provenance
-          else
-            npm publish --access ${{ inputs.access }} $TAG_OPT
+          DRY_RUN_OPT=""
+          if [ "${{ inputs.dry-run }}" = "true" ]; then
+            DRY_RUN_OPT="--dry-run"
           fi
+
+          PROVENANCE_OPT=""
+          if [ "${{ inputs.provenance }}" = "true" ]; then
+            PROVENANCE_OPT="--provenance"
+          fi
+
+          npm publish --access ${{ inputs.access }} $TAG_OPT $DRY_RUN_OPT $PROVENANCE_OPT
