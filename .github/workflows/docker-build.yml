@@ -151,10 +151,11 @@ jobs:
           echo "report<<EOF" >> "$GITHUB_OUTPUT"
           cat hadolint.txt >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
+          cat hadolint.txt
 
       - name: Find existing Hadolint comment
         id: find_hadolint
-        if: ${{ inputs.hadolint }}
+        if: ${{ github.event_name == 'pull_request' && inputs.hadolint }}
         uses: peter-evans/find-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -162,7 +163,7 @@ jobs:
           body-includes: "Hadolint Dockerfile Lint Results"
 
       - name: Create or update Hadolint comment
-        if: ${{ inputs.hadolint && steps.read_hadolint.outputs.report != '' }}
+        if: ${{ github.event_name == 'pull_request' && inputs.hadolint && steps.read_hadolint.outputs.report != '' }}
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
