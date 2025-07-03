@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.3.0...docker-build-v2.3.1) (2025-07-03)
+
+
+### Bug Fixes
+
+* **docker-build:** skip hadolint comment outside of PR context ([#75](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/75)) ([4ac41dd](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/4ac41dd0e87a61710ebc19303bc15ada656d9a12))
+
 ## [2.3.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.2.0...docker-build-v2.3.0) (2025-07-02)
 
 
