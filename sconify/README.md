@@ -59,10 +59,10 @@ The workflow performs the following actions:
 
 | **Output**          | **Description**                                                                    |
 | ------------------- | ---------------------------------------------------------------------------------- |
-| **debug-image**     | Debug Sconified Image (unless `inputs.sconify-debug: false`)                       |
+| **debug-image-tag** | Debug Sconified Image Tag (unless `inputs.sconify-debug: false`)                   |
 | **debug-mrenclave** | Debug Sconified Image MrEnclave Fingerprint (unless `inputs.sconify-debug: false`) |
 | **debug-checksum**  | Debug Sconified Image Checksum (unless `inputs.sconify-debug: false`)              |
-| **prod-image**      | Prod Sconified Image (unless `inputs.sconify-prod: false`)                         |
+| **prod-image-tag**  | Prod Sconified Image Tag (unless `inputs.sconify-prod: false`)                     |
 | **prod-mrenclave**  | Prod Sconified Image MrEnclave Fingerprint (unless `inputs.sconify-prod: false`)   |
 | **prod-checksum**   | Prod Sconified Image Checksum (unless `inputs.sconify-prod: false`)                |
 
@@ -127,8 +127,8 @@ jobs:
     needs: sconify
     steps:
       - run: |
-          echo "DEBUG IMAGE INFO: image=${{ needs.sconify.outputs.debug-image }} | checksum=${{ needs.sconify.outputs.debug-checksum }} | mrenclave=${{ needs.sconify.outputs.debug-mrenclave }}"
-          echo "PROD IMAGE INFO: image=${{ needs.sconify.outputs.prod-image }} | checksum=${{ needs.sconify.outputs.prod-checksum }} | mrenclave=${{ needs.sconify.outputs.prod-mrenclave }}"
+          echo "DEBUG IMAGE INFO: tag=${{ needs.sconify.outputs.debug-image-tag }} | checksum=${{ needs.sconify.outputs.debug-checksum }} | mrenclave=${{ needs.sconify.outputs.debug-mrenclave }}"
+          echo "PROD IMAGE INFO: tag=${{ needs.sconify.outputs.prod-image-tag }} | checksum=${{ needs.sconify.outputs.prod-checksum }} | mrenclave=${{ needs.sconify.outputs.prod-mrenclave }}"
 ```
 
 3. **Configure Secrets**  
