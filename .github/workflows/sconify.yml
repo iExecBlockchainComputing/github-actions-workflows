@@ -7,20 +7,12 @@ on:
         description: "Docker registry of docker image to sconify"
         default: "docker.io"
         type: string
-      docker-username:
-        description: "Docker registry username"
-        type: string
-        required: true
       image-name:
         description: "Name of docker image to sconify"
         type: string
         required: true
       image-tag:
         description: "Tag of docker image to sconify"
-        type: string
-        required: true
-      scontain-username:
-        description: "Scontain registry username"
         type: string
         required: true
       sconify-version:
@@ -72,8 +64,14 @@ on:
         type: string
         default: "ubuntu-latest"
     secrets:
+      docker-username:
+        description: "Docker registry username"
+        required: true
       docker-password:
         description: "Docker Registry Password or Token"
+        required: true
+      scontain-username:
+        description: "Scontain registry username"
         required: true
       scontain-password:
         description: "Scontain Registry Password or Token"
@@ -82,18 +80,18 @@ on:
         description: "Signing Key for Scone Production (not required with `sconify-prod: false`)"
         required: false
     outputs:
-      debug-image:
-        description: "Debug Sconified Image"
-        value: ${{ jobs.build.outputs.debug-image }}
+      debug-image-tag:
+        description: "Debug Sconified Image Tag"
+        value: ${{ jobs.build.outputs.debug-image-tag }}
       debug-mrenclave:
         description: "Debug Sconified Image MrEnclave Fingerprint"
         value: ${{ jobs.build.outputs.debug-mrenclave }}
       debug-checksum:
         description: "Debug Sconified Image Checksum"
         value: ${{ jobs.build.outputs.debug-checksum }}
-      prod-image:
-        description: "Prod Sconified Image"
-        value: ${{ jobs.build.outputs.prod-image }}
+      prod-image-tag:
+        description: "Prod Sconified Image Tag"
+        value: ${{ jobs.build.outputs.prod-image-tag }}
       prod-mrenclave:
         description: "Prod Sconified Image MrEnclave Fingerprint"
         value: ${{ jobs.build.outputs.prod-mrenclave }}
@@ -105,10 +103,10 @@ jobs:
   build:
     runs-on: ${{ inputs.runner }}
     outputs:
-      debug-image: ${{ steps.push-debug.outputs.image }}
+      debug-image-tag: ${{ steps.push-debug.outputs.tag }}
       debug-mrenclave: ${{ steps.push-debug.outputs.mrenclave }}
       debug-checksum: ${{ steps.push-debug.outputs.checksum }}
-      prod-image: ${{ steps.push-prod.outputs.image }}
+      prod-image-tag: ${{ steps.push-prod.outputs.tag }}
       prod-mrenclave: ${{ steps.push-prod.outputs.mrenclave }}
       prod-checksum: ${{ steps.push-prod.outputs.checksum }}
     steps:
@@ -118,17 +116,19 @@ jobs:
       - name: Prepare Sconify Command
         id: prepare-command
         run: |
-          FROM_IMAGE=${{ inputs.docker-registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
-          DEBUG_IMAGE=$FROM_IMAGE-scone-debug-${{ inputs.sconify-version }}
-          echo "debug-image=$DEBUG_IMAGE"
-          echo "debug-image=$DEBUG_IMAGE" >> "$GITHUB_OUTPUT"
-          PROD_IMAGE=$FROM_IMAGE-scone-prod-${{ inputs.sconify-version }}
-          echo "prod-image=$PROD_IMAGE"
-          echo "prod-image=$PROD_IMAGE" >> "$GITHUB_OUTPUT"
+          IMAGE_REPO=${{ inputs.docker-registry }}/${{ inputs.image-name }}
+          DEBUG_IMAGE_TAG=${{ inputs.image-tag }}-scone-debug-${{ inputs.sconify-version }}
+          PROD_IMAGE_TAG=${{ inputs.image-tag }}-scone-prod-${{ inputs.sconify-version }}
+
+          echo "image-repo=$IMAGE_REPO" | tee -a "$GITHUB_OUTPUT"
+          echo "debug-image-tag=$DEBUG_IMAGE_TAG" | tee -a "$GITHUB_OUTPUT"
+          echo "prod-image-tag=$PROD_IMAGE_TAG" | tee -a "$GITHUB_OUTPUT"
+
+          # Prepare the base command for sconify
           SCONIFY_CMD="sconify_iexec"
           # REQUIRED:
           # --from
-          SCONIFY_CMD+=" --from=$FROM_IMAGE"
+          SCONIFY_CMD+=" --from=$IMAGE_REPO:${{ inputs.image-tag }}"
           # --to will be added later on
           # --binary
           SCONIFY_CMD+=" --binary=${{ inputs.binary }}"
@@ -154,21 +154,21 @@ jobs:
           # DEBUG
           # --verbose --no-color options
           SCONIFY_CMD+=" --verbose --no-color"
-          echo "sconify-base-command=$SCONIFY_CMD"
-          echo "sconify-base-command=$SCONIFY_CMD" >> "$GITHUB_OUTPUT"
+
+          echo "sconify-base-command=$SCONIFY_CMD" | tee -a "$GITHUB_OUTPUT"
 
       - name: Login to Docker Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ inputs.docker-registry }}
-          username: ${{ inputs.docker-username }}
+          username: ${{ secrets.docker-username }}
           password: ${{ secrets.docker-password }}
 
       - name: Login to Scontain Docker Registry
         uses: docker/login-action@v3
         with:
           registry: "registry.scontain.com"
-          username: ${{ inputs.scontain-username }}
+          username: ${{ secrets.scontain-username }}
           password: ${{ secrets.scontain-password }}
 
       - name: Pull Image to Sconify
@@ -185,16 +185,16 @@ jobs:
           -v /var/run/docker.sock:/var/run/docker.sock \
           registry.scontain.com/scone-production/iexec-sconify-image:${{ inputs.sconify-version }} \
           ${{ steps.prepare-command.outputs.sconify-base-command }} \
-          --to=${{ steps.prepare-command.outputs.debug-image }}
+          --to=${{ steps.prepare-command.outputs.image-repo }}:${{ steps.prepare-command.outputs.debug-image-tag }}
 
       - name: Push Debug Image
         if: ${{ inputs.sconify-debug }}
         id: push-debug
         run: |
-          docker push ${{ steps.prepare-command.outputs.debug-image }}
-          echo "image=${{ steps.prepare-command.outputs.debug-image }}" >> "$GITHUB_OUTPUT"
-          echo "checksum=0x$(docker image inspect ${{ steps.prepare-command.outputs.debug-image }} | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
-          echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 ${{ steps.prepare-command.outputs.debug-image }})" >> "$GITHUB_OUTPUT"
+          docker push ${{ steps.prepare-command.outputs.image-repo }}:${{ steps.prepare-command.outputs.debug-image-tag }}
+          echo "tag=${{ steps.prepare-command.outputs.debug-image-tag }}" | tee -a "$GITHUB_OUTPUT"
+          echo "checksum=0x$(docker image inspect ${{ steps.prepare-command.outputs.image-repo }}:${{ steps.prepare-command.outputs.debug-image-tag }} | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" | tee -a "$GITHUB_OUTPUT"
+          echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 ${{ steps.prepare-command.outputs.image-repo }}:${{ steps.prepare-command.outputs.debug-image-tag }})" | tee -a "$GITHUB_OUTPUT"
 
       - name: Sconify Image Prod
         if: ${{ inputs.sconify-prod }}
@@ -207,17 +207,17 @@ jobs:
           -v ${{github.workspace}}/tmp/sig/enclave-key.pem:/sig/enclave-key.pem \
           registry.scontain.com/scone-production/iexec-sconify-image:${{ inputs.sconify-version }} \
           ${{ steps.prepare-command.outputs.sconify-base-command }} \
-          --to=${{ steps.prepare-command.outputs.prod-image }} \
+          --to=${{ steps.prepare-command.outputs.image-repo }}:${{ steps.prepare-command.outputs.prod-image-tag }} \
           --scone-signer=/sig/enclave-key.pem
 
       - name: Push Prod Image
         if: ${{ inputs.sconify-prod }}
         id: push-prod
         run: |
-          docker push ${{ steps.prepare-command.outputs.prod-image }}
-          echo "image=${{ steps.prepare-command.outputs.prod-image }}" >> "$GITHUB_OUTPUT"
-          echo "checksum=0x$(docker image inspect ${{ steps.prepare-command.outputs.prod-image }} | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" >> "$GITHUB_OUTPUT"
-          echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 ${{ steps.prepare-command.outputs.prod-image }})" >> "$GITHUB_OUTPUT"
+          docker push ${{ steps.prepare-command.outputs.image-repo }}:${{ steps.prepare-command.outputs.prod-image-tag }}
+          echo "tag=${{ steps.prepare-command.outputs.prod-image-tag }}" | tee -a "$GITHUB_OUTPUT"
+          echo "checksum=0x$(docker image inspect ${{ steps.prepare-command.outputs.image-repo }}:${{ steps.prepare-command.outputs.prod-image-tag }} | jq .[0].RepoDigests[0] | sed 's/"//g' | awk -F '@sha256:' '{print $2}')" | tee -a "$GITHUB_OUTPUT"
+          echo "mrenclave=$(docker run --rm -e SCONE_HASH=1 ${{ steps.prepare-command.outputs.image-repo }}:${{ steps.prepare-command.outputs.prod-image-tag }})" | tee -a "$GITHUB_OUTPUT"
 
       - name: Clean Temporary Directory
         if: always()

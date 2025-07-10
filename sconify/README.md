@@ -22,23 +22,22 @@ The workflow performs the following actions:
 
 ## Workflow Inputs 🛠️
 
-| **Input**             | **Description**                                                                                          | **Required** | **Default**                      |
-| --------------------- | -------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------- |
-| **docker-registry**   | Docker registry of docker image to sconify                                                               | No           | docker.io                        |
-| **docker-username**   | Docker registry username                                                                                 | Yes          | -                                |
-| **image-name**        | Name of docker image to sconify                                                                          | Yes          | -                                |
-| **image-tag**         | Tag of docker image to sconify                                                                           | Yes          | -                                |
-| **scontain-username** | Scontain registry username                                                                               | Yes          | -                                |
-| **sconify-version**   | Version of the sconify image to use                                                                      | Yes          | -                                |
-| **binary**            | [SCONE] Path of the binary to use                                                                        | Yes          | -                                |
-| **command**           | [SCONE] Command to execute                                                                               | No           | ENTRYPOINT + CMD of native image |
-| **binary-fs**         | [SCONE] Embed the file system into the binary via Scone binary file system                               | No           | false                            |
-| **fs-dir**            | [SCONE] Path of directories to add to the binary file system (use multiline to add multiple directories) | No           | -                                |
-| **fs-file**           | [SCONE] Path of files to add to the binary file system (use multiline to add multiple files)             | No           | -                                |
-| **host-path**         | [SCONE] Host path, served directly from the host file system (use multiline to add multiple path)        | No           | -                                |
-| **heap**              | [SCONE] Enclave heap size                                                                                | No           | 1G                               |
-| **dlopen**            | [SCONE] Scone dlopen mode (0:disable; 1:enable)                                                          | No           | 0                                |
-| **mprotect**          | [SCONE] Scone mprotect mode (0:disable; 1:enable)                                                        | No           | 0                                |
+| **Input**           | **Description**                                                                                          | **Required** | **Default**                      |
+| ------------------- | -------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------- |
+| **docker-registry** | Docker registry of docker image to sconify                                                               | No           | docker.io                        |
+| **docker-username** | Docker registry username                                                                                 | Yes          | -                                |
+| **image-name**      | Name of docker image to sconify                                                                          | Yes          | -                                |
+| **image-tag**       | Tag of docker image to sconify                                                                           | Yes          | -                                |
+| **sconify-version** | Version of the sconify image to use                                                                      | Yes          | -                                |
+| **binary**          | [SCONE] Path of the binary to use                                                                        | Yes          | -                                |
+| **command**         | [SCONE] Command to execute                                                                               | No           | ENTRYPOINT + CMD of native image |
+| **binary-fs**       | [SCONE] Embed the file system into the binary via Scone binary file system                               | No           | false                            |
+| **fs-dir**          | [SCONE] Path of directories to add to the binary file system (use multiline to add multiple directories) | No           | -                                |
+| **fs-file**         | [SCONE] Path of files to add to the binary file system (use multiline to add multiple files)             | No           | -                                |
+| **host-path**       | [SCONE] Host path, served directly from the host file system (use multiline to add multiple path)        | No           | -                                |
+| **heap**            | [SCONE] Enclave heap size                                                                                | No           | 1G                               |
+| **dlopen**          | [SCONE] Scone dlopen mode (0:disable; 1:enable)                                                          | No           | 0                                |
+| **mprotect**        | [SCONE] Scone mprotect mode (0:disable; 1:enable)                                                        | No           | 0                                |
 
 | **sconify-debug** | Create Scone debug image | No | true |
 | **sconify-prod** | Create Scone production image | No | true |
@@ -50,7 +49,9 @@ The workflow performs the following actions:
 
 | **Secret**            | **Description**                                 | **Required**                            |
 | --------------------- | ----------------------------------------------- | --------------------------------------- |
+| **docker-username**   | Docker registry username                        | yes                                     |
 | **docker-password**   | Docker Registry Password or Token               | Yes                                     |
+| **scontain-username** | Scontain registry username                      | Yes                                     |
 | **scontain-password** | Scontain Registry Password or Token             | Yes                                     |
 | **scone-signing-key** | Signing Key for Scone Production (PEM RSA-3072) | Yes unless `inputs.sconify-prod: false` |
 
@@ -58,10 +59,10 @@ The workflow performs the following actions:
 
 | **Output**          | **Description**                                                                    |
 | ------------------- | ---------------------------------------------------------------------------------- |
-| **debug-image**     | Debug Sconified Image (unless `inputs.sconify-debug: false`)                       |
+| **debug-image-tag** | Debug Sconified Image Tag (unless `inputs.sconify-debug: false`)                   |
 | **debug-mrenclave** | Debug Sconified Image MrEnclave Fingerprint (unless `inputs.sconify-debug: false`) |
 | **debug-checksum**  | Debug Sconified Image Checksum (unless `inputs.sconify-debug: false`)              |
-| **prod-image**      | Prod Sconified Image (unless `inputs.sconify-prod: false`)                         |
+| **prod-image-tag**  | Prod Sconified Image Tag (unless `inputs.sconify-prod: false`)                     |
 | **prod-mrenclave**  | Prod Sconified Image MrEnclave Fingerprint (unless `inputs.sconify-prod: false`)   |
 | **prod-checksum**   | Prod Sconified Image Checksum (unless `inputs.sconify-prod: false`)                |
 
@@ -94,7 +95,8 @@ on:
 
 jobs:
   sconify:
-    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/sconify.yml@sconify-v1.0.0
+    # ⚠️ use tagged version here
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/sconify.yml@main
     with:
       # runner: your-runner-here ⚠️ control the runner used in the workflow to match your requirements
       image-name: ${{ inputs.image-name }}
@@ -113,9 +115,9 @@ jobs:
       heap: 1G
       dlopen: 1
       mprotect: 1
-      docker-username: ${{ vars.DOCKER_USERNAME }}
-      scontain-username: ${{ vars.SCONTAIN_USERNAME }}
     secrets:
+      docker-username: ${{ secrets.DOCKER_USERNAME }}
+      scontain-username: ${{ secrets.SCONTAIN_USERNAME }}
       docker-password: ${{ secrets.DOCKER_TOKEN }}
       scontain-password: ${{ secrets.SCONTAIN_TOKEN }}
       scone-signing-key: ${{ secrets.SCONE_SIGNING_KEY }}
@@ -126,26 +128,15 @@ jobs:
     needs: sconify
     steps:
       - run: |
-          echo "DEBUG IMAGE INFO: image=${{ needs.sconify.outputs.debug-image }} | checksum=${{ needs.sconify.outputs.debug-checksum }} | mrenclave=${{ needs.sconify.outputs.debug-mrenclave }}"
-          echo "PROD IMAGE INFO: image=${{ needs.sconify.outputs.prod-image }} | checksum=${{ needs.sconify.outputs.prod-checksum }} | mrenclave=${{ needs.sconify.outputs.prod-mrenclave }}"
+          echo "DEBUG IMAGE INFO: tag=${{ needs.sconify.outputs.debug-image-tag }} | checksum=${{ needs.sconify.outputs.debug-checksum }} | mrenclave=${{ needs.sconify.outputs.debug-mrenclave }}"
+          echo "PROD IMAGE INFO: tag=${{ needs.sconify.outputs.prod-image-tag }} | checksum=${{ needs.sconify.outputs.prod-checksum }} | mrenclave=${{ needs.sconify.outputs.prod-mrenclave }}"
 ```
 
-3. **Configure Variables**
-   Ensure that the following variables are added to your repository's settings:
-
-   - `DOCKER_USERNAME`: Your Docker Registry username
-   - `SCONTAIN_USERNAME`: Your Scontain username
-
-   NB: Beware if you choose to use secrets to store registries usernames;
-   registries usernames can appear in sconified image names outputted as `outputs.debug-image` and `outputs.prod-image`, in such a case GitHub Actions blanks the outputs with this waring:
-
-   > Skip output 'prod-image' since it may contain secret.
-
-   > Skip output 'debug-image' since it may contain secret.
-
-4. **Configure Secrets**  
+3. **Configure Secrets**  
    Ensure that the following secrets are added to your repository's settings:
+   - `DOCKER_USERNAME`: Your Docker Registry username
    - `DOCKER_PASSWORD`: Your Docker Registry password or access token
+   - `SCONTAIN_USERNAME`: Your Scontain username
    - `SCONTAIN_PASSWORD`: Your Scontain password or access token
    - `SCONE_SIGNING_KEY`: The key to use for signing Scone Prod applications
 
