@@ -1,13 +1,14 @@
-# Rust Build Workflow
+# Rust Build and Test Workflow
 
-A reusable GitHub Actions workflow for building, testing, and publishing Rust packages.
+A reusable GitHub Actions workflow for building, linting, testing, and auditing Rust packages.
 
 ## Features
 
 - Build and test Rust packages
+- Lint code using clippy
+- Check formatting with cargo fmt
+- Run security audits with cargo audit
 - Cache dependencies for faster builds
-- Publish packages to crates.io
-- Upload build artifacts
 
 ## Usage
 
@@ -21,30 +22,19 @@ jobs:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
       rust-version: 'stable'
-      build-target: 'release'
+      build-profile: 'release'
+      run-audit: true
       enable-cache: true
-      upload-artifact: true
-      artifact-name: 'my-rust-app'
-      artifact-path: 'target/release/my-app'
 ```
 
 ## Inputs
 
-| Name                | Description                                        | Default   | Required                            |
-|---------------------|----------------------------------------------------|-----------|-------------------------------------|
-| `rust-version`      | Rust version to use                                | `stable`  | No                                  |
-| `build-target`      | Cargo profile to use for building (debug, release) | `release` | No                                  |
-| `enable-cache`      | Enable caching of dependencies                     | `true`    | No                                  |
-| `publish-crates-io` | Publish package to crates.io                       | `false`   | No                                  |
-| `upload-artifact`   | Upload build artifact                              | `false`   | No                                  |
-| `artifact-name`     | Name of the artifact to upload                     | -         | Only if `upload-artifact` is `true` |
-| `artifact-path`     | Path to the artifact to upload                     | -         | Only if `upload-artifact` is `true` |
-
-## Secrets
-
-| Name              | Description                       | Required                              |
-|-------------------|-----------------------------------|---------------------------------------|
-| `CRATES_IO_TOKEN` | Token for publishing to crates.io | Only if `publish-crates-io` is `true` |
+| Name            | Description                                    | Default   | Required |
+| --------------- | ---------------------------------------------- | --------- | -------- |
+| `rust-version`  | Rust version to use                            | `stable`  | No       |
+| `build-profile` | Cargo profile to use (debug, release)          | `release` | No       |
+| `run-audit`     | Run `cargo audit` for security vulnerabilities | `true`    | No       |
+| `enable-cache`  | Enable caching of dependencies                 | `true`    | No       |
 
 ## Examples
 
@@ -56,26 +46,23 @@ jobs:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
 ```
 
-### Build, Test, and Upload Artifact
+### Disable Security Audit
 
 ```yaml
 jobs:
   build-and-test:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
-      upload-artifact: true
-      artifact-name: 'my-rust-app'
-      artifact-path: 'target/release/my-app'
+      run-audit: false
 ```
 
-### Build, Test, and Publish to crates.io
+### Use Debug Profile
 
 ```yaml
 jobs:
-  build-and-publish:
+  jobs:
+  build-and-test:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
-      publish-crates-io: true
-    secrets:
-      CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+      build-profile: 'debug'
 ```

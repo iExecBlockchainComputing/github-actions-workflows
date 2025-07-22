@@ -1,4 +1,4 @@
-name: Build, Test and Publish Rust Package
+name: Build and Test Rust Package
 
 on:
   workflow_call:
@@ -7,97 +7,66 @@ on:
         description: 'Rust version to use'
         default: 'stable'
         type: string
-      build-target:
+      build-profile:
         description: 'Cargo profile to use for building (debug, release)'
         default: 'release'
         type: string
+      run-audit:
+        description: 'Run cargo-audit for security vulnerabilities'
+        default: true
+        type: boolean
       enable-cache:
         description: 'Enable caching of dependencies'
         default: true
         type: boolean
-      publish-crates-io:
-        description: 'Publish package to crates.io'
-        default: false
-        type: boolean
-      upload-artifact:
-        description: 'Upload build artifact'
-        default: false
-        type: boolean
-      artifact-name:
-        description: 'Name of the artifact to upload'
-        type: string
-        required: false
-      artifact-path:
-        description: 'Path to the artifact to upload'
-        type: string
-        required: false
-    secrets:
-      CRATES_IO_TOKEN:
-        required: false
 
+env:
+  CARGO_TERM_COLOR: always
+  
 jobs:
-  build:
+  build-and-test:
+    name: Build & Test
     runs-on: ubuntu-latest
-    outputs:
-      build_success: ${{ steps.set-output.outputs.build_success }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: ${{ inputs.rust-version }}
-          override: true
+          components: clippy
 
       - name: Cache dependencies
         if: ${{ inputs.enable-cache }}
         uses: actions/cache@v4
         with:
           path: |
-            ~/.cargo/registry
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ inputs.build-profile }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ inputs.build-profile }}-
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run linter (Clippy)
+        run: cargo clippy --all-targets -- -D warnings
+      
+      - name: Install cargo-audit
+        if: ${{ inputs.run-audit }}
+        run: cargo install cargo-audit
+
+      - name: Run security audit
+        if: ${{ inputs.run-audit }}
+        run: cargo audit
 
       - name: Build
-        run: cargo build --profile ${{ inputs.build-target }}
+        run: cargo build --profile ${{ inputs.build-profile }}
 
       - name: Run tests
-        run: cargo test --profile ${{ inputs.build-target }}
-
-      - name: Set build success output
-        id: set-output
-        run: echo "build_success=true" >> $GITHUB_OUTPUT
-
-      - name: Upload artifact
-        if: ${{ inputs.upload-artifact }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.artifact-name }}
-          path: ${{ inputs.artifact-path }}
-
-  publish:
-    needs: build
-    if: ${{ inputs.publish-crates-io && needs.build.outputs.build_success == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: ${{ inputs.rust-version }}
-          override: true
-
-      - name: Login to crates.io
-        run: cargo login ${{ secrets.CRATES_IO_TOKEN }}
-
-      - name: Package for crates.io
-        run: cargo package
-
-      - name: Publish to crates.io
-        run: cargo publish
+        run: cargo test --profile ${{ inputs.build-profile }}
