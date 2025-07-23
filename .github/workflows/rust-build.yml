@@ -1,4 +1,4 @@
-name: Build and Test Rust Package
+name: Build, Test and Publish Rust Package
 
 on:
   workflow_call:
@@ -44,7 +44,6 @@ env:
   
 jobs:
   build:
-    name: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -98,21 +97,21 @@ jobs:
           path: ${{ inputs.artifact-path }}
 
   publish:
-      needs: build
-      if: ${{ inputs.publish-crates-io && needs.build.result == 'success' }}
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+    needs: build
+    if: ${{ inputs.publish-crates-io && needs.build.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Install Rust toolchain
-          uses: dtolnay/rust-toolchain@stable
-          with:
-            toolchain: ${{ inputs.rust-version }}
-            components: cargo
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ inputs.rust-version }}
+          components: cargo
 
-        - name: Validate package
-          run: cargo package --allow-dirty
+      - name: Validate package
+        run: cargo package --allow-dirty
 
-        - name: Publish to crates.io
-          run: cargo publish --token ${{ secrets.CRATES_IO_TOKEN }}
+      - name: Publish to crates.io
+        run: cargo publish --token ${{ secrets.CRATES_IO_TOKEN }}

@@ -87,7 +87,7 @@ jobs:
 
 ```yaml
 jobs:
-  build-and-test:
+  build-and-upload:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
       upload-artifact: true
@@ -99,7 +99,7 @@ jobs:
 
 ```yaml
 jobs:
-  build-and-test:
+  build-and-publish:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
       publish-crates-io: true
