@@ -24,14 +24,14 @@ jobs:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
       rust-version: 'stable'
-      build-profile: 'release'
+      build-target: 'release'
       run-audit: true
       enable-cache: true
       upload-artifact: true
       artifact-name: my-crate
       artifact-path: target/release/my-crate
     secrets:
-      CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 ```
 
 ## Inputs
@@ -39,7 +39,7 @@ jobs:
 | Name                | Description                                                  | Default   | Required |
 | ------------------- | ------------------------------------------------------------ | --------- | -------- |
 | `rust-version`      | Rust version to use                                          | `stable`  | No       |
-| `build-profile`     | Cargo profile to use for building (`debug`, `release`, etc.) | `release` | No       |
+| `build-target`      | Cargo profile to use for building (`debug`, `release`, etc.) | `release` | No       |
 | `run-audit`         | Run `cargo audit` for security vulnerabilities               | `true`    | No       |
 | `enable-cache`      | Enable caching of dependencies                               | `true`    | No       |
 | `upload-artifact`   | Upload a build artifact after building                       | `false`   | No       |
@@ -49,9 +49,9 @@ jobs:
 
 ## Secrets
 
-| Name              | Description                             | Required                              |
-| ----------------- | --------------------------------------- | ------------------------------------- |
-| `CRATES_IO_TOKEN` | crates.io API token for `cargo publish` | Only if `publish-crates-io` is `true` |
+| Name                   | Description                             | Required                              |
+| -----------------------| --------------------------------------- | ------------------------------------- |
+| `CARGO_REGISTRY_TOKEN` | crates.io API token for `cargo publish` | Only if `publish-crates-io` is `true` |
 
 ## Examples
 
@@ -73,14 +73,14 @@ jobs:
       run-audit: false
 ```
 
-### Use Debug Profile
+### Use Debug Target
 
 ```yaml
 jobs:
   build-and-test:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
-      build-profile: 'debug'
+      build-target: 'debug'
 ```
 
 ### Upload Artifact After Build
@@ -95,7 +95,7 @@ jobs:
       artifact-path: target/release/my-crate
 ```
 
-### Publish to crates.io (requires CRATES_IO_TOKEN)
+### Publish to crates.io (requires CARGO_REGISTRY_TOKEN)
 
 ```yaml
 jobs:
@@ -104,5 +104,5 @@ jobs:
     with:
       publish-crates-io: true
     secrets:
-      CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 ```
