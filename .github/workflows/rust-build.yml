@@ -11,6 +11,10 @@ on:
         description: 'Cargo profile to use for building (debug, release)'
         default: 'release'
         type: string
+      working-directory:
+        description: 'The directory to run jobs from'
+        default: '.'
+        type: string
       run-audit:
         description: 'Run cargo-audit for security vulnerabilities'
         default: true
@@ -46,6 +50,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    working-directory: ${{ inputs.working-directory }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -100,6 +105,7 @@ jobs:
     needs: build
     if: ${{ inputs.publish-crates-io && needs.build.result == 'success' }}
     runs-on: ubuntu-latest
+    working-directory: ${{ inputs.working-directory }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

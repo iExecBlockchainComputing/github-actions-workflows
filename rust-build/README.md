@@ -9,6 +9,7 @@ A reusable GitHub Actions workflow for building, linting, testing, and auditing 
 - Check formatting with `cargo fmt`
 - Run security audits with `cargo audit`
 - Cache dependencies for faster builds
+- Set a working directory for monorepos
 - Upload build artifacts
 - Publish to crates.io
 
@@ -25,6 +26,7 @@ jobs:
     with:
       rust-version: 'stable'
       build-target: 'release'
+      working-directory: './my-crate'
       run-audit: true
       enable-cache: true
       upload-artifact: true
@@ -40,6 +42,7 @@ jobs:
 | ------------------- | ------------------------------------------------------------ | --------- | -------- |
 | `rust-version`      | Rust version to use                                          | `stable`  | No       |
 | `build-target`      | Cargo profile to use for building (`debug`, `release`, etc.) | `release` | No       |
+| `working-directory` | The directory to run jobs from                               | `.`       | No       |
 | `run-audit`         | Run `cargo audit` for security vulnerabilities               | `true`    | No       |
 | `enable-cache`      | Enable caching of dependencies                               | `true`    | No       |
 | `upload-artifact`   | Upload a build artifact after building                       | `false`   | No       |
@@ -61,6 +64,16 @@ jobs:
 jobs:
   build-and-test:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
+```
+
+### Specify a Working Directory
+
+```yaml
+jobs:
+  build-and-test:
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
+    with:
+      working-directory: './my-crate'
 ```
 
 ### Disable Security Audit
