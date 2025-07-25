@@ -12,6 +12,7 @@ A reusable GitHub Actions workflow for building, linting, testing, and auditing 
 - Set a working directory for monorepos
 - Upload build artifacts
 - Publish to crates.io
+- All operations are performed in a single job (no redundant toolchain installs)
 
 ## Usage
 
@@ -25,7 +26,6 @@ jobs:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
       rust-version: 'stable'
-      build-target: 'release'
       working-directory: './my-crate'
       run-audit: true
       enable-cache: true
@@ -38,22 +38,23 @@ jobs:
 
 ## Inputs
 
-| Name                | Description                                                  | Default   | Required |
-| ------------------- | ------------------------------------------------------------ | --------- | -------- |
-| `rust-version`      | Rust version to use                                          | `stable`  | No       |
-| `build-target`      | Cargo profile to use for building (`debug`, `release`, etc.) | `release` | No       |
-| `working-directory` | The directory to run jobs from                               | `.`       | No       |
-| `run-audit`         | Run `cargo audit` for security vulnerabilities               | `true`    | No       |
-| `enable-cache`      | Enable caching of dependencies                               | `true`    | No       |
-| `upload-artifact`   | Upload a build artifact after building                       | `false`   | No       |
-| `artifact-name`     | Name of the artifact to upload                               | –         | No       |
-| `artifact-path`     | Path to the artifact to upload                               | –         | No       |
-| `publish-crates-io` | Publish the package to crates.io (only if build succeeds)    | `false`   | No       |
+| Name                | Description                                               | Default  | Required |
+| ------------------- | --------------------------------------------------------- | -------- | -------- |
+| `rust-version`      | Rust version to use                                       | `stable` | No       |
+| `working-directory` | The directory to run jobs from                            | `.`      | No       |
+| `run-audit`         | Run `cargo audit` for security vulnerabilities            | `true`   | No       |
+| `enable-cache`      | Enable caching of dependencies                            | `true`   | No       |
+| `upload-artifact`   | Upload a build artifact after building                    | `false`  | No       |
+| `artifact-name`     | Name of the artifact to upload                            | –        | No       |
+| `artifact-path`     | Path to the artifact to upload                            | –        | No       |
+| `publish-crates-io` | Publish the package to crates.io (only if build succeeds) | `false`  | No       |
+
+Note: All builds use the release profile by default. There is no build-target input anymore
 
 ## Secrets
 
 | Name                   | Description                             | Required                              |
-| -----------------------| --------------------------------------- | ------------------------------------- |
+| ---------------------- | --------------------------------------- | ------------------------------------- |
 | `CARGO_REGISTRY_TOKEN` | crates.io API token for `cargo publish` | Only if `publish-crates-io` is `true` |
 
 ## Examples
@@ -84,16 +85,6 @@ jobs:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
       run-audit: false
-```
-
-### Use Debug Target
-
-```yaml
-jobs:
-  build-and-test:
-    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
-    with:
-      build-target: 'debug'
 ```
 
 ### Upload Artifact After Build

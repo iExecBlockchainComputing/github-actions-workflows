@@ -7,10 +7,6 @@ on:
         description: 'Rust version to use'
         default: 'stable'
         type: string
-      build-target:
-        description: 'Cargo profile to use for building (debug, release)'
-        default: 'release'
-        type: string
       working-directory:
         description: 'The directory to run jobs from'
         default: '.'
@@ -48,7 +44,7 @@ env:
   CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
   
 jobs:
-  build:
+  build_and_publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -58,7 +54,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ inputs.rust-version }}
-          components: clippy, rustfmt
+          components: clippy, rustfmt, cargo
 
       - name: Cache dependencies
         if: ${{ inputs.enable-cache }}
@@ -69,9 +65,9 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ inputs.build-target }}-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-release-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-${{ inputs.build-target }}-
+            ${{ runner.os }}-cargo-release-
 
       - name: Check formatting
         working-directory: ${{ inputs.working-directory }}
@@ -92,11 +88,11 @@ jobs:
 
       - name: Build
         working-directory: ${{ inputs.working-directory }}
-        run: cargo build --profile ${{ inputs.build-target }}
+        run: cargo build --release
 
       - name: Run tests
         working-directory: ${{ inputs.working-directory }}
-        run: cargo test --profile ${{ inputs.build-target }}
+        run: cargo test --release
 
       - name: Upload artifact
         if: ${{ inputs.upload-artifact }}
@@ -105,24 +101,12 @@ jobs:
           name: ${{ inputs.artifact-name }}
           path: ${{ inputs.artifact-path }}
 
-  publish:
-    needs: build
-    if: ${{ inputs.publish-crates-io && needs.build.result == 'success' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: ${{ inputs.rust-version }}
-          components: cargo
-
       - name: Validate package
+        if: ${{ inputs.publish-crates-io }}
         working-directory: ${{ inputs.working-directory }}
         run: cargo package
 
       - name: Publish to crates.io
+        if: ${{ inputs.publish-crates-io }}
         working-directory: ${{ inputs.working-directory }}
         run: cargo publish
