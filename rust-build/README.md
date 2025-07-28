@@ -22,7 +22,6 @@ jobs:
   build-and-test:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
-      rust-version: 'stable'
       working-directory: './my-crate'
       enable-cache: true
       publish-crates-io: false
@@ -34,7 +33,6 @@ jobs:
 
 | Name                | Description                                               | Default  | Required |
 | ------------------- | --------------------------------------------------------- | -------- | -------- |
-| `rust-version`      | Rust version to use                                       | `stable` | No       |
 | `working-directory` | The directory to run jobs from                            | `.`      | No       |
 | `enable-cache`      | Enable caching of dependencies                            | `true`   | No       |
 | `publish-crates-io` | Publish the package to crates.io (only if build succeeds) | `false`  | No       |
