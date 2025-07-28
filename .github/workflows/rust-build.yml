@@ -3,6 +3,10 @@ name: Build, Test and Publish Rust Package
 on:
   workflow_call:
     inputs:
+      rust-version:
+        description: 'Rust version to use'
+        default: 'stable'
+        type: string
       working-directory:
         description: 'The directory to run jobs from'
         default: '.'
@@ -30,8 +34,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Add clippy and rustfmt
-        run: rustup component add clippy rustfmt
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ inputs.rust-version }}
+          components: clippy, rustfmt, cargo
 
       - name: Cache dependencies
         if: ${{ inputs.enable-cache }}
