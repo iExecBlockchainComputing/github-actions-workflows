@@ -1,13 +1,15 @@
 # Rust Build Workflow
 
-A reusable GitHub Actions workflow for building, testing, and publishing Rust packages.
+A reusable GitHub Actions workflow for building, linting, testing, and publishing Rust packages, with optional dependency caching and working directory support.
 
 ## Features
 
 - Build and test Rust packages
+- Lint code using `clippy`
+- Check formatting with `cargo fmt`
 - Cache dependencies for faster builds
-- Publish packages to crates.io
-- Upload build artifacts
+- Set a working directory (for monorepos or nested crates)
+- Publish to crates.io
 
 ## Usage
 
@@ -21,30 +23,29 @@ jobs:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
       rust-version: 'stable'
-      build-target: 'release'
+      working-directory: './my-crate'
       enable-cache: true
-      upload-artifact: true
-      artifact-name: 'my-rust-app'
-      artifact-path: 'target/release/my-app'
+      publish-crates-io: false
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 ```
 
 ## Inputs
 
-| Name                | Description                                        | Default   | Required                            |
-|---------------------|----------------------------------------------------|-----------|-------------------------------------|
-| `rust-version`      | Rust version to use                                | `stable`  | No                                  |
-| `build-target`      | Cargo profile to use for building (debug, release) | `release` | No                                  |
-| `enable-cache`      | Enable caching of dependencies                     | `true`    | No                                  |
-| `publish-crates-io` | Publish package to crates.io                       | `false`   | No                                  |
-| `upload-artifact`   | Upload build artifact                              | `false`   | No                                  |
-| `artifact-name`     | Name of the artifact to upload                     | -         | Only if `upload-artifact` is `true` |
-| `artifact-path`     | Path to the artifact to upload                     | -         | Only if `upload-artifact` is `true` |
+| Name                | Description                                               | Default  | Required |
+| ------------------- | --------------------------------------------------------- | -------- | -------- |
+| `rust-version`      | Rust version to use                                       | `stable` | No       |
+| `working-directory` | The directory to run jobs from                            | `.`      | No       |
+| `enable-cache`      | Enable caching of dependencies                            | `true`   | No       |
+| `publish-crates-io` | Publish the package to crates.io (only if build succeeds) | `false`  | No       |
+
+Note: All builds use the release profile by default. There is no build-target input anymore
 
 ## Secrets
 
-| Name              | Description                       | Required                              |
-|-------------------|-----------------------------------|---------------------------------------|
-| `CRATES_IO_TOKEN` | Token for publishing to crates.io | Only if `publish-crates-io` is `true` |
+| Name                   | Description                             | Required                              |
+| ---------------------- | --------------------------------------- | ------------------------------------- |
+| `CARGO_REGISTRY_TOKEN` | crates.io API token for `cargo publish` | Only if `publish-crates-io` is `true` |
 
 ## Examples
 
@@ -56,19 +57,17 @@ jobs:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
 ```
 
-### Build, Test, and Upload Artifact
+### Specify a Working Directory
 
 ```yaml
 jobs:
   build-and-test:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
-      upload-artifact: true
-      artifact-name: 'my-rust-app'
-      artifact-path: 'target/release/my-app'
+      working-directory: './my-crate'
 ```
 
-### Build, Test, and Publish to crates.io
+### Publish to crates.io (requires CARGO_REGISTRY_TOKEN)
 
 ```yaml
 jobs:
@@ -77,5 +76,5 @@ jobs:
     with:
       publish-crates-io: true
     secrets:
-      CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 ```
