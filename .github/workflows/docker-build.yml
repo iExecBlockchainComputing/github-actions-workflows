@@ -39,6 +39,10 @@ on:
         description: "Enable Hadolint"
         default: true
         type: boolean
+      platforms:
+        description: "Build platforms"
+        default: "linux/amd64,linux/arm64"
+        type: string
     secrets:
       username:
         required: false
@@ -71,7 +75,7 @@ jobs:
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.platforms }}
           push: ${{ inputs.push }}
           tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
 

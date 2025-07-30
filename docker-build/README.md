@@ -17,17 +17,18 @@ This reusable GitHub Actions workflow automates the process of building and push
 
 ## ⚙️ Inputs
 
-| Name              | Description                                                                        | Required | Default        |
-| ----------------- | ---------------------------------------------------------------------------------- | -------- | -------------- |
-| `image-name`      | Name of Docker Image (e.g., 'myimage', 'myorg/myimage')                            | true     | -              |
-| `image-tag`       | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                         | No       | `"latest"`     |
-| `dockerfile`      | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')      | No       | `"Dockerfile"` |
-| `context`         | Path to Docker Build Context                                                       | No       | `"."`          |
-| `registry`        | Docker Registry                                                                    | No       | `"docker.io"`  |
-| `push`            | Push Docker Image to Registry                                                      | No       | `false`        |
-| `security-scan`   | Enable Trivy Security Scan                                                         | No       | `true`         |
-| `security-report` | Security Report Mode (`"sarif"` \| `"comment"`; ignored if `security-scan: false`) | No       | `"sarif"`      |
-| `hadolint`        | Enable Hadolint                                                                    | No       | `true`         |
+| Name              | Description                                                                        | Required | Default                     |
+| ----------------- | ---------------------------------------------------------------------------------- | -------- | --------------------------- |
+| `image-name`      | Name of Docker Image (e.g., 'myimage', 'myorg/myimage')                            | true     | -                           |
+| `image-tag`       | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                         | No       | `"latest"`                  |
+| `dockerfile`      | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')      | No       | `"Dockerfile"`              |
+| `context`         | Path to Docker Build Context                                                       | No       | `"."`                       |
+| `platforms`       | Indicates which platforms the image should be built for                            | No       | `"linux/amd64,linux/arm64"` |
+| `registry`        | Docker Registry                                                                    | No       | `"docker.io"`               |
+| `push`            | Push Docker Image to Registry                                                      | No       | `false`                     |
+| `security-scan`   | Enable Trivy Security Scan                                                         | No       | `true`                      |
+| `security-report` | Security Report Mode (`"sarif"` \| `"comment"`; ignored if `security-scan: false`) | No       | `"sarif"`                   |
+| `hadolint`        | Enable Hadolint                                                                    | No       | `true`                      |
 
 ## 🔐 Secrets
 
