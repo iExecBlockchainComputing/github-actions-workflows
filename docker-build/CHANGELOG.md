@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.3.1...docker-build-v2.4.0) (2025-07-30)
+
+
+### Features
+
+* variabilize docker build platforms ([#81](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/81)) ([1d02b7e](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/1d02b7ee6d75c7d88046ebf3dd51b969c2a651ae))
+
 ## [2.3.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.3.0...docker-build-v2.3.1) (2025-07-03)
 
 
