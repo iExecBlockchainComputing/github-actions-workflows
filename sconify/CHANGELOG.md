@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/sconify-v2.0.0...sconify-v3.0.0) (2025-09-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove useless `command` option ([#83](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/83))
+
+### Bug Fixes
+
+* remove useless `command` option ([#83](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/83)) ([d0c027a](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/d0c027a370d637d6badce22df0e5af53c4c0e371))
+
 ## [2.0.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/sconify-v1.0.0...sconify-v2.0.0) (2025-07-10)
 
 
