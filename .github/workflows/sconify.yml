@@ -23,9 +23,6 @@ on:
         description: "Path of the binary to use"
         type: string
         required: true
-      command:
-        description: "Command to execute (default: ENTRYPOINT + CMD of native image)"
-        type: string
       binary-fs:
         description: "Embed the file system into the binary via Scone binary file system (default: false)"
         type: boolean
@@ -133,8 +130,6 @@ jobs:
           # --binary
           SCONIFY_CMD+=" --binary=${{ inputs.binary }}"
           # OPTIONAL:
-          # --command option
-          [[ -n '${{ inputs.command }}' ]] && SCONIFY_CMD+=" --command=${{ inputs.command }}"
           # --host-path variadic option
           while IFS= read -r line; do [[ -n "$line" ]] && SCONIFY_CMD+=" --host-path=$line" ; done <<< '${{ inputs.host-path }}'
           # BINARY FILE SYSTEM (binary fs):

@@ -22,22 +22,21 @@ The workflow performs the following actions:
 
 ## Workflow Inputs 🛠️
 
-| **Input**           | **Description**                                                                                          | **Required** | **Default**                      |
-| ------------------- | -------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------- |
-| **docker-registry** | Docker registry of docker image to sconify                                                               | No           | docker.io                        |
-| **docker-username** | Docker registry username                                                                                 | Yes          | -                                |
-| **image-name**      | Name of docker image to sconify                                                                          | Yes          | -                                |
-| **image-tag**       | Tag of docker image to sconify                                                                           | Yes          | -                                |
-| **sconify-version** | Version of the sconify image to use                                                                      | Yes          | -                                |
-| **binary**          | [SCONE] Path of the binary to use                                                                        | Yes          | -                                |
-| **command**         | [SCONE] Command to execute                                                                               | No           | ENTRYPOINT + CMD of native image |
-| **binary-fs**       | [SCONE] Embed the file system into the binary via Scone binary file system                               | No           | false                            |
-| **fs-dir**          | [SCONE] Path of directories to add to the binary file system (use multiline to add multiple directories) | No           | -                                |
-| **fs-file**         | [SCONE] Path of files to add to the binary file system (use multiline to add multiple files)             | No           | -                                |
-| **host-path**       | [SCONE] Host path, served directly from the host file system (use multiline to add multiple path)        | No           | -                                |
-| **heap**            | [SCONE] Enclave heap size                                                                                | No           | 1G                               |
-| **dlopen**          | [SCONE] Scone dlopen mode (0:disable; 1:enable)                                                          | No           | 0                                |
-| **mprotect**        | [SCONE] Scone mprotect mode (0:disable; 1:enable)                                                        | No           | 0                                |
+| **Input**           | **Description**                                                                                          | **Required** | **Default** |
+| ------------------- | -------------------------------------------------------------------------------------------------------- | ------------ | ----------- |
+| **docker-registry** | Docker registry of docker image to sconify                                                               | No           | docker.io   |
+| **docker-username** | Docker registry username                                                                                 | Yes          | -           |
+| **image-name**      | Name of docker image to sconify                                                                          | Yes          | -           |
+| **image-tag**       | Tag of docker image to sconify                                                                           | Yes          | -           |
+| **sconify-version** | Version of the sconify image to use                                                                      | Yes          | -           |
+| **binary**          | [SCONE] Path of the binary to use                                                                        | Yes          | -           |
+| **binary-fs**       | [SCONE] Embed the file system into the binary via Scone binary file system                               | No           | false       |
+| **fs-dir**          | [SCONE] Path of directories to add to the binary file system (use multiline to add multiple directories) | No           | -           |
+| **fs-file**         | [SCONE] Path of files to add to the binary file system (use multiline to add multiple files)             | No           | -           |
+| **host-path**       | [SCONE] Host path, served directly from the host file system (use multiline to add multiple path)        | No           | -           |
+| **heap**            | [SCONE] Enclave heap size                                                                                | No           | 1G          |
+| **dlopen**          | [SCONE] Scone dlopen mode (0:disable; 1:enable)                                                          | No           | 0           |
+| **mprotect**        | [SCONE] Scone mprotect mode (0:disable; 1:enable)                                                        | No           | 0           |
 
 | **sconify-debug** | Create Scone debug image | No | true |
 | **sconify-prod** | Create Scone production image | No | true |
@@ -106,7 +105,6 @@ jobs:
       docker-registry: docker.io
       sconify-version: 5.9.0-v15
       binary: /usr/local/bin/node
-      command: node /app/src/app.js
       host-path: |
         /etc/hosts
         /etc/resolv.conf
