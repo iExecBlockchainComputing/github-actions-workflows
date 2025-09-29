@@ -7,13 +7,6 @@
     "build": "ncc build src/index.js -o dist",
     "prepare": "npm run build"
   },
-  "keywords": [
-    "github-actions",
-    "safe",
-    "gnosis-safe",
-    "ethereum",
-    "blockchain"
-  ],
   "dependencies": {
     "@actions/core": "^1.10.1",
     "@safe-global/api-kit": "^1.0.0",
