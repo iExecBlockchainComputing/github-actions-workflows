@@ -11,12 +11,11 @@ This reusable GitHub Actions workflow automates the process of creating and prop
 | **proposer-private-key** | Private key of the proposer wallet                           | Yes          | -                                   |
 | **rpc-url**              | RPC URL for the blockchain network                            | Yes          | -                                   |
 | **safe-address**         | Address of the Safe contract                                  | Yes          | -                                   |
-| **target-address**       | Target address for the transaction                            | Yes          | -                                   |
+| **transaction-target-address** | Target address for the transaction                            | Yes          | -                                   |
 | **safe-api-key**         | Safe API key for transaction service                          | Yes          | -                                   |
 | **chain-id**             | Chain ID of the blockchain network                            | No           | `42161` (Arbitrum)                  |
 | **transaction-value**    | Value to send in the transaction (in wei)                     | No           | `0`                                 |
 | **transaction-data**     | Transaction data/calldata                                     | No           | `0x`                                |
-| **operation**            | Operation type (0 for Call, 1 for DelegateCall)              | No           | `0`                                 |
 
 ## Workflow Outputs 📤
 
@@ -48,7 +47,7 @@ This reusable GitHub Actions workflow automates the process of creating and prop
          safe-address:
            description: 'Safe contract address'
            required: true
-         target-address:
+         transaction-target-address:
            description: 'Target contract address'
            required: true
          transaction-data:
@@ -65,7 +64,7 @@ This reusable GitHub Actions workflow automates the process of creating and prop
          safe-api-key: ${{ secrets.SAFE_API_KEY }}
        with:
          safe-address: ${{ inputs.safe-address }}
-         target-address: ${{ inputs.target-address }}
+         transaction-target-address: ${{ inputs.transaction-target-address }}
          transaction-data: ${{ inputs.transaction-data }}
    ```
 
@@ -73,11 +72,6 @@ This reusable GitHub Actions workflow automates the process of creating and prop
    Ensure that the required secrets are added to your repository's settings:
    - `PROPOSER_PRIVATE_KEY`: The private key of the wallet that will propose the transaction
    - `SAFE_API_KEY`: Your Safe API key for the transaction service
-
-## Operation Types 🔧
-
-- **`0`**: **Call** - Normal transaction execution
-- **`1`**: **DelegateCall** - Execution in the context of the Safe contract
 
 ## Security Considerations 🛡️
 

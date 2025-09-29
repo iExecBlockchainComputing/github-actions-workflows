@@ -10,16 +10,17 @@ async function run() {
     const proposerPrivateKey = process.env.INPUT_PROPOSER_PRIVATE_KEY;
     const rpcUrl = process.env.INPUT_RPC_URL;
     const safeAddress = process.env.INPUT_SAFE_ADDRESS;
-    const targetAddress = process.env.INPUT_TARGET_ADDRESS;
+    const transactionTargetAddress = process.env.INPUT_TARGET_ADDRESS;
     const safeApiKey = process.env.INPUT_SAFE_API_KEY;
-    const chainId = BigInt(process.env.INPUT_CHAIN_ID || '42161');
-    const transactionValue = process.env.INPUT_TRANSACTION_VALUE || '0';
-    const transactionData = process.env.INPUT_TRANSACTION_DATA || '0x';
-    const operation = process.env.INPUT_OPERATION || '0';
+    const chainId = BigInt(process.env.INPUT_CHAIN_ID || "42161");
+    const transactionValue = process.env.INPUT_TRANSACTION_VALUE || "0";
+    const transactionData = process.env.INPUT_TRANSACTION_DATA || "0x";
+    // Hardcoded to 0 (Call operation) - DelegateCall (1) is not supported for security reasons
+    const operation = 0;
 
     core.info(`🚀 Starting Safe transaction creation...`);
     core.info(`📍 Safe Address: ${safeAddress}`);
-    core.info(`🎯 Target Address: ${targetAddress}`);
+    core.info(`🎯 Target Address: ${transactionTargetAddress}`);
 
     // Initialize wallet
     const wallet = new Wallet(proposerPrivateKey);
@@ -28,27 +29,27 @@ async function run() {
     // Initialize API Kit
     const apiKit = new SafeApiKit({
       chainId: chainId,
-      apiKey: safeApiKey
+      apiKey: safeApiKey,
     });
 
     // Initialize Protocol Kit
     const protocolKit = await Safe.init({
       provider: rpcUrl,
       signer: proposerPrivateKey,
-      safeAddress: safeAddress
+      safeAddress: safeAddress,
     });
 
     // Create transaction
     const safeTransactionData = {
-      to: targetAddress,
+      to: transactionTargetAddress,
       value: transactionValue,
       data: transactionData,
-      operation: parseInt(operation)
+      operation: parseInt(operation),
     };
 
-    core.info('📝 Creating Safe transaction...');
+    core.info("📝 Creating Safe transaction...");
     const safeTransaction = await protocolKit.createTransaction({
-      transactions: [safeTransactionData]
+      transactions: [safeTransactionData],
     });
 
     const safeTxHash = await protocolKit.getTransactionHash(safeTransaction);
@@ -62,22 +63,23 @@ async function run() {
       safeTransactionData: safeTransaction.data,
       safeTxHash: safeTxHash,
       senderAddress: wallet.address,
-      senderSignature: signature.data
+      senderSignature: signature.data,
     });
 
-    core.info('📤 Transaction proposed to Safe service');
+    core.info("📤 Transaction proposed to Safe service");
 
     // Get transaction details
     const transaction = await apiKit.getTransaction(safeTxHash);
-    
+
     // Set outputs
-    core.setOutput('safe-tx-hash', safeTxHash);
-    core.setOutput('transaction', JSON.stringify(transaction));
+    core.setOutput("safe-tx-hash", safeTxHash);
+    core.setOutput("transaction", JSON.stringify(transaction));
 
     core.info(`✅ Transaction created successfully!`);
     core.info(`🔗 Transaction Hash: ${safeTxHash}`);
-    core.info(`📋 Transaction Details: ${JSON.stringify(transaction, null, 2)}`);
-
+    core.info(
+      `📋 Transaction Details: ${JSON.stringify(transaction, null, 2)}`
+    );
   } catch (error) {
     core.setFailed(`❌ Error creating Safe transaction: ${error.message}`);
     core.error(error.stack);
