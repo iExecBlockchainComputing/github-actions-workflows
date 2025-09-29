@@ -33,7 +33,6 @@ This reusable GitHub Actions workflow automates the process of creating and prop
 
 ## How to Use This Reusable Workflow 🔄
 
-
 1. **Call the Reusable Workflow**  
    In another workflow file, invoke this reusable workflow like so:
 
