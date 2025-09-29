@@ -43,6 +43,10 @@ on:
         description: "Build platforms"
         default: "linux/amd64,linux/arm64"
         type: string
+      build-args:
+        description: "Build arguments (newline-separated list)"
+        default: ""
+        type: string
     secrets:
       username:
         required: false
@@ -75,15 +79,11 @@ jobs:
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
-          platforms: ${{ inputs.platforms }}
-          push: ${{ inputs.push }}
+          platforms: linux/amd64  # Build single platform for security scanning
+          push: false  # Don't push yet, wait for security checks
           tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
-
-      - name: Build Docker Image as Tarball
-        if: ${{ inputs.security-scan }}
-        run: |
-          docker build -t ${{ inputs.image-name }}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile }} ${{ inputs.context }}
-          docker save -o vuln-image.tar ${{ inputs.image-name }}:${{ inputs.image-tag }}
+          build-args: ${{ inputs.build-args }}
+          outputs: type=docker,dest=vuln-image.tar  # Export as tarball for security scanning
 
       - name: Run Trivy vulnerability scanner
         id: trivy
@@ -183,3 +183,37 @@ jobs:
             ${{ steps.read_hadolint.outputs.report }}
             ```
             </details>
+
+      - name: Check security scan results
+        id: security_check
+        if: ${{ inputs.security-scan }}
+        run: |
+          # Check if Trivy found any vulnerabilities
+          if [ -f "trivy.txt" ]; then
+            if grep -q "Total: 0" trivy.txt; then
+              echo "✅ No vulnerabilities found"
+              echo "trivy_passed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "❌ Vulnerabilities found in Trivy scan"
+              echo "trivy_passed=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "trivy_passed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fail if critical vulnerabilities found
+        if: ${{ inputs.security-scan && steps.security_check.outputs.trivy_passed == 'false' }}
+        run: |
+          echo "::error::Critical or high vulnerabilities found. Image will not be pushed."
+          exit 1
+
+      - name: Build and Push Multi-Platform Image
+        if: ${{ inputs.push && (!inputs.security-scan || steps.security_check.outputs.trivy_passed == 'true') }}
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          platforms: ${{ inputs.platforms }}
+          push: true
+          tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+          build-args: ${{ inputs.build-args }}
