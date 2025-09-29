@@ -1,0 +1,89 @@
+name: 'Safe Transaction Proposer'
+
+on:
+  workflow_call:
+    inputs:
+      proposer-private-key:
+        description: 'Private key of the proposer wallet'
+        required: true
+        type: string
+      rpc-url:
+        description: 'RPC URL for the blockchain network'
+        required: true
+        type: string
+      safe-address:
+        description: 'Address of the Safe contract'
+        required: true
+        type: string
+      target-address:
+        description: 'Target address for the transaction'
+        required: true
+        type: string
+      safe-api-key:
+        description: 'Safe API key for transaction service'
+        required: true
+        type: string
+      chain-id:
+        description: 'Chain ID of the blockchain network (default: 42161 for Arbitrum)'
+        required: false
+        default: '42161'
+        type: string
+      transaction-value:
+        description: 'Value to send in the transaction (in wei, default: 0)'
+        required: false
+        default: '0'
+        type: string
+      transaction-data:
+        description: 'Transaction data/calldata (default: 0x)'
+        required: false
+        default: '0x'
+        type: string
+      operation:
+        description: 'Operation type (0 for Call, 1 for DelegateCall)'
+        required: false
+        default: '0'
+        type: string
+    outputs:
+      safe-tx-hash:
+        description: 'Hash of the Safe transaction'
+        value: ${{ jobs.propose-transaction.outputs.safe-tx-hash }}
+      transaction:
+        description: 'Created transaction details'
+        value: ${{ jobs.propose-transaction.outputs.transaction }}
+
+jobs:
+  propose-transaction:
+    runs-on: ubuntu-latest
+    outputs:
+      safe-tx-hash: ${{ steps.safe-transaction.outputs.safe-tx-hash }}
+      transaction: ${{ steps.safe-transaction.outputs.transaction }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build action
+        run: npm run build
+
+      - name: Propose Safe Transaction
+        run: node dist/index.js
+        env:
+          INPUT_PROPOSER_PRIVATE_KEY: ${{ inputs.proposer-private-key }}
+          INPUT_RPC_URL: ${{ inputs.rpc-url }}
+          INPUT_SAFE_ADDRESS: ${{ inputs.safe-address }}
+          INPUT_TARGET_ADDRESS: ${{ inputs.target-address }}
+          INPUT_SAFE_API_KEY: ${{ inputs.safe-api-key }}
+          INPUT_CHAIN_ID: ${{ inputs.chain-id }}
+          INPUT_TRANSACTION_VALUE: ${{ inputs.transaction-value }}
+          INPUT_TRANSACTION_DATA: ${{ inputs.transaction-data }}
+          INPUT_OPERATION: ${{ inputs.operation }}
+        id: safe-transaction
