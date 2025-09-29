@@ -65,12 +65,15 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ./safe-transaction
 
       - name: Build action
         run: npm run build
+        working-directory: ./safe-transaction
 
       - name: Propose Safe Transaction
         run: node dist/index.js
+        working-directory: ./safe-transaction
         env:
           INPUT_PROPOSER_PRIVATE_KEY: ${{ inputs.proposer-private-key }}
           INPUT_RPC_URL: ${{ inputs.rpc-url }}

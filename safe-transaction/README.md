@@ -33,10 +33,8 @@ This reusable GitHub Actions workflow automates the process of creating and prop
 
 ## How to Use This Reusable Workflow 🔄
 
-1. **Save the Workflow File**  
-   Place the `safe-transaction.yml` file in the `.github/workflows/` directory of your repository. 💾
 
-2. **Call the Reusable Workflow**  
+1. **Call the Reusable Workflow**  
    In another workflow file, invoke this reusable workflow like so:
 
    ```yaml
@@ -68,7 +66,7 @@ This reusable GitHub Actions workflow automates the process of creating and prop
          transaction-data: ${{ inputs.transaction-data }}
    ```
 
-3. **Configure Secrets**  
+2. **Configure Secrets**  
    Ensure that the required secrets are added to your repository's settings:
    - `PROPOSER_PRIVATE_KEY`: The private key of the wallet that will propose the transaction
    - `SAFE_API_KEY`: Your Safe API key for the transaction service
