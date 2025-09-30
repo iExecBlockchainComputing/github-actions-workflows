@@ -15,8 +15,6 @@ async function run() {
     const chainId = BigInt(process.env.INPUT_CHAIN_ID || "42161");
     const transactionValue = process.env.INPUT_TRANSACTION_VALUE || "0";
     const transactionData = process.env.INPUT_TRANSACTION_DATA || "0x";
-    // Hardcoded to 0 (Call operation) - DelegateCall (1) is not supported for security reasons
-    const operation = 0;
 
     core.info(`🚀 Starting Safe transaction creation...`);
     core.info(`📍 Safe Address: ${safeAddress}`);
@@ -44,7 +42,7 @@ async function run() {
       to: transactionTargetAddress,
       value: transactionValue,
       data: transactionData,
-      operation: parseInt(operation),
+      operation: OperationType.Call, // Hardcoded Call operation - DelegateCall is not supported for security reasons
     };
 
     core.info("📝 Creating Safe transaction...");
