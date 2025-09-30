@@ -54,6 +54,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          repository: iExecBlockchainComputing/github-actions-workflows
+          # TODO: Only for testing, remove before merging
+          ref: feature/add-safe-transaction-reusable-workflow
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
