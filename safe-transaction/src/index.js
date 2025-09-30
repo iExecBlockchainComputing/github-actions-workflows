@@ -1,9 +1,8 @@
 const core = require('@actions/core');
 const SafeApiKit = require('@safe-global/api-kit').default;
-const Safe = require('@safe-global/protocol-kit').default;
-const { EthersAdapter } = require("@safe-global/protocol-kit");
+const Safe = require("@safe-global/protocol-kit").default;
 const { OperationType } = require('@safe-global/types-kit');
-const { Wallet, JsonRpcProvider, ethers } = require("ethers");
+const { Wallet } = require("ethers");
 
 async function run() {
   try {
@@ -21,16 +20,9 @@ async function run() {
     core.info(`📍 Safe Address: ${safeAddress}`);
     core.info(`🎯 Target Address: ${transactionTargetAddress}`);
 
-    // Initialize wallet and provider
-    const provider = new JsonRpcProvider(rpcUrl);
-    const wallet = new Wallet(proposerPrivateKey, provider);
+    // Initialize wallet
+    const wallet = new Wallet(proposerPrivateKey);
     core.info(`👤 Proposer Address: ${wallet.address}`);
-
-    // Initialize EthAdapter
-    const ethAdapter = new EthersAdapter({
-      ethers,
-      signerOrProvider: wallet,
-    });
 
     // Initialize API Kit
     const apiKit = new SafeApiKit({
@@ -42,8 +34,9 @@ async function run() {
     core.info(`🔧 API Kit initialized with chainId: ${chainId}`);
 
     // Initialize Protocol Kit
-    const protocolKit = await Safe.create({
-      ethAdapter,
+    const protocolKit = await Safe.init({
+      provider: rpcUrl,
+      signer: proposerPrivateKey,
       safeAddress: safeAddress,
     });
 
@@ -74,9 +67,8 @@ async function run() {
       )}`
     );
 
-    // Debug: Log API Kit state
-    core.info(`🔧 API Kit chainId: ${apiKit.chainId}`);
-    core.info(`🔧 API Kit txServiceUrl: ${apiKit.txServiceUrl}`);
+    // Debug: API Kit initialized successfully
+    core.info(`🔧 API Kit initialized for chainId: ${chainId}`);
 
     // Propose transaction to the service
     await apiKit.proposeTransaction({
