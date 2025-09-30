@@ -1,8 +1,9 @@
 const core = require('@actions/core');
 const SafeApiKit = require('@safe-global/api-kit').default;
 const Safe = require('@safe-global/protocol-kit').default;
+const { EthersAdapter } = require('@safe-global/protocol-kit');
 const { OperationType } = require('@safe-global/types-kit');
-const { Wallet } = require('ethers');
+const { Wallet, JsonRpcProvider, ethers } = require('ethers');
 
 async function run() {
   try {
@@ -20,9 +21,16 @@ async function run() {
     core.info(`📍 Safe Address: ${safeAddress}`);
     core.info(`🎯 Target Address: ${transactionTargetAddress}`);
 
-    // Initialize wallet
-    const wallet = new Wallet(proposerPrivateKey);
+    // Initialize wallet and provider
+    const provider = new JsonRpcProvider(rpcUrl);
+    const wallet = new Wallet(proposerPrivateKey, provider);
     core.info(`👤 Proposer Address: ${wallet.address}`);
+
+    // Initialize EthAdapter
+    const ethAdapter = new EthersAdapter({
+      ethers,
+      signerOrProvider: wallet,
+    });
 
     // Initialize API Kit
     const apiKit = new SafeApiKit({
@@ -32,8 +40,7 @@ async function run() {
 
     // Initialize Protocol Kit
     const protocolKit = await Safe.create({
-      provider: rpcUrl,
-      signer: proposerPrivateKey,
+      ethAdapter,
       safeAddress: safeAddress,
     });
 
