@@ -1,9 +1,9 @@
 const core = require('@actions/core');
 const SafeApiKit = require('@safe-global/api-kit').default;
 const Safe = require('@safe-global/protocol-kit').default;
-const { EthersAdapter } = require('@safe-global/protocol-kit');
+const { EthersAdapter } = require("@safe-global/protocol-kit");
 const { OperationType } = require('@safe-global/types-kit');
-const { Wallet, JsonRpcProvider, ethers } = require('ethers');
+const { Wallet, JsonRpcProvider, ethers } = require("ethers");
 
 async function run() {
   try {
