@@ -31,7 +31,7 @@ async function run() {
     });
 
     // Initialize Protocol Kit
-    const protocolKit = await Safe.init({
+    const protocolKit = await Safe.create({
       provider: rpcUrl,
       signer: proposerPrivateKey,
       safeAddress: safeAddress,
