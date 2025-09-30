@@ -36,8 +36,10 @@ async function run() {
     const apiKit = new SafeApiKit({
       chainId: chainId,
       apiKey: safeApiKey,
-      txServiceUrl: `https://safe-transaction-arbitrum.safe.global`,
     });
+
+    // Debug: Test API Kit initialization
+    core.info(`🔧 API Kit initialized with chainId: ${chainId}`);
 
     // Initialize Protocol Kit
     const protocolKit = await Safe.create({
