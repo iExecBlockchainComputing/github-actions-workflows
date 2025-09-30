@@ -36,6 +36,7 @@ async function run() {
     const apiKit = new SafeApiKit({
       chainId: chainId,
       apiKey: safeApiKey,
+      txServiceUrl: `https://safe-transaction-arbitrum.safe.global`,
     });
 
     // Initialize Protocol Kit
