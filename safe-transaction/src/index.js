@@ -66,7 +66,17 @@ async function run() {
     core.info(`🔐 Transaction signed with hash: ${safeTxHash}`);
 
     // Debug: Log transaction data structure
-    core.info(`📋 Safe Transaction Data: ${JSON.stringify(safeTransaction.data, null, 2)}`);
+    core.info(
+      `📋 Safe Transaction Data: ${JSON.stringify(
+        safeTransaction.data,
+        null,
+        2
+      )}`
+    );
+
+    // Debug: Log API Kit state
+    core.info(`🔧 API Kit chainId: ${apiKit.chainId}`);
+    core.info(`🔧 API Kit txServiceUrl: ${apiKit.txServiceUrl}`);
 
     // Propose transaction to the service
     await apiKit.proposeTransaction({
@@ -75,7 +85,7 @@ async function run() {
       safeTxHash: safeTxHash,
       senderAddress: wallet.address,
       senderSignature: signature.data,
-      origin: 'GitHub Actions Safe Transaction Workflow',
+      origin: "GitHub Actions Safe Transaction Workflow",
     });
 
     core.info("📤 Transaction proposed to Safe service");
