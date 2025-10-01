@@ -11,7 +11,7 @@ async function run() {
     const rpcUrl = process.env.INPUT_RPC_URL;
     const chainId = process.env.INPUT_CHAIN_ID || "42161"; // Default to Arbitrum
     const safeAddress = process.env.INPUT_SAFE_ADDRESS;
-    const transactionTargetAddress = process.env.INPUT_TARGET_ADDRESS;
+    const transactionTo = process.env.INPUT_TRANSACTION_TO;
     const safeApiKey = process.env.INPUT_SAFE_API_KEY;
     const transactionValue = process.env.INPUT_TRANSACTION_VALUE || "0";
     const transactionData = process.env.INPUT_TRANSACTION_DATA || "0x";
@@ -21,7 +21,7 @@ async function run() {
       !proposerPrivateKey ||
       !rpcUrl ||
       !safeAddress ||
-      !transactionTargetAddress ||
+      !transactionTo ||
       !safeApiKey
     ) {
       throw new Error("Missing required environment variables");
@@ -30,7 +30,7 @@ async function run() {
     core.info(`🚀 Starting Safe transaction proposal...`);
     core.info(`🌐 Chain ID: ${chainId}`);
     core.info(`📍 Safe Address: ${safeAddress}`);
-    core.info(`🎯 Target Address: ${transactionTargetAddress}`);
+    core.info(`🎯 Target Address: ${transactionTo}`);
 
     // Initialize wallet
     const wallet = new Wallet(proposerPrivateKey);
@@ -53,7 +53,7 @@ async function run() {
 
     // Create transaction
     const safeTransactionData: MetaTransactionData = {
-      to: transactionTargetAddress,
+      to: transactionTo,
       value: transactionValue,
       data: transactionData,
       operation: OperationType.Call,

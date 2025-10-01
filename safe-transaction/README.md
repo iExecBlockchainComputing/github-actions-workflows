@@ -12,7 +12,7 @@ This reusable GitHub Actions workflow automates the process of creating and prop
 | **rpc-url**              | RPC URL for the blockchain network                            | Yes          | -                                   |
 | **chain-id**             | Chain ID of the blockchain network                            | No           | `42161` (Arbitrum)                  |
 | **safe-address**         | Address of the Safe contract                                  | Yes          | -                                   |
-| **transaction-target-address** | Target address for the transaction                            | Yes          | -                                   |
+| **transaction-to**       | Target address for the transaction                            | Yes          | -                                   |
 | **safe-api-key**         | Safe API key for transaction service                          | Yes          | -                                   |
 | **transaction-value**    | Value to send in the transaction (in wei)                     | No           | `0`                                 |
 | **transaction-data**     | Transaction data/calldata                                     | No           | `0x`                                |
@@ -44,7 +44,7 @@ This reusable GitHub Actions workflow automates the process of creating and prop
          safe-address:
            description: 'Safe contract address'
            required: true
-         transaction-target-address:
+         transaction-to:
            description: 'Target contract address'
            required: true
          chain-id:
@@ -65,7 +65,7 @@ This reusable GitHub Actions workflow automates the process of creating and prop
          safe-api-key: ${{ secrets.SAFE_API_KEY }}
        with:
          safe-address: ${{ inputs.safe-address }}
-         transaction-target-address: ${{ inputs.transaction-target-address }}
+         transaction-to: ${{ inputs.transaction-to }}
          chain-id: ${{ inputs.chain-id }}
          transaction-data: ${{ inputs.transaction-data }}
    ```
