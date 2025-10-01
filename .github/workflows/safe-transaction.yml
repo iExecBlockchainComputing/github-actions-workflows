@@ -14,11 +14,6 @@ on:
         description: 'Target address for the transaction'
         required: true
         type: string
-      chain-id:
-        description: 'Chain ID of the blockchain network (default: 42161 for Arbitrum)'
-        required: false
-        default: '42161'
-        type: string
       transaction-value:
         description: 'Value to send in the transaction (in wei, default: 0)'
         required: false
@@ -81,7 +76,6 @@ jobs:
           INPUT_RPC_URL: ${{ inputs.rpc-url }}
           INPUT_SAFE_ADDRESS: ${{ inputs.safe-address }}
           INPUT_TARGET_ADDRESS: ${{ inputs.transaction-target-address }}
-          INPUT_CHAIN_ID: ${{ inputs.chain-id }}
           INPUT_TRANSACTION_VALUE: ${{ inputs.transaction-value }}
           INPUT_TRANSACTION_DATA: ${{ inputs.transaction-data }}
         id: safe-transaction

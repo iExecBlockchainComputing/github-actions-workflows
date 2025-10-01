@@ -13,7 +13,6 @@ This reusable GitHub Actions workflow automates the process of creating and prop
 | **safe-address**         | Address of the Safe contract                                  | Yes          | -                                   |
 | **transaction-target-address** | Target address for the transaction                            | Yes          | -                                   |
 | **safe-api-key**         | Safe API key for transaction service                          | Yes          | -                                   |
-| **chain-id**             | Chain ID of the blockchain network                            | No           | `42161` (Arbitrum)                  |
 | **transaction-value**    | Value to send in the transaction (in wei)                     | No           | `0`                                 |
 | **transaction-data**     | Transaction data/calldata                                     | No           | `0x`                                |
 
