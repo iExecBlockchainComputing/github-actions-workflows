@@ -10,6 +10,7 @@ This reusable GitHub Actions workflow automates the process of creating and prop
 | ------------------------ | ------------------------------------------------------------- | ------------ | ----------------------------------- |
 | **proposer-private-key** | Private key of the proposer wallet                           | Yes          | -                                   |
 | **rpc-url**              | RPC URL for the blockchain network                            | Yes          | -                                   |
+| **chain-id**             | Chain ID of the blockchain network                            | No           | `42161` (Arbitrum)                  |
 | **safe-address**         | Address of the Safe contract                                  | Yes          | -                                   |
 | **transaction-target-address** | Target address for the transaction                            | Yes          | -                                   |
 | **safe-api-key**         | Safe API key for transaction service                          | Yes          | -                                   |
@@ -46,6 +47,10 @@ This reusable GitHub Actions workflow automates the process of creating and prop
          transaction-target-address:
            description: 'Target contract address'
            required: true
+         chain-id:
+           description: 'Chain ID (e.g., 1 for Ethereum, 42161 for Arbitrum)'
+           required: false
+           default: '42161'
          transaction-data:
            description: 'Transaction data (0x prefixed)'
            required: false
@@ -61,6 +66,7 @@ This reusable GitHub Actions workflow automates the process of creating and prop
        with:
          safe-address: ${{ inputs.safe-address }}
          transaction-target-address: ${{ inputs.transaction-target-address }}
+         chain-id: ${{ inputs.chain-id }}
          transaction-data: ${{ inputs.transaction-data }}
    ```
 

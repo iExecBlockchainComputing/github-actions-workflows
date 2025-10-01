@@ -9,6 +9,7 @@ async function run() {
     // Get inputs from environment variables
     const proposerPrivateKey = process.env.INPUT_PROPOSER_PRIVATE_KEY;
     const rpcUrl = process.env.INPUT_RPC_URL;
+    const chainId = process.env.INPUT_CHAIN_ID || "42161"; // Default to Arbitrum
     const safeAddress = process.env.INPUT_SAFE_ADDRESS;
     const transactionTargetAddress = process.env.INPUT_TARGET_ADDRESS;
     const safeApiKey = process.env.INPUT_SAFE_API_KEY;
@@ -27,6 +28,7 @@ async function run() {
     }
 
     core.info(`🚀 Starting Safe transaction proposal...`);
+    core.info(`🌐 Chain ID: ${chainId}`);
     core.info(`📍 Safe Address: ${safeAddress}`);
     core.info(`🎯 Target Address: ${transactionTargetAddress}`);
 
@@ -36,7 +38,7 @@ async function run() {
 
     // Initialize API Kit
     const apiKit = new SafeApiKit({
-      chainId: 42161n, // Arbitrum
+      chainId: BigInt(chainId),
       apiKey: safeApiKey,
     });
 
