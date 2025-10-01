@@ -6,6 +6,11 @@ on:
         description: 'RPC URL for the blockchain network'
         required: true
         type: string
+      chain-id:
+        description: 'Chain ID of the blockchain network (default: 42161 for Arbitrum)'
+        required: false
+        default: '42161'
+        type: string
       safe-address:
         description: 'Address of the Safe contract'
         required: true
@@ -13,11 +18,6 @@ on:
       transaction-target-address:
         description: 'Target address for the transaction'
         required: true
-        type: string
-      chain-id:
-        description: 'Chain ID of the blockchain network (default: 42161 for Arbitrum)'
-        required: false
-        default: '42161'
         type: string
       transaction-value:
         description: 'Value to send in the transaction (in wei, default: 0)'
