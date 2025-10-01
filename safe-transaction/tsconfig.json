@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
+    "module": "commonjs",
     "target": "ES2022",
     "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
