@@ -35,13 +35,13 @@ async function run() {
     core.info(`🔑 Proposer Address: ${wallet.address}`);
 
     // Initialize API Kit
-    const apiKit = new SafeApiKit({
+    const apiKit = new SafeApiKit.default({
       chainId: 42161n, // Arbitrum
       apiKey: safeApiKey,
     });
 
     // Initialize Protocol Kit
-    const protocolKit = await Safe.create({
+    const protocolKit = await Safe.default.init({
       provider: rpcUrl,
       signer: proposerPrivateKey,
       safeAddress: safeAddress,
