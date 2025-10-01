@@ -78,6 +78,7 @@ async function run() {
       safeTxHash: safeTxHash,
       senderAddress: wallet.address,
       senderSignature: signature.data,
+      origin: "GitHub Action - Safe Transaction",
     });
 
     core.info("📤 Transaction proposed to Safe service");
