@@ -5,9 +5,10 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
-    "esModuleInterop": true,
     "moduleResolution": "nodenext",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

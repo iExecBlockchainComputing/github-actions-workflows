@@ -1,5 +1,8 @@
 import * as core from '@actions/core';
-import { createSafeClient } from '@safe-global/sdk-starter-kit';
+import SafeApiKit from "@safe-global/api-kit";
+import Safe from "@safe-global/protocol-kit";
+import { OperationType, MetaTransactionData } from "@safe-global/types-kit";
+import { Wallet } from "ethers";
 
 async function run() {
   try {
@@ -13,54 +16,88 @@ async function run() {
     const transactionData = process.env.INPUT_TRANSACTION_DATA || "0x";
 
     // Validate required inputs
-    if (!proposerPrivateKey || !rpcUrl || !safeAddress || !transactionTargetAddress || !safeApiKey) {
-      throw new Error('Missing required environment variables');
+    if (
+      !proposerPrivateKey ||
+      !rpcUrl ||
+      !safeAddress ||
+      !transactionTargetAddress ||
+      !safeApiKey
+    ) {
+      throw new Error("Missing required environment variables");
     }
 
-    core.info(`🚀 Starting Safe transaction creation...`);
+    core.info(`🚀 Starting Safe transaction proposal...`);
     core.info(`📍 Safe Address: ${safeAddress}`);
     core.info(`🎯 Target Address: ${transactionTargetAddress}`);
 
-    // Initialize Safe Client
-    const safeClient = await createSafeClient({
+    // Initialize wallet
+    const wallet = new Wallet(proposerPrivateKey);
+    core.info(`🔑 Proposer Address: ${wallet.address}`);
+
+    // Initialize API Kit
+    const apiKit = new SafeApiKit({
+      chainId: 42161n, // Arbitrum
+      apiKey: safeApiKey,
+    });
+
+    // Initialize Protocol Kit
+    const protocolKit = await Safe.create({
       provider: rpcUrl,
       signer: proposerPrivateKey,
       safeAddress: safeAddress,
     });
 
-    core.info(`👤 Safe Client initialized for Safe: ${safeAddress}`);
+    core.info(`👤 Safe initialized for: ${safeAddress}`);
 
     // Create transaction
-    const transactions = [{
+    const safeTransactionData: MetaTransactionData = {
       to: transactionTargetAddress,
       value: transactionValue,
       data: transactionData,
-    }];
+      operation: OperationType.Call,
+    };
 
     core.info("📝 Creating Safe transaction...");
 
-    // Send the Safe transaction
-    const txResult = await safeClient.send({ transactions });
-    const safeTxHash = txResult.transactions?.safeTxHash;
+    // Create the transaction
+    const safeTransaction = await protocolKit.createTransaction({
+      transactions: [safeTransactionData],
+    });
 
-    core.info(`🔐 Transaction sent with hash: ${safeTxHash}`);
+    const safeTxHash = await protocolKit.getTransactionHash(safeTransaction);
+    const signature = await protocolKit.signHash(safeTxHash);
 
-    // Get transaction details from txResult
-    const transaction = txResult;
+    core.info(`🔐 Transaction signed with hash: ${safeTxHash}`);
+
+    // Propose transaction to the service
+    await apiKit.proposeTransaction({
+      safeAddress: safeAddress,
+      safeTransactionData: safeTransaction.data,
+      safeTxHash: safeTxHash,
+      senderAddress: wallet.address,
+      senderSignature: signature.data,
+    });
+
+    core.info("📤 Transaction proposed to Safe service");
+
+    // Get transaction details
+    const transaction = await apiKit.getTransaction(safeTxHash);
 
     // Set outputs
     core.setOutput("safe-tx-hash", safeTxHash);
     core.setOutput("transaction", JSON.stringify(transaction));
 
-    core.info(`✅ Transaction created successfully!`);
+    core.info(`✅ Transaction proposed successfully!`);
     core.info(`🔗 Transaction Hash: ${safeTxHash}`);
+    core.info(`⏳ Waiting for other owners to sign and execute...`);
     core.info(
       `📋 Transaction Details: ${JSON.stringify(transaction, null, 2)}`
     );
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     const errorStack = error instanceof Error ? error.stack : undefined;
-    core.setFailed(`❌ Error creating Safe transaction: ${errorMessage}`);
+    core.setFailed(`❌ Error proposing Safe transaction: ${errorMessage}`);
     if (errorStack) {
       core.error(errorStack);
     }
