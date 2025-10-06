@@ -11,7 +11,7 @@ on:
         required: true
         type: string
       transaction-to:
-        description: 'Target address for the transaction'
+        description: 'Target address of the transaction'
         required: true
         type: string
       transaction-value:
