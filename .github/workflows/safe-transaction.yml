@@ -34,9 +34,9 @@ on:
       safe-tx-hash:
         description: 'Hash of the Safe transaction'
         value: ${{ jobs.propose-transaction.outputs.safe-tx-hash }}
-      transaction:
+      tx-details:
         description: 'Created transaction details'
-        value: ${{ jobs.propose-transaction.outputs.transaction }}
+        value: ${{ jobs.propose-transaction.outputs.tx-details }}
 
 jobs:
   propose-transaction:
