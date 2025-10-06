@@ -1,0 +1,78 @@
+name: 'Propose Safe Multisig Transaction'
+on:
+  workflow_call:
+    inputs:
+      rpc-url:
+        description: 'RPC URL for the blockchain network'
+        required: true
+        type: string
+      safe-address:
+        description: 'Address of the Safe contract'
+        required: true
+        type: string
+      transaction-to:
+        description: 'Target address of the transaction'
+        required: true
+        type: string
+      transaction-value:
+        description: 'Value to send in the transaction (in wei, default: 0)'
+        required: false
+        default: '0'
+        type: string
+      transaction-data:
+        description: 'Transaction data/calldata'
+        required: true
+        type: string
+    secrets:
+      safe-proposer-private-key:
+        description: 'Private key of the proposer wallet'
+        required: true
+      safe-api-key:
+        description: 'Safe API key for transaction service'
+        required: true
+    outputs:
+      tx-hash:
+        description: 'Hash of the Safe transaction'
+        value: ${{ jobs.propose-transaction.outputs.tx-hash }}
+      tx-details:
+        description: 'Created transaction details'
+        value: ${{ jobs.propose-transaction.outputs.tx-details }}
+
+jobs:
+  propose-transaction:
+    runs-on: ubuntu-latest
+    outputs:
+      tx-hash: ${{ steps.safe-transaction.outputs.tx-hash }}
+      tx-details: ${{ steps.safe-transaction.outputs.tx-details }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: iExecBlockchainComputing/github-actions-workflows
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./propose-safe-multisig-tx
+
+      - name: Build action
+        run: npm run build
+        working-directory: ./propose-safe-multisig-tx
+
+      - name: Propose Safe Transaction
+        run: npm run propose
+        working-directory: ./propose-safe-multisig-tx
+        env:
+          RPC_URL: ${{ inputs.rpc-url }}
+          SAFE_ADDRESS: ${{ inputs.safe-address }}
+          TRANSACTION_TO: ${{ inputs.transaction-to }}
+          TRANSACTION_VALUE: ${{ inputs.transaction-value }}
+          TRANSACTION_DATA: ${{ inputs.transaction-data }}
+          SAFE_PROPOSER_PRIVATE_KEY: ${{ secrets.safe-proposer-private-key }}
+          SAFE_API_KEY: ${{ secrets.safe-api-key }}
+        id: safe-transaction

@@ -25,6 +25,9 @@ Provides a standardized workflow for building, testing, and publishing Rust pack
 ### 🧹 [Stale Issues and PRs](./stale)
 Automatically identifies and closes stale issues and pull requests to maintain a clean and focused repository. Helps your team concentrate on active work items and reduces maintenance overhead.
 
+### 🛡️ [Safe Multisig Transaction Proposer](./propose-safe-multisig-tx)
+Automates the process of proposing transactions to a Safe multi-signature wallet (Gnosis Safe). Features smart chain detection, comprehensive validation, and secure transaction handling for blockchain operations.
+
 ## 🔧 Usage
 
 Each workflow has its own detailed documentation in its respective directory. The comprehensive documentation includes:
