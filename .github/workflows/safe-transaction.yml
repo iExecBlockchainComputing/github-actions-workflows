@@ -20,9 +20,8 @@ on:
         default: '0'
         type: string
       transaction-data:
-        description: 'Transaction data/calldata (default: 0x)'
-        required: false
-        default: '0x'
+        description: 'Transaction data/calldata'
+        required: true
         type: string
     secrets:
       proposer-private-key:
