@@ -1,4 +1,4 @@
-name: 'Safe Transaction Proposer'
+name: 'Propose Safe Multisig Transaction'
 on:
   workflow_call:
     inputs:
