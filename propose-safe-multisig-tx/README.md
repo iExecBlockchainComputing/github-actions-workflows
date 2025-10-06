@@ -12,7 +12,7 @@ This reusable GitHub Actions workflow automates the process of proposing transac
 | **safe-address**         | Address of the Safe contract                                  | Yes          | -                                   |
 | **transaction-to**       | Target address for the transaction                            | Yes          | -                                   |
 | **transaction-value**    | Value to send in the transaction (in wei)                     | No           | `0`                                 |
-| **transaction-data**     | Transaction data/calldata                                     | No           | `0x`                                |
+| **transaction-data**     | Transaction data/calldata                                     | Yes           | -                                |
 | **safe-proposer-private-key** | Private key of the proposer wallet                           | Yes (Secret) | -                                   |
 | **safe-api-key**         | Safe API key for transaction service                          | Yes (Secret) | -                                   |
 
