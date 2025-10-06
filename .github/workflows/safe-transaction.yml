@@ -68,7 +68,7 @@ jobs:
         working-directory: ./safe-transaction
 
       - name: Propose Safe Transaction
-        run: node dist/index.js
+        run: npm run propose
         working-directory: ./safe-transaction
         env:
           INPUT_PROPOSER_PRIVATE_KEY: ${{ secrets.proposer-private-key }}
