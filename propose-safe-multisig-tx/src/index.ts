@@ -9,13 +9,13 @@ import { env } from "./env.js";
 async function run() {
   // Environment variables are already validated and parsed
   const {
-    PROPOSER_PRIVATE_KEY: proposerPrivateKey,
     RPC_URL: rpcUrl,
     SAFE_ADDRESS: safeAddress,
     TRANSACTION_TO: transactionTo,
-    SAFE_API_KEY: safeApiKey,
     TRANSACTION_VALUE: transactionValue,
     TRANSACTION_DATA: transactionData,
+    SAFE_PROPOSER_PRIVATE_KEY: safeProposerPrivateKey,
+    SAFE_API_KEY: safeApiKey,
   } = env;
 
   core.info(`🚀 Starting Safe transaction proposal...`);
@@ -23,7 +23,7 @@ async function run() {
   core.info(`🎯 Target Address: ${transactionTo}`);
 
   // Initialize wallet
-  const account = privateKeyToAccount(proposerPrivateKey as `0x${string}`);
+  const account = privateKeyToAccount(safeProposerPrivateKey as `0x${string}`);
   core.info(`🔑 Proposer Address: ${account.address}`);
 
   // Detect chainId from RPC
@@ -43,7 +43,7 @@ async function run() {
   // Initialize Protocol Kit
   const protocolKit = await Safe.init({
     provider: rpcUrl,
-    signer: proposerPrivateKey,
+    signer: safeProposerPrivateKey,
     safeAddress: safeAddress,
   });
 

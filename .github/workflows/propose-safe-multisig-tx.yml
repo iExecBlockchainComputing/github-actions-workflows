@@ -70,11 +70,11 @@ jobs:
         run: npm run propose
         working-directory: ./propose-safe-multisig-tx
         env:
-          PROPOSER_PRIVATE_KEY: ${{ secrets.safe-proposer-private-key }}
-          SAFE_API_KEY: ${{ secrets.safe-api-key }}
           RPC_URL: ${{ inputs.rpc-url }}
           SAFE_ADDRESS: ${{ inputs.safe-address }}
           TRANSACTION_TO: ${{ inputs.transaction-to }}
           TRANSACTION_VALUE: ${{ inputs.transaction-value }}
           TRANSACTION_DATA: ${{ inputs.transaction-data }}
+          SAFE_PROPOSER_PRIVATE_KEY: ${{ secrets.safe-proposer-private-key }}
+          SAFE_API_KEY: ${{ secrets.safe-api-key }}
         id: safe-transaction

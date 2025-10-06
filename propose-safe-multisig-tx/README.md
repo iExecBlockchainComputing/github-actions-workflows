@@ -10,13 +10,13 @@ This reusable GitHub Actions workflow automates the process of proposing transac
 
 | **Input**                | **Description**                                               | **Required** | **Default**                         |
 | ------------------------ | ------------------------------------------------------------- | ------------ | ----------------------------------- |
-| **proposer-private-key** | Private key of the proposer wallet                           | Yes          | -                                   |
 | **rpc-url**              | RPC URL for the blockchain network                            | Yes          | -                                   |
 | **safe-address**         | Address of the Safe contract                                  | Yes          | -                                   |
 | **transaction-to**       | Target address for the transaction                            | Yes          | -                                   |
-| **safe-api-key**         | Safe API key for transaction service                          | Yes          | -                                   |
 | **transaction-value**    | Value to send in the transaction (in wei)                     | No           | `0`                                 |
 | **transaction-data**     | Transaction data/calldata                                     | No           | `0x`                                |
+| **safe-proposer-private-key** | Private key of the proposer wallet                           | Yes (Secret) | -                                   |
+| **safe-api-key**         | Safe API key for transaction service                          | Yes (Secret) | -                                   |
 
 ## Workflow Outputs 📤
 
@@ -24,13 +24,6 @@ This reusable GitHub Actions workflow automates the process of proposing transac
 | ----------------- | ----------------------------------------- |
 | **tx-hash**       | Hash of the Safe transaction created      |
 | **tx-details**    | Complete transaction details (JSON)       |
-
-## Secrets 🔐
-
-| **Secret**                    | **Description**                                    | **Required** |
-| ----------------------------- | -------------------------------------------------- | ------------ |
-| **SAFE_PROPOSER_PRIVATE_KEY** | Private key of the proposer wallet                 | Yes          |
-| **SAFE_API_KEY**              | Safe API key for transaction service               | Yes          |
 
 ## How to Use This Reusable Workflow 🔄
 
@@ -61,9 +54,9 @@ This reusable GitHub Actions workflow automates the process of proposing transac
          safe-api-key: ${{ secrets.SAFE_API_KEY }}
        with:
          rpc-url: ${{ vars.RPC_URL }}
-       with:
          safe-address: ${{ inputs.safe-address }}
          transaction-to: ${{ inputs.transaction-to }}
+         transaction-value: ${{ inputs.transaction-value }}
          transaction-data: ${{ inputs.transaction-data }}
    ```
 
