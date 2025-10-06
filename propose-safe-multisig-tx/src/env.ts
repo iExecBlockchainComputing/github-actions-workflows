@@ -45,7 +45,8 @@ const envSchema = z.object({
   SAFE_PROPOSER_PRIVATE_KEY: z
     .string()
     .regex(privateKeyRegex, "Invalid private key format")
-    .min(1, "Safe proposer private key is required"),
+    .min(1, "Safe proposer private key is required")
+    .transform((val) => (val.startsWith("0x") ? val : `0x${val}`)),
 
   // Safe API key for transaction service
   SAFE_API_KEY: z.string().min(1, "Safe API key is required"),
