@@ -64,7 +64,7 @@ async function run() {
   const safeTxHash = await protocolKit.getTransactionHash(safeTransaction);
   const signature = await protocolKit.signHash(safeTxHash);
 
-  core.info(`🔐 Transaction signed with hash: ${safeTxHash}`);
+  core.info(`🔐 Transaction signed - hash: ${safeTxHash}`);
 
   // Propose transaction to the service
   await apiKit.proposeTransaction({
