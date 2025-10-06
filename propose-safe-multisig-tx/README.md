@@ -29,33 +29,23 @@ This reusable GitHub Actions workflow automates the process of proposing transac
    In another workflow file, invoke this reusable workflow like so:
 
    ```yaml
-   name: Propose Safe Transaction
-   on:
-     workflow_dispatch:
-       inputs:
-         safe-address:
-           description: 'Safe contract address'
-           required: true
-         transaction-to:
-           description: 'Target contract address'
-           required: true
-         transaction-data:
-           description: 'Transaction data (0x prefixed)'
-           required: false
-           default: '0x'
+    name: Upgrade contract
 
-   jobs:
-     safe-transaction:
-       uses: ./.github/workflows/propose-safe-multisig-tx.yml
-       secrets:
-         safe-proposer-private-key: ${{ secrets.SAFE_PROPOSER_PRIVATE_KEY }}
-         safe-api-key: ${{ secrets.SAFE_API_KEY }}
-       with:
-         rpc-url: ${{ vars.RPC_URL }}
-         safe-address: ${{ inputs.safe-address }}
-         transaction-to: ${{ inputs.transaction-to }}
-         transaction-value: ${{ inputs.transaction-value }}
-         transaction-data: ${{ inputs.transaction-data }}
+    on:
+      workflow_dispatch:
+
+    jobs:
+      upgrade:
+        uses: ./.github/workflows/propose-safe-multisig-tx.yml
+        secrets:
+          safe-proposer-private-key: ${{ secrets.SAFE_PROPOSER_PRIVATE_KEY }}
+          safe-api-key: ${{ secrets.SAFE_API_KEY }}
+        with:
+          rpc-url: 'https://...'
+          safe-address: '0xab...'
+          transaction-to: '0xcd...'
+          transaction-value: '0'
+          transaction-data: '0xef' # Upgrade transaction calldata
    ```
 
 2. **Configure Secrets**  
