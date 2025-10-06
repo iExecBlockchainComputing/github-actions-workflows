@@ -27,12 +27,10 @@ async function run() {
   core.info(`🔑 Proposer Address: ${account.address}`);
 
   // Detect chainId from RPC
-  core.info(`🔍 Detecting chain ID from RPC...`);
   const publicClient = createPublicClient({
     transport: http(rpcUrl),
   });
   const chainId = await publicClient.getChainId();
-  core.info(`🌐 Detected Chain ID: ${chainId.toString()}`);
 
   // Initialize API Kit
   const apiKit = new SafeApiKit({
@@ -59,7 +57,6 @@ async function run() {
 
   core.info("📝 Creating Safe transaction...");
 
-  // Create the transaction
   const safeTransaction = await protocolKit.createTransaction({
     transactions: [safeTransactionData],
   });

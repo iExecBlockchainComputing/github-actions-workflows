@@ -4,8 +4,6 @@
 
 This reusable GitHub Actions workflow automates the process of proposing transactions to a Safe multi-signature wallet (Gnosis Safe). It handles the proposal submission, making it easy to integrate Safe transactions into your CI/CD pipeline.
 
-**🤖 Smart Chain Detection**: The workflow automatically detects the blockchain network's Chain ID from the provided RPC URL, eliminating the need to manually specify it.
-
 ## Workflow Inputs 🛠️
 
 | **Input**                | **Description**                                               | **Required** | **Default**                         |
