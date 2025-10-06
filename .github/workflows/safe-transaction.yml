@@ -31,9 +31,9 @@ on:
         description: 'Safe API key for transaction service'
         required: true
     outputs:
-      safe-tx-hash:
+      tx-hash:
         description: 'Hash of the Safe transaction'
-        value: ${{ jobs.propose-transaction.outputs.safe-tx-hash }}
+        value: ${{ jobs.propose-transaction.outputs.tx-hash }}
       tx-details:
         description: 'Created transaction details'
         value: ${{ jobs.propose-transaction.outputs.tx-details }}
