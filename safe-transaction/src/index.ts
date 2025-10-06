@@ -2,7 +2,8 @@ import * as core from '@actions/core';
 import SafeApiKit from "@safe-global/api-kit";
 import Safe from "@safe-global/protocol-kit";
 import { OperationType, MetaTransactionData } from "@safe-global/types-kit";
-import { Wallet, JsonRpcProvider } from "ethers";
+import { createPublicClient, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 
 async function run() {
   try {
@@ -31,15 +32,16 @@ async function run() {
     core.info(`🎯 Target Address: ${transactionTo}`);
 
     // Initialize wallet
-    const wallet = new Wallet(proposerPrivateKey);
-    core.info(`🔑 Proposer Address: ${wallet.address}`);
+    const account = privateKeyToAccount(proposerPrivateKey as `0x${string}`);
+    core.info(`🔑 Proposer Address: ${account.address}`);
 
     // Detect chainId from RPC
     core.info(`🔍 Detecting chain ID from RPC...`);
-    const provider = new JsonRpcProvider(rpcUrl);
-    const network = await provider.getNetwork();
-    const chainId = network.chainId.toString();
-    core.info(`🌐 Detected Chain ID: ${chainId}`);
+    const publicClient = createPublicClient({
+      transport: http(rpcUrl),
+    });
+    const chainId = await publicClient.getChainId();
+    core.info(`🌐 Detected Chain ID: ${chainId.toString()}`);
 
     // Initialize API Kit
     const apiKit = new SafeApiKit({
@@ -81,7 +83,7 @@ async function run() {
       safeAddress: safeAddress,
       safeTransactionData: safeTransaction.data,
       safeTxHash: safeTxHash,
-      senderAddress: wallet.address,
+      senderAddress: account.address,
       senderSignature: signature.data,
       origin: "GitHub Action - Safe Transaction",
     });
