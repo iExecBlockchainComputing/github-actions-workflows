@@ -2,7 +2,7 @@
 
 ## Overview 🌟
 
-This reusable GitHub Actions workflow automates the process of creating and proposing transactions to a Safe multi-signature wallet (Gnosis Safe). It handles the complete transaction lifecycle from creation to proposal submission, making it easy to integrate Safe transactions into your CI/CD pipeline.
+This reusable GitHub Actions workflow automates the process of proposing transactions to a Safe multi-signature wallet (Gnosis Safe). It handles the proposal submission, making it easy to integrate Safe transactions into your CI/CD pipeline.
 
 ## Workflow Inputs 🛠️
 
