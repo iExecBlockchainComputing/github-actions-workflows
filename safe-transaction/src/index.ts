@@ -2,14 +2,13 @@ import * as core from '@actions/core';
 import SafeApiKit from "@safe-global/api-kit";
 import Safe from "@safe-global/protocol-kit";
 import { OperationType, MetaTransactionData } from "@safe-global/types-kit";
-import { Wallet } from "ethers";
+import { Wallet, JsonRpcProvider } from "ethers";
 
 async function run() {
   try {
     // Get inputs from environment variables
     const proposerPrivateKey = process.env.INPUT_PROPOSER_PRIVATE_KEY;
     const rpcUrl = process.env.INPUT_RPC_URL;
-    const chainId = process.env.INPUT_CHAIN_ID || "42161"; // Default to Arbitrum
     const safeAddress = process.env.INPUT_SAFE_ADDRESS;
     const transactionTo = process.env.INPUT_TRANSACTION_TO;
     const safeApiKey = process.env.INPUT_SAFE_API_KEY;
@@ -28,13 +27,19 @@ async function run() {
     }
 
     core.info(`🚀 Starting Safe transaction proposal...`);
-    core.info(`🌐 Chain ID: ${chainId}`);
     core.info(`📍 Safe Address: ${safeAddress}`);
     core.info(`🎯 Target Address: ${transactionTo}`);
 
     // Initialize wallet
     const wallet = new Wallet(proposerPrivateKey);
     core.info(`🔑 Proposer Address: ${wallet.address}`);
+
+    // Detect chainId from RPC
+    core.info(`🔍 Detecting chain ID from RPC...`);
+    const provider = new JsonRpcProvider(rpcUrl);
+    const network = await provider.getNetwork();
+    const chainId = network.chainId.toString();
+    core.info(`🌐 Detected Chain ID: ${chainId}`);
 
     // Initialize API Kit
     const apiKit = new SafeApiKit({

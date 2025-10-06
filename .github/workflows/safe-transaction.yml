@@ -6,11 +6,6 @@ on:
         description: 'RPC URL for the blockchain network'
         required: true
         type: string
-      chain-id:
-        description: 'Chain ID of the blockchain network (default: 42161 for Arbitrum)'
-        required: false
-        default: '42161'
-        type: string
       safe-address:
         description: 'Address of the Safe contract'
         required: true
@@ -81,7 +76,6 @@ jobs:
           INPUT_RPC_URL: ${{ inputs.rpc-url }}
           INPUT_SAFE_ADDRESS: ${{ inputs.safe-address }}
           INPUT_TRANSACTION_TO: ${{ inputs.transaction-to }}
-          INPUT_CHAIN_ID: ${{ inputs.chain-id }}
           INPUT_TRANSACTION_VALUE: ${{ inputs.transaction-value }}
           INPUT_TRANSACTION_DATA: ${{ inputs.transaction-data }}
         id: safe-transaction

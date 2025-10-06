@@ -4,13 +4,14 @@
 
 This reusable GitHub Actions workflow automates the process of proposing transactions to a Safe multi-signature wallet (Gnosis Safe). It handles the proposal submission, making it easy to integrate Safe transactions into your CI/CD pipeline.
 
+**🤖 Smart Chain Detection**: The workflow automatically detects the blockchain network's Chain ID from the provided RPC URL, eliminating the need to manually specify it.
+
 ## Workflow Inputs 🛠️
 
 | **Input**                | **Description**                                               | **Required** | **Default**                         |
 | ------------------------ | ------------------------------------------------------------- | ------------ | ----------------------------------- |
 | **proposer-private-key** | Private key of the proposer wallet                           | Yes          | -                                   |
 | **rpc-url**              | RPC URL for the blockchain network                            | Yes          | -                                   |
-| **chain-id**             | Chain ID of the blockchain network                            | No           | `42161` (Arbitrum)                  |
 | **safe-address**         | Address of the Safe contract                                  | Yes          | -                                   |
 | **transaction-to**       | Target address for the transaction                            | Yes          | -                                   |
 | **safe-api-key**         | Safe API key for transaction service                          | Yes          | -                                   |
@@ -47,10 +48,6 @@ This reusable GitHub Actions workflow automates the process of proposing transac
          transaction-to:
            description: 'Target contract address'
            required: true
-         chain-id:
-           description: 'Chain ID (e.g., 1 for Ethereum, 42161 for Arbitrum)'
-           required: false
-           default: '42161'
          transaction-data:
            description: 'Transaction data (0x prefixed)'
            required: false
@@ -66,7 +63,6 @@ This reusable GitHub Actions workflow automates the process of proposing transac
        with:
          safe-address: ${{ inputs.safe-address }}
          transaction-to: ${{ inputs.transaction-to }}
-         chain-id: ${{ inputs.chain-id }}
          transaction-data: ${{ inputs.transaction-data }}
    ```
 
