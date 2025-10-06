@@ -76,8 +76,6 @@ async function run() {
     origin: "GitHub Action - Propose Safe Multisig Transaction",
   });
 
-  core.info("📤 Transaction proposed to Safe service");
-
   // Get transaction details
   const transaction = await apiKit.getTransaction(safeTxHash);
 
