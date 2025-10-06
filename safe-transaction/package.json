@@ -1,7 +1,7 @@
 {
   "name": "safe-transaction-action",
   "version": "1.0.0",
-  "description": "GitHub Action for proposing Safe transactions",
+  "description": "GitHub Action for proposing Safe Multisig transactions",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc"
