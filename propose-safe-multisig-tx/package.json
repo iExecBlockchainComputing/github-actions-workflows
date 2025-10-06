@@ -1,5 +1,5 @@
 {
-  "name": "safe-transaction-action",
+  "name": "propose-safe-multisig-tx-github-action",
   "version": "1.0.0",
   "description": "GitHub Action for proposing Safe Multisig transactions",
   "main": "dist/index.js",
