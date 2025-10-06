@@ -7,7 +7,6 @@ import { privateKeyToAccount } from "viem/accounts";
 import { env } from "./env.js";
 
 async function run() {
-  // Environment variables are already validated and parsed
   const {
     RPC_URL: rpcUrl,
     SAFE_ADDRESS: safeAddress,
@@ -22,23 +21,19 @@ async function run() {
   core.info(`📍 Safe Address: ${safeAddress}`);
   core.info(`🎯 Target Address: ${transactionTo}`);
 
-  // Initialize wallet
   const account = privateKeyToAccount(safeProposerPrivateKey as `0x${string}`);
   core.info(`🔑 Proposer Address: ${account.address}`);
 
-  // Detect chainId from RPC
   const publicClient = createPublicClient({
     transport: http(rpcUrl),
   });
   const chainId = await publicClient.getChainId();
 
-  // Initialize API Kit
   const apiKit = new SafeApiKit({
     chainId: BigInt(chainId),
     apiKey: safeApiKey,
   });
 
-  // Initialize Protocol Kit
   const protocolKit = await Safe.init({
     provider: rpcUrl,
     signer: safeProposerPrivateKey,
@@ -47,7 +42,6 @@ async function run() {
 
   core.info(`👤 Safe initialized for: ${safeAddress}`);
 
-  // Create transaction
   const safeTransactionData: MetaTransactionData = {
     to: transactionTo,
     value: transactionValue,
@@ -66,7 +60,6 @@ async function run() {
 
   core.info(`🔐 Transaction signed - hash: ${safeTxHash}`);
 
-  // Propose transaction to the service
   await apiKit.proposeTransaction({
     safeAddress: safeAddress,
     safeTransactionData: safeTransaction.data,
@@ -76,10 +69,8 @@ async function run() {
     origin: "GitHub Action - Propose Safe Multisig Transaction",
   });
 
-  // Get transaction details
   const transaction = await apiKit.getTransaction(safeTxHash);
 
-  // Set outputs
   core.setOutput("tx-hash", safeTxHash);
   core.setOutput("tx-details", JSON.stringify(transaction));
 
