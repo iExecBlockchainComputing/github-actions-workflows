@@ -42,8 +42,8 @@ jobs:
   propose-transaction:
     runs-on: ubuntu-latest
     outputs:
-      safe-tx-hash: ${{ steps.safe-transaction.outputs.safe-tx-hash }}
-      transaction: ${{ steps.safe-transaction.outputs.transaction }}
+      tx-hash: ${{ steps.safe-transaction.outputs.tx-hash }}
+      tx-details: ${{ steps.safe-transaction.outputs.tx-details }}
     
     steps:
       - name: Checkout repository
