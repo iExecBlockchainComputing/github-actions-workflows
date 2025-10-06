@@ -4,28 +4,20 @@ import Safe from "@safe-global/protocol-kit";
 import { OperationType, MetaTransactionData } from "@safe-global/types-kit";
 import { createPublicClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
+import { env } from "./env.js";
 
 async function run() {
   try {
-    // Get inputs from environment variables
-    const proposerPrivateKey = process.env.INPUT_PROPOSER_PRIVATE_KEY;
-    const rpcUrl = process.env.INPUT_RPC_URL;
-    const safeAddress = process.env.INPUT_SAFE_ADDRESS;
-    const transactionTo = process.env.INPUT_TRANSACTION_TO;
-    const safeApiKey = process.env.INPUT_SAFE_API_KEY;
-    const transactionValue = process.env.INPUT_TRANSACTION_VALUE || "0";
-    const transactionData = process.env.INPUT_TRANSACTION_DATA || "0x";
-
-    // Validate required inputs
-    if (
-      !proposerPrivateKey ||
-      !rpcUrl ||
-      !safeAddress ||
-      !transactionTo ||
-      !safeApiKey
-    ) {
-      throw new Error("Missing required environment variables");
-    }
+    // Environment variables are already validated and parsed
+    const {
+      PROPOSER_PRIVATE_KEY: proposerPrivateKey,
+      RPC_URL: rpcUrl,
+      SAFE_ADDRESS: safeAddress,
+      TRANSACTION_TO: transactionTo,
+      SAFE_API_KEY: safeApiKey,
+      TRANSACTION_VALUE: transactionValue,
+      TRANSACTION_DATA: transactionData,
+    } = env;
 
     core.info(`🚀 Starting Safe transaction proposal...`);
     core.info(`📍 Safe Address: ${safeAddress}`);
@@ -94,8 +86,8 @@ async function run() {
     const transaction = await apiKit.getTransaction(safeTxHash);
 
     // Set outputs
-    core.setOutput("safe-tx-hash", safeTxHash);
-    core.setOutput("transaction", JSON.stringify(transaction));
+    core.setOutput("tx-hash", safeTxHash);
+    core.setOutput("tx-details", JSON.stringify(transaction));
 
     core.info(`✅ Transaction proposed successfully!`);
     core.info(`🔗 Transaction Hash: ${safeTxHash}`);
