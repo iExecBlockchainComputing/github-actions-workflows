@@ -95,16 +95,19 @@ jobs:
           ssh-private-key: ${{ secrets.ssh_private_key }}
 
       - name: Add remote host to known_hosts
-        run: ssh-keyscan -H "${{ inputs.remote_host#*@ }}" >> ~/.ssh/known_hosts
+        run: |
+          HOST="${{ inputs.remote_host }}"
+          HOSTNAME="${HOST#*@}"
+          ssh-keyscan -H "$HOSTNAME" >> ~/.ssh/known_hosts
 
       - name: Prepare .env for Compose
         run: |
           cat <<EOF > .env
-IMAGE_NAME=${{ inputs.image_name }}
-IMAGE_TAG=${{ needs.get-tag.outputs.tag }}
-DOCKERHUB_USERNAME=${{ secrets.dockerhub_username }}
-DOCKERHUB_PASSWORD=${{ secrets.dockerhub_password }}
-EOF
+          IMAGE_NAME=${{ inputs.image_name }}
+          IMAGE_TAG=${{ needs.get-tag.outputs.tag }}
+          DOCKERHUB_USERNAME=${{ secrets.dockerhub_username }}
+          DOCKERHUB_PASSWORD=${{ secrets.dockerhub_password }}
+          EOF
 
       - name: Copy compose files
         run: |
@@ -113,10 +116,10 @@ EOF
       - name: Pull & restart containers
         run: |
           ssh "${{ inputs.remote_host }}" bash -s <<'REMOTE'
-            cd "${{ inputs.remote_path }}"
-            set -e
-            export \$(grep -v '^#' .env | xargs)
-            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker compose pull
-            docker compose up -d
-REMOTE
+          cd "${{ inputs.remote_path }}"
+          set -e
+          export $(grep -v '^#' .env | xargs)
+          echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+          docker compose pull
+          docker compose up -d
+          REMOTE
