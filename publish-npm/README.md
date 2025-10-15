@@ -43,9 +43,9 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
 ### Secrets 🔐
 
-| **Secret**    | **Description**                                    | **Required** |
-| ------------- | -------------------------------------------------- | ------------ |
-| **npm-token** | NPM auth token (required unless `dry-run: true`)". | No           |
+| **Secret**    | **Description**                                                                                | **Required** |
+| ------------- | ---------------------------------------------------------------------------------------------- | ------------ |
+| **npm-token** | NPM auth token (required unless `dry-run: true` or workflow is called by a trusted publisher). | No           |
 
 ## Job and Steps ⚙️
 

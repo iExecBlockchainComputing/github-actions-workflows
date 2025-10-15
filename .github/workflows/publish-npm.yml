@@ -81,7 +81,7 @@ on:
         type: boolean
     secrets:
       npm-token:
-        description: "NPM auth token (required unless `dry-run: true`)"
+        description: "NPM auth token (required unless `dry-run: true` or workflow is called by a trusted publisher)"
         required: false
 
 jobs:
@@ -93,16 +93,6 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - name: Ensure npm-token
-        if: ${{ !inputs.dry-run }}
-        run: |
-          if [ -n "${{ secrets.npm-token }}" ]; then
-            echo "`npm-token` secret is set"
-          else
-            echo "Missing `npm-token` secret (required unless `dry-run: true`)"
-            exit 1
-          fi
-
       - name: Download extra artifact
         if: ${{ inputs.artifact-name != '' }}
         uses: actions/download-artifact@v4
@@ -117,6 +107,10 @@ jobs:
           node-version: ${{ inputs.node-version }}
           registry-url: ${{ inputs.registry }}
           scope: ${{ inputs.scope }}
+
+      - name: Update npm
+        # Ensure npm 11.5.1 or later is installed (required for OIDC trusted publishing)
+        run: npm i -g npm@latest
 
       - name: Install dependencies
         working-directory: ${{ inputs.working-directory }}
