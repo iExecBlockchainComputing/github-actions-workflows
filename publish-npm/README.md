@@ -60,10 +60,50 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
 ## How to Use This Reusable Workflow 🔄
 
-1. **Save the Workflow File**  
-   Place this YAML file (e.g., `publish-npm.yml`) in the `.github/workflows/` directory of your repository. 💾
+### With trusted publishers (no token needed)
 
-2. **Call the Reusable Workflow**  
+1. **Call the Reusable Workflow**
+
+   In another workflow file (e.g., triggered by a release), invoke this reusable workflow like so:
+
+   ```yaml
+   name: Call Publish Package NPM Workflow
+   on:
+     release:
+       types: [published]
+
+   permissions:
+     id-token: write # Required for OIDC
+     packages: write
+     contents: read
+
+   jobs:
+     publish:
+       uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/publish-npm.yml@main
+       with:
+         node-version: "22"
+         build-command: "npm run build:prod"
+         run-tests: true
+         test-command: "npm run test:ci"
+         lint-command: "npm run lint"
+         type-check-command: "npm run check-types"
+         format-check-command: "npm run check-format"
+         # Optional: Download an artifact before building
+         # artifact-name: 'my-build-artifact'
+         # artifact-path: './dist'
+   ```
+
+2. **Configure Trusted Publisher on NPM**
+
+   On [npmjs.com](https://www.npmjs.com/), configure your the root publish workflow of your GitHub repository as a trusted publisher for your package.
+   ![trusted publisher](trusted-publisher.png)
+
+   NB: You can have only one trusted publisher per package, if you need multiple publication triggers (workflow_dispatch, release, etc.), you need to merge them into a single workflow referenced as trusted publisher.
+
+### With npm token (deprecated)
+
+1. **Call the Reusable Workflow**
+
    In another workflow file (e.g., triggered by a release), invoke this reusable workflow like so:
 
    ```yaml
@@ -90,7 +130,8 @@ for the package scope, Node.js version, registry URL, and other options. The wor
          npm-token: ${{ secrets.NPM_TOKEN }}
    ```
 
-3. **Configure Secrets**  
+2. **Configure Secrets**
+
    Ensure that the `NPM_TOKEN` secret is added to your repository’s settings. This token is required to authenticate
    with the NPM registry during publishing. 🔑
 
