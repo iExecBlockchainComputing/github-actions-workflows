@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.5.0...publish-npm-v1.6.0) (2025-10-16)
+
+
+### Features
+
+* support tokenless trusted publishers ([#90](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/90)) ([b4720bb](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/b4720bb49bdadc367cdefb9794526d09f08d48c3))
+
 ## [1.5.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.4.0...publish-npm-v1.5.0) (2025-07-02)
 
 
