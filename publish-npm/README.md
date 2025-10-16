@@ -95,7 +95,7 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
 2. **Configure Trusted Publisher on NPM**
 
-   On [npmjs.com](https://www.npmjs.com/), configure your the root publish workflow of your GitHub repository as a trusted publisher for your package.
+   On [npmjs.com](https://www.npmjs.com/), configure the root publish workflow of your GitHub repository as a trusted publisher for your package.
    ![trusted publisher](trusted-publisher.png)
 
    NB: You can have only one trusted publisher per package, if you need multiple publication triggers (workflow_dispatch, release, etc.), you need to merge them into a single workflow referenced as trusted publisher.
