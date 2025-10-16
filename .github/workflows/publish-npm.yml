@@ -155,7 +155,8 @@ jobs:
 
           DRY_RUN_OPT=""
           if [ "${{ inputs.dry-run }}" = "true" ]; then
-            DRY_RUN_OPT="--dry-run"
+            npm pkg set version=$(npm pkg get version | sed 's/"//g')-dry-run
+            DRY_RUN_OPT="--dry-run --tag dry-run"
           fi
 
           PROVENANCE_OPT=""
