@@ -108,9 +108,17 @@ jobs:
           registry-url: ${{ inputs.registry }}
           scope: ${{ inputs.scope }}
 
-      - name: Update npm
-        # Ensure npm 11.5.1 or later is installed (required for OIDC trusted publishing)
-        run: npm i -g npm@latest
+      - name: Ensure npm version
+        if: ${{ !inputs.dry-run }}
+        run: |
+          if [ -n "${{ secrets.npm-token }}" ]; then
+            echo "npm-token secret is set not using OIDC"
+          elif [ $(npx semver -r ">=11.5.1" $(npm -v)) ]; then
+            echo "OIDC trusted publishing supported by current npm version"
+          else
+            echo "OIDC trusted publishing requires npm >= 11.5.1, updating npm"
+            npm install -g npm@11
+          fi
 
       - name: Install dependencies
         working-directory: ${{ inputs.working-directory }}

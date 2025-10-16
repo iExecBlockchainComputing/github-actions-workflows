@@ -62,6 +62,8 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
 ### With trusted publishers (no token needed)
 
+> ⚠️ this method uses npm >= 11.5.1 ensure your project supports a compatible version of npm if not please use the method with npm token.
+
 1. **Call the Reusable Workflow**
 
    In another workflow file (e.g., triggered by a release), invoke this reusable workflow like so:
