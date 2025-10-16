@@ -81,7 +81,7 @@ on:
         type: boolean
     secrets:
       npm-token:
-        description: "NPM auth token (required unless `dry-run: true`)"
+        description: "NPM auth token (required unless `dry-run: true` or workflow is called by a trusted publisher)"
         required: false
 
 jobs:
@@ -93,16 +93,6 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - name: Ensure npm-token
-        if: ${{ !inputs.dry-run }}
-        run: |
-          if [ -n "${{ secrets.npm-token }}" ]; then
-            echo "`npm-token` secret is set"
-          else
-            echo "Missing `npm-token` secret (required unless `dry-run: true`)"
-            exit 1
-          fi
-
       - name: Download extra artifact
         if: ${{ inputs.artifact-name != '' }}
         uses: actions/download-artifact@v4
@@ -117,6 +107,18 @@ jobs:
           node-version: ${{ inputs.node-version }}
           registry-url: ${{ inputs.registry }}
           scope: ${{ inputs.scope }}
+
+      - name: Ensure npm version
+        if: ${{ !inputs.dry-run }}
+        run: |
+          if [ -n "${{ secrets.npm-token }}" ]; then
+            echo "npm-token secret is set not using OIDC"
+          elif [ $(npx semver -r ">=11.5.1" $(npm -v)) ]; then
+            echo "OIDC trusted publishing supported by current npm version"
+          else
+            echo "OIDC trusted publishing requires npm >= 11.5.1, updating npm"
+            npm install -g npm@11
+          fi
 
       - name: Install dependencies
         working-directory: ${{ inputs.working-directory }}
@@ -161,7 +163,8 @@ jobs:
 
           DRY_RUN_OPT=""
           if [ "${{ inputs.dry-run }}" = "true" ]; then
-            DRY_RUN_OPT="--dry-run"
+            npm pkg set version=$(npm pkg get version | sed 's/"//g')-dry-run
+            DRY_RUN_OPT="--dry-run --tag dry-run"
           fi
 
           PROVENANCE_OPT=""
