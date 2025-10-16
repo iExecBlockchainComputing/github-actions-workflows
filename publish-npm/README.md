@@ -60,7 +60,7 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
 ## How to Use This Reusable Workflow 🔄
 
-### With trusted publishers (no token needed)
+### With Trusted Publishers (preferred)
 
 > ⚠️ this method uses npm >= 11.5.1 ensure your project supports a compatible version of npm if not please use the method with npm token.
 
@@ -102,7 +102,7 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
    NB: You can have only one trusted publisher per package, if you need multiple publication triggers (workflow_dispatch, release, etc.), you need to merge them into a single workflow referenced as trusted publisher.
 
-### With npm token (deprecated)
+### With npm token (legacy)
 
 1. **Call the Reusable Workflow**
 
