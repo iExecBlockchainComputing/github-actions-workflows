@@ -50,6 +50,13 @@ const envSchema = z.object({
 
   // Safe API key for transaction service
   SAFE_API_KEY: z.string().min(1, "Safe API key is required"),
+
+  // Dry run mode - validate without proposing
+  DRY_RUN: z
+    .string()
+    .optional()
+    .default("false")
+    .transform((val) => val === "true" || val === "1"),
 });
 
 export const env = envSchema.parse(process.env);

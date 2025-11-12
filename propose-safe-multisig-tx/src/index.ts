@@ -15,9 +15,10 @@ async function run() {
     TRANSACTION_DATA: transactionData,
     SAFE_PROPOSER_PRIVATE_KEY: safeProposerPrivateKey,
     SAFE_API_KEY: safeApiKey,
+    DRY_RUN: dryRun,
   } = env;
 
-  core.info(`🚀 Starting Safe transaction proposal...`);
+  core.info(`🚀 Starting Safe transaction ${dryRun ? 'validation (DRY RUN)' : 'proposal'}...`);
   core.info(`📍 Safe Address: ${safeAddress}`);
   core.info(`🎯 Target Address: ${transactionTo}`);
 
@@ -60,24 +61,47 @@ async function run() {
 
   core.info(`🔐 Transaction signed - hash: ${safeTxHash}`);
 
-  await apiKit.proposeTransaction({
-    safeAddress: safeAddress,
-    safeTransactionData: safeTransaction.data,
-    safeTxHash: safeTxHash,
-    senderAddress: account.address,
-    senderSignature: signature.data,
-    origin: "GitHub Action - Propose Safe Multisig Transaction",
-  });
+  if (dryRun) {
+    core.info(`🧪 DRY RUN MODE - Transaction validated but not proposed`);
+    core.info(`📋 Transaction Preview:`);
+    core.info(`   To: ${safeTransactionData.to}`);
+    core.info(`   Value: ${safeTransactionData.value}`);
+    core.info(`   Data: ${safeTransactionData.data}`);
+    core.info(`   Operation: ${safeTransactionData.operation}`);
+    
+    core.setOutput("tx-hash", safeTxHash);
+    core.setOutput("tx-details", JSON.stringify({
+      to: safeTransactionData.to,
+      value: safeTransactionData.value,
+      data: safeTransactionData.data,
+      operation: safeTransactionData.operation,
+      safeTxHash: safeTxHash,
+      senderAddress: account.address,
+      dryRun: true,
+    }));
 
-  const transaction = await apiKit.getTransaction(safeTxHash);
+    core.info(`✅ Transaction validated successfully (not proposed)`);
+    core.info(`🔗 Transaction Hash (would be): ${safeTxHash}`);
+  } else {
+    await apiKit.proposeTransaction({
+      safeAddress: safeAddress,
+      safeTransactionData: safeTransaction.data,
+      safeTxHash: safeTxHash,
+      senderAddress: account.address,
+      senderSignature: signature.data,
+      origin: "GitHub Action - Propose Safe Multisig Transaction",
+    });
 
-  core.setOutput("tx-hash", safeTxHash);
-  core.setOutput("tx-details", JSON.stringify(transaction));
+    const transaction = await apiKit.getTransaction(safeTxHash);
 
-  core.info(`✅ Transaction proposed successfully!`);
-  core.info(`🔗 Transaction Hash: ${safeTxHash}`);
-  core.info(`⏳ Waiting for other owners to sign and execute...`);
-  core.info(`📋 Transaction Details: ${JSON.stringify(transaction, null, 2)}`);
+    core.setOutput("tx-hash", safeTxHash);
+    core.setOutput("tx-details", JSON.stringify(transaction));
+
+    core.info(`✅ Transaction proposed successfully!`);
+    core.info(`🔗 Transaction Hash: ${safeTxHash}`);
+    core.info(`⏳ Waiting for other owners to sign and execute...`);
+    core.info(`📋 Transaction Details: ${JSON.stringify(transaction, null, 2)}`);
+  }
 }
 
 run().catch((error) => {

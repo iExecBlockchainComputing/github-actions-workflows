@@ -23,6 +23,11 @@ on:
         description: 'Transaction data/calldata'
         required: true
         type: string
+      dry-run:
+        description: 'If true, validate and prepare the transaction without proposing it'
+        required: false
+        default: false
+        type: boolean
     secrets:
       safe-proposer-private-key:
         description: 'Private key of the proposer wallet'
@@ -75,4 +80,5 @@ jobs:
           TRANSACTION_DATA: ${{ inputs.transaction-data }}
           SAFE_PROPOSER_PRIVATE_KEY: ${{ secrets.safe-proposer-private-key }}
           SAFE_API_KEY: ${{ secrets.safe-api-key }}
+          DRY_RUN: ${{ inputs.dry-run }}
         id: safe-transaction
