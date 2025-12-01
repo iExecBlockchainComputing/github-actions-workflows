@@ -12,6 +12,7 @@ This reusable GitHub Actions workflow automates the process of building a Docker
 
 | **Input**        | **Description**                                     | **Required** | **Default**     |
 |------------------|-----------------------------------------------------|--------------|-----------------|
+| **build-args**   | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`). | No | `""` |
 | **dockerfile**   | Path to Dockerfile.                                 | No           | `Dockerfile`    |
 | **image_name**   | Full image name (e.g. org/my-api).                  | Yes          | -               |
 | **image_tag**    | Optional tag override (defaults to pushed Git tag). | No           | -               |
@@ -47,6 +48,7 @@ This reusable GitHub Actions workflow automates the process of building a Docker
 - **Depends On**: `get-tag`
 - **Uses**: The docker-build workflow from the same repository.
 - **Inputs**:
+  - Build arguments (optional)
   - Dockerfile path
   - Image name and tag
   - Push configuration (set to true)
@@ -65,10 +67,10 @@ This reusable GitHub Actions workflow automates the process of building a Docker
 
 ## How to Use This Reusable Workflow 🔄
 
-1. **Save the Workflow File**  
+1. **Save the Workflow File**
    This workflow is already saved as `.github/workflows/deploy-docker.yml` in the repository. 💾
 
-2. **Call the Reusable Workflow**  
+2. **Call the Reusable Workflow**
    In another workflow file (e.g., triggered by a release), invoke this reusable workflow like so:
 
    ```yaml
@@ -81,6 +83,9 @@ This reusable GitHub Actions workflow automates the process of building a Docker
      deploy:
        uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/deploy-docker.yml@main
        with:
+         build-args: |
+           BUILD_VERSION=1.0.0
+           NODE_ENV=production
          dockerfile: 'path/to/Dockerfile'
          image_name: 'your-org/your-app'
          remote_host: 'user@your-server.com'
@@ -91,7 +96,7 @@ This reusable GitHub Actions workflow automates the process of building a Docker
          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
    ```
 
-3. **Configure Secrets**  
+3. **Configure Secrets**
    Ensure that the following secrets are added to your repository's settings:
    - `DOCKERHUB_USERNAME`: Your DockerHub username
    - `DOCKERHUB_PASSWORD`: Your DockerHub password or access token

@@ -3,6 +3,11 @@ name: Build & Deploy Docker
 on:
   workflow_call:
     inputs:
+      build-args:
+        description: "Docker build arguments (multiline format: KEY1=value1\nKEY2=value2)"
+        required: false
+        default: ""
+        type: string
       dockerfile:
         description: "Path to Dockerfile"
         default: "Dockerfile"
@@ -69,6 +74,7 @@ jobs:
     needs: get-tag
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@docker-build-v2.2.0
     with:
+      build-args: ${{ inputs.build-args }}
       dockerfile: ${{ inputs.dockerfile }}
       image-name: ${{ inputs.image_name }}
       image-tag: ${{ needs.get-tag.outputs.tag }}
