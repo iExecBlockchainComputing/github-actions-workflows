@@ -19,16 +19,17 @@ This reusable GitHub Actions workflow automates the process of building and push
 
 | Name              | Description                                                                        | Required | Default                     |
 | ----------------- | ---------------------------------------------------------------------------------- | -------- | --------------------------- |
+| `build-args`      | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`)              | No       | `""`                        |
+| `context`         | Path to Docker Build Context                                                       | No       | `"."`                       |
+| `dockerfile`      | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')      | No       | `"Dockerfile"`              |
+| `hadolint`        | Enable Hadolint                                                                    | No       | `true`                      |
 | `image-name`      | Name of Docker Image (e.g., 'myimage', 'myorg/myimage')                            | true     | -                           |
 | `image-tag`       | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                         | No       | `"latest"`                  |
-| `dockerfile`      | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')      | No       | `"Dockerfile"`              |
-| `context`         | Path to Docker Build Context                                                       | No       | `"."`                       |
 | `platforms`       | Indicates which platforms the image should be built for                            | No       | `"linux/amd64,linux/arm64"` |
-| `registry`        | Docker Registry                                                                    | No       | `"docker.io"`               |
 | `push`            | Push Docker Image to Registry                                                      | No       | `false`                     |
-| `security-scan`   | Enable Trivy Security Scan                                                         | No       | `true`                      |
+| `registry`        | Docker Registry                                                                    | No       | `"docker.io"`               |
 | `security-report` | Security Report Mode (`"sarif"` \| `"comment"`; ignored if `security-scan: false`) | No       | `"sarif"`                   |
-| `hadolint`        | Enable Hadolint                                                                    | No       | `true`                      |
+| `security-scan`   | Enable Trivy Security Scan                                                         | No       | `true`                      |
 
 ## 🔐 Secrets
 
@@ -62,6 +63,9 @@ jobs:
         with:
           image-name: "username/my-image"
           dockerfile: "Dockerfile"
+          build-args: |
+            BUILD_VERSION=1.0.0
+            NODE_ENV=production
         secrets:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PAT }}

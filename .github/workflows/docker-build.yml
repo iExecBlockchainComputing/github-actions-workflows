@@ -3,6 +3,10 @@ name: Build, Test and Push Docker Image
 on:
   workflow_call:
     inputs:
+      build-args:
+        description: "Docker build arguments (multiline format: KEY1=value1\nKEY2=value2)"
+        default: ""
+        type: string
       image-name:
         description: "Name of Docker Image"
         type: string
@@ -73,6 +77,7 @@ jobs:
       - name: Build Docker Image
         uses: docker/build-push-action@v6
         with:
+          build-args: ${{ inputs.build-args }}
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
           platforms: ${{ inputs.platforms }}
@@ -82,7 +87,15 @@ jobs:
       - name: Build Docker Image as Tarball
         if: ${{ inputs.security-scan }}
         run: |
-          docker build -t ${{ inputs.image-name }}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile }} ${{ inputs.context }}
+          BUILD_ARGS=""
+          if [ -n "${{ inputs.build-args }}" ]; then
+            while IFS= read -r line; do
+              if [ -n "$line" ]; then
+                BUILD_ARGS="$BUILD_ARGS --build-arg $line"
+              fi
+            done <<< "${{ inputs.build-args }}"
+          fi
+          docker build $BUILD_ARGS -t ${{ inputs.image-name }}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile }} ${{ inputs.context }}
           docker save -o vuln-image.tar ${{ inputs.image-name }}:${{ inputs.image-tag }}
 
       - name: Run Trivy vulnerability scanner
