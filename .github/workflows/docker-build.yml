@@ -74,36 +74,23 @@ jobs:
           username: ${{ secrets.username }}
           password: ${{ secrets.password }}
 
-      - name: Build Docker Image
+      - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
           build-args: ${{ inputs.build-args }}
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
           platforms: ${{ inputs.platforms }}
-          push: ${{ inputs.push }}
+          load: true   # Make the image available on runner
+          push: false  # Don't push yet, wait for security checks
           tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
-
-      - name: Build Docker Image as Tarball
-        if: ${{ inputs.security-scan }}
-        run: |
-          BUILD_ARGS=""
-          if [ -n "${{ inputs.build-args }}" ]; then
-            while IFS= read -r line; do
-              if [ -n "$line" ]; then
-                BUILD_ARGS="$BUILD_ARGS --build-arg $line"
-              fi
-            done <<< "${{ inputs.build-args }}"
-          fi
-          docker build $BUILD_ARGS -t ${{ inputs.image-name }}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile }} ${{ inputs.context }}
-          docker save -o vuln-image.tar ${{ inputs.image-name }}:${{ inputs.image-tag }}
 
       - name: Run Trivy vulnerability scanner
         id: trivy
         if: ${{ inputs.security-scan }}
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@0.33.1
         with:
-          input: vuln-image.tar
+          image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
           format: ${{ (inputs.security-report == 'sarif' && 'sarif') || 'table' }}
           ignore-unfixed: true
           vuln-type: "os,library"
@@ -196,3 +183,33 @@ jobs:
             ${{ steps.read_hadolint.outputs.report }}
             ```
             </details>
+
+      - name: Fail build on CRITICAL or HIGH vulnerabilities
+        if: ${{ inputs.security-scan }}
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+          format: ${{ (inputs.security-report == 'sarif' && 'sarif') || 'table' }}
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          hide-progress: true
+          skip-setup-trivy: true
+          exit-code: 1
+
+      - name: Build and push Docker image
+        if: ${{ inputs.push }}
+        uses: docker/build-push-action@v6
+        with:
+          build-args: ${{ inputs.build-args }}
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          platforms: ${{ inputs.platforms }}
+          push: true
+          tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+
+      - name: Cleanup files
+        if: always()
+        run: |
+          rm -f trivy.txt trivy-results.sarif
+          docker image rm -f ${{ inputs.image-name }}:${{ inputs.image-tag }}
