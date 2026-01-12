@@ -92,9 +92,7 @@ jobs:
         with:
           image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
           format: ${{ (inputs.security-report == 'sarif' && 'sarif') || 'table' }}
-          ignore-unfixed: true
           vuln-type: "os,library"
-          severity: "CRITICAL,HIGH"
           hide-progress: true
           output: ${{ (inputs.security-report == 'sarif' && 'trivy-results.sarif') || 'trivy.txt' }}
 
