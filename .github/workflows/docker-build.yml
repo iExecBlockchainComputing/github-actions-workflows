@@ -80,7 +80,7 @@ jobs:
           build-args: ${{ inputs.build-args }}
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
-          platforms: ${{ inputs.platforms }}
+          platforms: "linux/amd64"
           load: true   # Make the image available on runner
           push: false  # Don't push yet, wait for security checks
           tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
