@@ -43,9 +43,9 @@ on:
         description: "Enable Hadolint"
         default: true
         type: boolean
-      platforms:
-        description: "Build platforms"
-        default: "linux/amd64,linux/arm64"
+      platform:
+        description: "Build platform"
+        default: "linux/amd64"
         type: string
     secrets:
       username:
@@ -57,6 +57,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Validate platform input
+        run: |
+          platform="${{ inputs.platform }}"
+
+          if [ "$platform" != "linux/amd64" ] && [ "$platform" != "linux/arm64" ] ; then
+            echo "❌ Error: Invalid platform: $platform"
+            echo "Valid platforms are 'linux/amd64' or 'linux/arm64'"
+            exit 1
+          fi
+
+          echo "✅ Platform validation passed: $platform"
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -80,7 +92,7 @@ jobs:
           build-args: ${{ inputs.build-args }}
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
-          platforms: "linux/amd64"
+          platforms: ${{ inputs.platform }}
           load: true   # Make the image available on runner
           push: false  # Don't push yet, wait for security checks
           tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
@@ -111,7 +123,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: "github-actions[bot]"
-          body-includes: "Trivy Security Scan Results"
+          body-includes: "Trivy Security ${{ inputs.platform }} Scan Results"
 
       - name: Create or update Trivy comment
         if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'comment'
@@ -123,7 +135,7 @@ jobs:
           edit-mode: replace
           body: |
             <!-- trivy-scan -->
-            ### 🔒 Trivy Security Scan Results
+            ### 🔒 Trivy Security ${{ inputs.platform }} Scan Results
             <details><summary>Click to expand detailed results</summary>
 
             ```bash
@@ -195,16 +207,9 @@ jobs:
           skip-setup-trivy: true
           exit-code: 1
 
-      - name: Build and push Docker image
+      - name: Push Docker image
         if: ${{ inputs.push }}
-        uses: docker/build-push-action@v6
-        with:
-          build-args: ${{ inputs.build-args }}
-          context: ${{ inputs.context }}
-          file: ${{ inputs.dockerfile }}
-          platforms: ${{ inputs.platforms }}
-          push: true
-          tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+        run: docker push ${{ inputs.image-name }}:${{ inputs.image-tag }}
 
       - name: Cleanup files
         if: always()
