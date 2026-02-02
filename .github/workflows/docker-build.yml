@@ -43,9 +43,9 @@ on:
         description: "Enable Hadolint"
         default: true
         type: boolean
-      platforms:
-        description: "Build platforms"
-        default: "linux/amd64,linux/arm64"
+      platform:
+        description: "Build platform"
+        default: "linux/amd64"
         type: string
     secrets:
       username:
@@ -56,7 +56,35 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    # avoid shell injection through string interpolation
+    env:
+      PLATFORM: ${{ inputs.platform }}
+      OCI_IMAGE: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+      REPORT_MODE: ${{ inputs.security-report }}
+
     steps:
+      - name: Validate platform input
+        run: |
+          if [ "$PLATFORM" != "linux/amd64" ] && [ "$PLATFORM" != "linux/arm64" ] ; then
+            echo "❌ Error: Invalid platform: $PLATFORM"
+            echo "Valid platforms are 'linux/amd64' or 'linux/arm64'"
+            exit 1
+          fi
+
+          echo "✅ Platform validation passed: $PLATFORM"
+
+      - name: Validate security report mode input
+        if: ${{ inputs.security-scan }}
+        run: |
+          if [ "$REPORT_MODE" != "comment" ] && [ "$REPORT_MODE" != "sarif" ] ; then
+            echo "❌ Error: Invalid security report mode: $REPORT_MODE"
+            echo "Valid modes are 'comment' or 'sarif'"
+            exit 1
+          fi
+
+          echo "✅ Security report mode validation passed: $REPORT_MODE"
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -74,40 +102,25 @@ jobs:
           username: ${{ secrets.username }}
           password: ${{ secrets.password }}
 
-      - name: Build Docker Image
+      - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
           build-args: ${{ inputs.build-args }}
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
-          platforms: ${{ inputs.platforms }}
-          push: ${{ inputs.push }}
+          platforms: ${{ inputs.platform }}
+          load: true   # Make the image available on runner
+          push: false  # Don't push yet, wait for security checks
           tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
-
-      - name: Build Docker Image as Tarball
-        if: ${{ inputs.security-scan }}
-        run: |
-          BUILD_ARGS=""
-          if [ -n "${{ inputs.build-args }}" ]; then
-            while IFS= read -r line; do
-              if [ -n "$line" ]; then
-                BUILD_ARGS="$BUILD_ARGS --build-arg $line"
-              fi
-            done <<< "${{ inputs.build-args }}"
-          fi
-          docker build $BUILD_ARGS -t ${{ inputs.image-name }}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile }} ${{ inputs.context }}
-          docker save -o vuln-image.tar ${{ inputs.image-name }}:${{ inputs.image-tag }}
 
       - name: Run Trivy vulnerability scanner
         id: trivy
         if: ${{ inputs.security-scan }}
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@0.33.1
         with:
-          input: vuln-image.tar
+          image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
           format: ${{ (inputs.security-report == 'sarif' && 'sarif') || 'table' }}
-          ignore-unfixed: true
           vuln-type: "os,library"
-          severity: "CRITICAL,HIGH"
           hide-progress: true
           output: ${{ (inputs.security-report == 'sarif' && 'trivy-results.sarif') || 'trivy.txt' }}
 
@@ -126,7 +139,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: "github-actions[bot]"
-          body-includes: "Trivy Security Scan Results"
+          body-includes: "Trivy Security ${{ inputs.platform }} Scan Results"
 
       - name: Create or update Trivy comment
         if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'comment'
@@ -138,7 +151,7 @@ jobs:
           edit-mode: replace
           body: |
             <!-- trivy-scan -->
-            ### 🔒 Trivy Security Scan Results
+            ### 🔒 Trivy Security ${{ inputs.platform }} Scan Results
             <details><summary>Click to expand detailed results</summary>
 
             ```bash
@@ -196,3 +209,26 @@ jobs:
             ${{ steps.read_hadolint.outputs.report }}
             ```
             </details>
+
+      - name: Fail build on CRITICAL or HIGH vulnerabilities
+        if: ${{ inputs.security-scan }}
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+          format: table
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          hide-progress: true
+          skip-setup-trivy: true
+          exit-code: 1
+
+      - name: Push Docker image
+        if: ${{ inputs.push }}
+        run: docker push "$OCI_IMAGE"
+
+      - name: Cleanup files
+        if: always()
+        run: |
+          rm -f trivy.txt trivy-results.sarif
+          docker image rm -f "$OCI_IMAGE"
