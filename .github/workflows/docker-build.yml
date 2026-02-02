@@ -56,18 +56,34 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    # avoid shell injection through string interpolation
+    env:
+      PLATFORM: ${{ inputs.platform }}
+      OCI_IMAGE: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+      REPORT_MODE: ${{ inputs.security-report }}
+
     steps:
       - name: Validate platform input
         run: |
-          platform="${{ inputs.platform }}"
-
-          if [ "$platform" != "linux/amd64" ] && [ "$platform" != "linux/arm64" ] ; then
-            echo "❌ Error: Invalid platform: $platform"
+          if [ "$PLATFORM" != "linux/amd64" ] && [ "$PLATFORM" != "linux/arm64" ] ; then
+            echo "❌ Error: Invalid platform: $PLATFORM"
             echo "Valid platforms are 'linux/amd64' or 'linux/arm64'"
             exit 1
           fi
 
-          echo "✅ Platform validation passed: $platform"
+          echo "✅ Platform validation passed: $PLATFORM"
+
+      - name: Validate security report mode input
+        if: ${{ inputs.security-scan }}
+        run: |
+          if [ "$REPORT_MODE" != "comment" ] && [ "$REPORT_MODE" != "sarif" ] ; then
+            echo "❌ Error: Invalid security report mode: $REPORT_MODE"
+            echo "Valid modes are 'comment' or 'sarif'"
+            exit 1
+          fi
+
+          echo "✅ Security report mode validation passed: $REPORT_MODE"
 
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -199,7 +215,7 @@ jobs:
         uses: aquasecurity/trivy-action@0.33.1
         with:
           image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
-          format: ${{ (inputs.security-report == 'sarif' && 'sarif') || 'table' }}
+          format: table
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
@@ -209,10 +225,10 @@ jobs:
 
       - name: Push Docker image
         if: ${{ inputs.push }}
-        run: docker push ${{ inputs.image-name }}:${{ inputs.image-tag }}
+        run: docker push "$OCI_IMAGE"
 
       - name: Cleanup files
         if: always()
         run: |
           rm -f trivy.txt trivy-results.sarif
-          docker image rm -f ${{ inputs.image-name }}:${{ inputs.image-tag }}
+          docker image rm -f "$OCI_IMAGE"
