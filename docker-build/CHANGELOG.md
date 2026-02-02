@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.4.0...docker-build-v3.0.0) (2026-02-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* enforce an optimize single platform docker-build with failure on CRITICAL or HIGH fixed vulnerabilities detection ([#98](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/98))
+
+### Code Refactoring
+
+* enforce an optimize single platform docker-build with failure on CRITICAL or HIGH fixed vulnerabilities detection ([#98](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/98)) ([59d6ea2](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/59d6ea284b1a9f75c8e2e7bb3f92ec900edc44f1))
+
 ## [2.4.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.3.1...docker-build-v2.4.0) (2025-07-30)
 
 
