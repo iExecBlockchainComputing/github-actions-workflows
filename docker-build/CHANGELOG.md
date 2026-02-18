@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.0.0...docker-build-v3.1.0) (2026-02-18)
+
+
+### Features
+
+* **docker-build:** expose checksum as 0x&lt;sha256&gt; ([#99](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/99)) ([7394bd5](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/7394bd51a52c0ee8b65f5db4fc5f76f65587b8c4))
+
 ## [3.0.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v2.4.0...docker-build-v3.0.0) (2026-02-02)
 
 
