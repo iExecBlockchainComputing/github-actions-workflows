@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.1.0...docker-build-v3.1.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* replace checksum prefix to 0x (docker-build) ([#101](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/101)) ([da7b622](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/da7b6227aadcdc482da81e7b9d46ebcd5b986ae1))
+
 ## [3.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.0.0...docker-build-v3.1.0) (2026-02-18)
 
 
