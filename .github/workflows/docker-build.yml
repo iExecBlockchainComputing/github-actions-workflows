@@ -52,10 +52,15 @@ on:
         required: false
       password:
         required: false
-
+    outputs:
+      checksum:
+        description: "Checksum of the Docker image"
+        value: ${{ jobs.build.outputs.checksum }}
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      checksum: ${{ steps.checksum.outputs.checksum }}
 
     # avoid shell injection through string interpolation
     env:
@@ -226,7 +231,15 @@ jobs:
       - name: Push Docker image
         if: ${{ inputs.push }}
         run: docker push "$OCI_IMAGE"
-
+      
+      - name: Compute checksum of the Docker image
+        id: checksum
+        run: |
+          # Extract SHA256 digest and format as 0X...
+          INSPECT=$(docker image inspect "$OCI_IMAGE")
+          DIGEST=$(echo "$INSPECT" | jq -r 'if .[0].RepoDigests[0] then .[0].RepoDigests[0] | split("@sha256:")[1] else .[0].Id | split(":")[1] end')
+          echo "checksum=0X${DIGEST}" >> "$GITHUB_OUTPUT"
+    
       - name: Cleanup files
         if: always()
         run: |
