@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/deploy-docker-v1.0.1...deploy-docker-v1.1.0) (2025-12-04)
+
+
+### Features
+
+* allow build-arg for docker build ([#94](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/94)) ([7249559](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/72495597bfd19e0b5957baba1d2a0994b7e2ce3e))
+
 ## [1.0.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/deploy-docker-v1.0.0...deploy-docker-v1.0.1) (2025-10-08)
 
 
