@@ -39,6 +39,10 @@ on:
         description: 'Security Report Mode (`"sarif"` | `"comment"`; ignored if `security-scan: false`)'
         default: "sarif"
         type: string
+      trivy-version:
+        description: "Trivy security scanner version"
+        default: "v0.69.2"
+        type: string
       hadolint:
         description: "Enable Hadolint"
         default: true
@@ -129,7 +133,7 @@ jobs:
           hide-progress: true
           output: ${{ (inputs.security-report == 'sarif' && 'trivy-results.sarif') || 'trivy.txt' }}
           # following https://github.com/aquasecurity/trivy/discussions/10265
-          version: v0.69.2
+          version: ${{ inputs.trivy-version }}
 
       - name: Read Trivy report file
         id: read_trivy
