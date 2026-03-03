@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.1.1...docker-build-v3.1.2) (2026-03-03)
+
+
+### Bug Fixes
+
+* **docker-build:** update trivy-action to v0.34.1 and trivy to v0.69.2 ([#103](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/103)) ([567e5ac](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/567e5ac177f79ba92d960027f60ce4906595cd1f))
+
 ## [3.1.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.1.0...docker-build-v3.1.1) (2026-02-18)
 
 
