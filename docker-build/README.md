@@ -19,9 +19,9 @@ Perfect for teams looking to streamline their containerization workflow with min
 
 > [!IMPORTANT]
 > Due to a limitation on Trivy analysis, the workflow targets a single platform.
-> A workflow instance should be configured for each intended targeted platform.
+> A workflow instance should be configured for each targeted platform.
 
-## ⚙️ Inputs
+## ⚙️  Inputs
 
 | Name              | Description                                                                        | Required | Default         |
 | ----------------- | ---------------------------------------------------------------------------------- | -------- | --------------- |
@@ -36,6 +36,7 @@ Perfect for teams looking to streamline their containerization workflow with min
 | `registry`        | Docker Registry                                                                    | No       | `"docker.io"`   |
 | `security-report` | Security Report Mode (`"sarif"` \| `"comment"`; ignored if `security-scan: false`) | No       | `"sarif"`       |
 | `security-scan`   | Enable Trivy Security Scan                                                         | No       | `true`          |
+| `trivy-version`   | Override Trivy security scanner version                                            | No       | `v0.69.2`       |
 
 ## 🔐 Secrets
 

@@ -39,6 +39,10 @@ on:
         description: 'Security Report Mode (`"sarif"` | `"comment"`; ignored if `security-scan: false`)'
         default: "sarif"
         type: string
+      trivy-version:
+        description: "Trivy security scanner version"
+        default: "v0.69.2"
+        type: string
       hadolint:
         description: "Enable Hadolint"
         default: true
@@ -121,13 +125,15 @@ jobs:
       - name: Run Trivy vulnerability scanner
         id: trivy
         if: ${{ inputs.security-scan }}
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@0.34.1
         with:
           image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
           format: ${{ (inputs.security-report == 'sarif' && 'sarif') || 'table' }}
           vuln-type: "os,library"
           hide-progress: true
           output: ${{ (inputs.security-report == 'sarif' && 'trivy-results.sarif') || 'trivy.txt' }}
+          # following https://github.com/aquasecurity/trivy/discussions/10265
+          version: ${{ inputs.trivy-version }}
 
       - name: Read Trivy report file
         id: read_trivy
@@ -217,7 +223,7 @@ jobs:
 
       - name: Fail build on CRITICAL or HIGH vulnerabilities
         if: ${{ inputs.security-scan }}
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@0.34.1
         with:
           image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
           format: table
@@ -231,7 +237,7 @@ jobs:
       - name: Push Docker image
         if: ${{ inputs.push }}
         run: docker push "$OCI_IMAGE"
-      
+
       - name: Compute checksum of the Docker image
         id: checksum
         run: |
@@ -239,7 +245,7 @@ jobs:
           INSPECT=$(docker image inspect "$OCI_IMAGE")
           DIGEST=$(echo "$INSPECT" | jq -r 'if .[0].RepoDigests[0] then .[0].RepoDigests[0] | split("@sha256:")[1] else .[0].Id | split(":")[1] end')
           echo "checksum=0x${DIGEST}" >> "$GITHUB_OUTPUT"
-    
+
       - name: Cleanup files
         if: always()
         run: |
