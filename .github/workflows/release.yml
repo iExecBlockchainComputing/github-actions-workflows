@@ -20,7 +20,7 @@ jobs:
       packages: ${{ steps.check-files.outputs.packages }}
       prev_sha: ${{ steps.check-files.outputs.prev_sha }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - name: Get list of workflows with changes
@@ -52,7 +52,7 @@ jobs:
           application_id: "${{ secrets.RELEASE_PLEASE_APPLICATION_ID }}"
           application_private_key: ${{ secrets.RELEASE_PLEASE_PRIVATE_KEY }}
           organization: ${{ github.repository_owner }}
-      - uses: googleapis/release-please-action@v3
+      - uses: googleapis/release-please-action@v4
         id: release
         with:
           default-branch: main
