@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/rust-build-v2.0.0...rust-build-v2.1.0) (2026-03-19)
+
+
+### Features
+
+* **rust-build:** update checkout and cache actions in rust-build workflow ([267c441](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/267c44168d488ed57102d6b855abae18378c1888))
+
 ## [2.0.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/rust-build-v1.0.0...rust-build-v2.0.0) (2025-07-30)
 
 
