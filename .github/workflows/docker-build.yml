@@ -41,7 +41,7 @@ on:
         type: string
       trivy-version:
         description: "Trivy security scanner version"
-        default: "v0.69.2"
+        default: "v0.69.3"
         type: string
       hadolint:
         description: "Enable Hadolint"
@@ -125,7 +125,8 @@ jobs:
       - name: Run Trivy vulnerability scanner
         id: trivy
         if: ${{ inputs.security-scan }}
-        uses: aquasecurity/trivy-action@0.34.1
+        # https://github.com/aquasecurity/trivy-action/issues/541
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
           format: ${{ (inputs.security-report == 'sarif' && 'sarif') || 'table' }}
@@ -223,7 +224,8 @@ jobs:
 
       - name: Fail build on CRITICAL or HIGH vulnerabilities
         if: ${{ inputs.security-scan }}
-        uses: aquasecurity/trivy-action@0.34.1
+        # https://github.com/aquasecurity/trivy-action/issues/541
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           image-ref: ${{ inputs.image-name }}:${{ inputs.image-tag }}
           format: table
