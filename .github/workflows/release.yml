@@ -52,7 +52,7 @@ jobs:
           application_id: "${{ secrets.RELEASE_PLEASE_APPLICATION_ID }}"
           application_private_key: ${{ secrets.RELEASE_PLEASE_PRIVATE_KEY }}
           organization: ${{ github.repository_owner }}
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v3
         id: release
         with:
           default-branch: main
