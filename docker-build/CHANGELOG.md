@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.1.2...docker-build-v3.2.0) (2026-03-20)
+
+
+### Features
+
+* **docker-build:** update to Node.js 24 GitHub actions ([#111](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/111)) ([bd008e7](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/bd008e78d6d8e9261847a5ea0eeea8e55818748f))
+
 ## [3.1.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.1.1...docker-build-v3.1.2) (2026-03-03)
 
 
