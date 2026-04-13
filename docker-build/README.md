@@ -44,8 +44,8 @@ Perfect for teams looking to streamline their containerization workflow with min
 | -------------------- | --------------------------------------------------------------------------------------------------- | -------- |
 | `dockerhub-username` | Username for Docker Hub authentication                                                              | Yes      |
 | `dockerhub-password` | Token for Docker Hub authentication (with read-only permissions)                                    | Yes      |
-| `username`           | Username for Docker Registry authentication                                                         | Yes      |
-| `password`           | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | Yes      |
+| `username`           | Username for Docker Registry authentication                                                         | No       |
+| `password`           | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | No       |
 
 ## 💻 Example Usage
 
