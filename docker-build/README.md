@@ -40,12 +40,12 @@ Perfect for teams looking to streamline their containerization workflow with min
 
 ## 🔐 Secrets
 
-| Name                 | Description                                                                                         | Required |
-| -------------------- | --------------------------------------------------------------------------------------------------- | -------- |
-| `dockerhub-username` | Username for Docker Hub authentication                                                              | Yes      |
-| `dockerhub-password` | Token for Docker Hub authentication (with read-only permissions)                                    | Yes      |
-| `username`           | Username for Docker Registry authentication                                                         | No       |
-| `password`           | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | No       |
+| Name                 | Description                                                                                         | Required           |
+| -------------------- | --------------------------------------------------------------------------------------------------- | ------------------ |
+| `dockerhub-username` | Username for Docker Hub authentication                                                              | Yes                |
+| `dockerhub-password` | Token for Docker Hub authentication (with read-only permissions)                                    | Yes                |
+| `username`           | Username for Docker Registry authentication                                                         | When `push: true`  |
+| `password`           | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | When `push: true`  |
 
 ## 💻 Example Usage
 
