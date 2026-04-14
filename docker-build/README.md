@@ -40,10 +40,12 @@ Perfect for teams looking to streamline their containerization workflow with min
 
 ## 🔐 Secrets
 
-| Name       | Description                                                                                         | Required |
-| ---------- | --------------------------------------------------------------------------------------------------- | -------- |
-| `username` | Username for Docker Registry authentication                                                         | Yes      |
-| `password` | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | Yes      |
+| Name                 | Description                                                                                         | Required           |
+| -------------------- | --------------------------------------------------------------------------------------------------- | ------------------ |
+| `dockerhub-username` | Username for Docker Hub authentication                                                              | Yes                |
+| `dockerhub-password` | Token for Docker Hub authentication (with read-only permissions)                                    | Yes                |
+| `username`           | Username for Docker Registry authentication                                                         | When `push: true`  |
+| `password`           | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | When `push: true`  |
 
 ## 💻 Example Usage
 
@@ -74,6 +76,8 @@ jobs:
             BUILD_VERSION=1.0.0
             NODE_ENV=production
         secrets:
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-password: ${{ secrets.DOCKERHUB_TOKEN_PULL_ONLY }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PAT }}
 ```
