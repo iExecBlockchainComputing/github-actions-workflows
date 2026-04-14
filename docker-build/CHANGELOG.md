@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.2.0...docker-build-v3.3.0) (2026-04-14)
+
+
+### Features
+
+* add docker login on dockerhub registry to use iExec rate limits ([#113](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/113)) ([aef28d1](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/aef28d1ce43734d0c6cbf8bd5fe21252195b15e4))
+
 ## [3.2.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.1.2...docker-build-v3.2.0) (2026-03-20)
 
 
