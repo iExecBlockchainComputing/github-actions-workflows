@@ -8,8 +8,8 @@ This reusable GitHub Actions workflow builds and pushes a multi-platform Docker 
 
 - 🏗️ Multi-platform build in a single job via Docker Build Cloud's remote builders
 - 🔐 Authenticates to DockerHub for both registry push and DBC endpoint access
-- 🏷️ Tags the image with `<image-name>:<image-tag>` and optionally `<image-name>:latest`
-- 📦 Returns the multi-arch manifest digest for downstream signing or SBOM use cases
+- 🏷️ Tags the image with `<image-name>:<image-tag>`
+- 📦 Returns the multi-arch manifest checksum (`0x`-prefixed sha256) for downstream signing or SBOM use cases
 - 🚀 No QEMU emulation, no native ARM runners — DBC handles arch-specific builds
 
 > [!IMPORTANT]
@@ -26,7 +26,6 @@ This reusable GitHub Actions workflow builds and pushes a multi-platform Docker 
 | `image-name`             | Name of Docker Image, fully qualified (e.g. `iexechub/my-image`)                  | Yes      | -              |
 | `image-tag`              | Tag to apply to the built image (e.g. `1.0.0`, no v prefix)                       | Yes      | -              |
 | `platforms`              | Comma-separated build platforms (e.g. `linux/amd64,linux/arm64`)                  | Yes      | -              |
-| `push-latest`            | Also push the image with the `:latest` tag                                        | No       | `false`        |
 
 ## 🔐 Secrets
 
@@ -37,9 +36,9 @@ This reusable GitHub Actions workflow builds and pushes a multi-platform Docker 
 
 ## 📤 Outputs
 
-| Name     | Description                                       |
-| -------- | ------------------------------------------------- |
-| `digest` | Multi-arch manifest digest of the published image |
+| Name       | Description                                                              |
+| ---------- | ------------------------------------------------------------------------ |
+| `checksum` | Checksum (`0x`-prefixed sha256) of the published multi-arch manifest     |
 
 ## 💻 Example Usage
 
@@ -59,7 +58,6 @@ jobs:
       image-tag: ${{ github.ref_name }}
       platforms: linux/amd64,linux/arm64
       cloud-builder-endpoint: ${{ vars.DOCKER_CLOUD_BUILDER_LABEL }}
-      push-latest: true
     secrets:
       dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub-password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -75,4 +73,4 @@ jobs:
 
 - **`403 Forbidden` on Set up Docker Buildx**: PAT missing Build scope, user not a member of the cloud builder, token owner not in the builder org, malformed endpoint, or inactive DBC subscription.
 - **Manifest only contains one platform**: confirm `platforms` input lists every arch with commas (no spaces).
-- **Empty `digest` output**: `docker/build-push-action@v7` only sets `digest` when `push: true` — verify the workflow is not running in dry-run mode.
+- **Empty `checksum` output**: `docker/build-push-action@v7` only emits the underlying digest when `push: true` — verify the workflow is not running in dry-run mode.

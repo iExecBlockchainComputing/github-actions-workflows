@@ -19,10 +19,6 @@ on:
         description: "Docker Build Cloud endpoint, format '<dbc-org>/<builder>'"
         required: true
         type: string
-      push-latest:
-        description: "Also push the image with the ':latest' tag"
-        default: false
-        type: boolean
       dockerfile:
         description: "Path to the Dockerfile (e.g. './Dockerfile', './docker/Dockerfile')"
         default: "Dockerfile"
@@ -43,21 +39,20 @@ on:
         description: "DockerHub PAT with Build scope (required to authenticate to Docker Build Cloud endpoint)"
         required: true
     outputs:
-      digest:
-        description: "Multi-arch manifest digest of the published image"
-        value: ${{ jobs.build.outputs.digest }}
+      checksum:
+        description: "Checksum (0x-prefixed sha256) of the published multi-arch manifest"
+        value: ${{ jobs.build.outputs.checksum }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      digest: ${{ steps.build.outputs.digest }}
+      checksum: ${{ steps.checksum.outputs.checksum }}
 
     # avoid shell injection through string interpolation
     env:
       IMAGE_NAME: ${{ inputs.image-name }}
       IMAGE_TAG: ${{ inputs.image-tag }}
-      PUSH_LATEST: ${{ inputs.push-latest }}
 
     steps:
       - name: Checkout Repository
@@ -77,18 +72,6 @@ jobs:
           driver: cloud
           endpoint: ${{ inputs.cloud-builder-endpoint }}
 
-      - name: Compute image tags
-        id: tags
-        run: |
-          {
-            echo "tags<<EOF"
-            echo "${IMAGE_NAME}:${IMAGE_TAG}"
-            if [ "${PUSH_LATEST}" = "true" ]; then
-              echo "${IMAGE_NAME}:latest"
-            fi
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
       - name: Build and push multi-platform image
         id: build
         uses: docker/build-push-action@v7
@@ -98,4 +81,11 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: ${{ inputs.platforms }}
           push: true
-          tags: ${{ steps.tags.outputs.tags }}
+          tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+
+      - name: Compute checksum of the Docker image
+        id: checksum
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          echo "checksum=0x${DIGEST#sha256:}" >> "$GITHUB_OUTPUT"

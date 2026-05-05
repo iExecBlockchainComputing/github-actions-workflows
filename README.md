@@ -7,6 +7,9 @@ This repository contains a comprehensive collection of reusable GitHub Actions w
 ### 🐳 [Build Docker Image](./docker-build)
 Automates the process of building, tagging, and pushing Docker images to Docker Hub. Perfect for projects that require containerization with minimal configuration overhead.
 
+### ☁️ [Build Docker Image via Docker Build Cloud](./docker-build-cloud)
+Builds and pushes a multi-platform Docker image (e.g. `linux/amd64` + `linux/arm64`) to Docker Hub in a single job using Docker Build Cloud's remote builders. No QEMU emulation, no native ARM runners.
+
 ### 🚀 [Deploy Docker](./deploy-docker)
 Automates the process of building a Docker image and deploying it to a remote server. Configurable for different Dockerfile paths, image names, tags, and remote hosts. Streamlines the deployment process with secure SSH connections.
 
