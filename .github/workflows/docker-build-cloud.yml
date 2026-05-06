@@ -38,16 +38,10 @@ on:
       dockerhub-password:
         description: "DockerHub PAT with Build scope (required to authenticate to Docker Build Cloud endpoint)"
         required: true
-    outputs:
-      checksum:
-        description: "Checksum (0x-prefixed sha256) of the published multi-arch manifest"
-        value: ${{ jobs.build.outputs.checksum }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      checksum: ${{ steps.checksum.outputs.checksum }}
 
     steps:
       - name: Checkout Repository
@@ -68,7 +62,6 @@ jobs:
           endpoint: ${{ inputs.cloud-builder-endpoint }}
 
       - name: Build and push multi-platform image
-        id: build
         uses: docker/build-push-action@v7
         with:
           build-args: ${{ inputs.build-args }}
@@ -77,10 +70,3 @@ jobs:
           platforms: ${{ inputs.platforms }}
           push: true
           tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
-
-      - name: Compute checksum of the Docker image
-        id: checksum
-        env:
-          DIGEST: ${{ steps.build.outputs.digest }}
-        run: |
-          echo "checksum=0x${DIGEST#sha256:}" >> "$GITHUB_OUTPUT"

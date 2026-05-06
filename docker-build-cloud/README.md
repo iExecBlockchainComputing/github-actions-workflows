@@ -9,7 +9,6 @@ This reusable GitHub Actions workflow builds and pushes a multi-platform Docker 
 - 🏗️ Multi-platform build in a single job via Docker Build Cloud's remote builders
 - 🔐 Authenticates to DockerHub for both registry push and DBC endpoint access
 - 🏷️ Tags the image with `<image-name>:<image-tag>`
-- 📦 Returns the multi-arch manifest checksum (`0x`-prefixed sha256) for downstream signing or SBOM use cases
 - 🚀 No QEMU emulation, no native ARM runners — DBC handles arch-specific builds
 
 > [!IMPORTANT]
@@ -33,12 +32,6 @@ This reusable GitHub Actions workflow builds and pushes a multi-platform Docker 
 | -------------------- | ------------------------------------------------------------------------------------------ | -------- |
 | `dockerhub-username` | Username for Docker Hub authentication                                                     | Yes      |
 | `dockerhub-password` | Personal Access Token for Docker Hub with the **Build** scope (needed for DBC endpoint)    | Yes      |
-
-## 📤 Outputs
-
-| Name       | Description                                                              |
-| ---------- | ------------------------------------------------------------------------ |
-| `checksum` | Checksum (`0x`-prefixed sha256) of the published multi-arch manifest     |
 
 ## 💻 Example Usage
 
@@ -73,4 +66,3 @@ jobs:
 
 - **`403 Forbidden` on Set up Docker Buildx**: PAT missing Build scope, user not a member of the cloud builder, token owner not in the builder org, malformed endpoint, or inactive DBC subscription.
 - **Manifest only contains one platform**: confirm `platforms` input lists every arch with commas (no spaces).
-- **Empty `checksum` output**: `docker/build-push-action@v7` only emits the underlying digest when `push: true` — verify the workflow is not running in dry-run mode.
