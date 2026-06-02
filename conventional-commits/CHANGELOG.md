@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/conventional-commits-v1.1.0...conventional-commits-v1.2.0) (2026-06-02)
+
+
+### Features
+
+* **conventional-commits:** update to Node.js 24 GitHub actions ([#117](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/117)) ([99384a0](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/99384a01e1fa339e370261473a0887d5dea44aac))
+
 ## [1.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/conventional-commits-v1.0.1...conventional-commits-v1.1.0) (2025-06-10)
 
 
