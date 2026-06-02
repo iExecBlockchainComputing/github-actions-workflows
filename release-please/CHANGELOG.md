@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/release-please-v2.1.0...release-please-v2.2.0) (2026-06-02)
+
+
+### Features
+
+* **release-please:** update to Node.js 24 GitHub actions ([#120](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/120)) ([984ed71](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/984ed71399bb821a018ac9615ad39130d22e25eb))
+
 ## [2.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/release-please-v2.0.0...release-please-v2.1.0) (2025-05-15)
 
 
