@@ -1,0 +1,87 @@
+name: Localstack Tests
+
+on:
+  workflow_call:
+    inputs:
+      alchemy-api-key:
+        description: 'API key for Alchemy'
+        required: true
+        type: string
+      infura-project-id:
+        description: 'Project ID for Infura'
+        required: true
+        type: string
+      etherscan-api-key:
+        description: 'API key for Etherscan'
+        required: true
+        type: string
+      sonar-token:
+        description: 'Token for SonarCloud/ SonarQube'
+        required: true
+        type: string
+      sonar-host-url:
+        description: 'URL of Sonar server'
+        required: true
+        type: string
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '18'
+      run-check-types:
+        description: 'Enable check types'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      ALCHEMY_API_KEY: ${{ inputs.alchemy-api-key }}
+      INFURA_PROJECT_ID: ${{ inputs.infura-project-id }}
+      ETHERSCAN_API_KEY: ${{ inputs.etherscan-api-key }}
+      SONAR_TOKEN: ${{ inputs.sonar-token }}
+      SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare local stack
+        id: prepare
+        run: npm run start-test-stack
+
+      - name: Build
+        run: npm run build
+
+      - name: Check format
+        run: npm run check-format
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check Types
+        if: ${{ inputs.run-check-types }}
+        run: npm run check-types
+
+      - name: Install global & Test
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xxd
+          npm install -g .
+          npm test
+
+      - name: SonarScanner
+        uses: SonarSource/sonarqube-scan-action@v5.1.0
+        env:
+          SONAR_TOKEN: ${{ inputs.sonar-token }}
+          SONAR_HOST_URL: ${{ inputs.sonar-host-url }}
