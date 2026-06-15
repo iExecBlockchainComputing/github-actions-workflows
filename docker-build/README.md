@@ -23,20 +23,21 @@ Perfect for teams looking to streamline their containerization workflow with min
 
 ## ⚙️  Inputs
 
-| Name              | Description                                                                        | Required | Default         |
-| ----------------- | ---------------------------------------------------------------------------------- | -------- | --------------- |
-| `build-args`      | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`)              | No       | `""`            |
-| `context`         | Path to Docker Build Context                                                       | No       | `"."`           |
-| `dockerfile`      | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')      | No       | `"Dockerfile"`  |
-| `hadolint`        | Enable Hadolint                                                                    | No       | `true`          |
-| `image-name`      | Name of Docker Image (e.g., 'myimage', 'myorg/myimage')                            | true     | -               |
-| `image-tag`       | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                         | No       | `"latest"`      |
-| `platform`        | Indicates which platform the image should be built for                             | No       | `"linux/amd64"` |
-| `push`            | Push Docker Image to Registry                                                      | No       | `false`         |
-| `registry`        | Docker Registry                                                                    | No       | `"docker.io"`   |
-| `security-report` | Security Report Mode (`"sarif"` \| `"comment"`; ignored if `security-scan: false`) | No       | `"sarif"`       |
-| `security-scan`   | Enable Trivy Security Scan                                                         | No       | `true`          |
-| `trivy-version`   | Override Trivy security scanner version                                            | No       | `v0.69.2`       |
+| Name              | Description                                                                        | Required | Default           |
+| ----------------- | ---------------------------------------------------------------------------------- | -------- | ----------------- |
+| `build-args`      | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`)              | No       | `""`              |
+| `context`         | Path to Docker Build Context                                                       | No       | `"."`             |
+| `dockerfile`      | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')      | No       | `"Dockerfile"`    |
+| `hadolint`        | Enable Hadolint                                                                    | No       | `true`            |
+| `image-name`      | Name of Docker Image (e.g., 'myimage', 'myorg/myimage')                            | true     | -                 |
+| `image-tag`       | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                         | No       | `"latest"`        |
+| `platform`        | Indicates which platform the image should be built for                             | No       | `"linux/amd64"`   |
+| `push`            | Push Docker Image to Registry                                                      | No       | `false`           |
+| `registry`        | Docker Registry                                                                    | No       | `"docker.io"`     |
+| `runner`          | GitHub Actions runner label                                                        | No       | `"ubuntu-latest"` |
+| `security-report` | Security Report Mode (`"sarif"` \| `"comment"`; ignored if `security-scan: false`) | No       | `"sarif"`         |
+| `security-scan`   | Enable Trivy Security Scan                                                         | No       | `true`            |
+| `trivy-version`   | Override Trivy security scanner version                                            | No       | `v0.71.0`         |
 
 ## 🔐 Secrets
 
