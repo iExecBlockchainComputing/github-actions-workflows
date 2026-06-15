@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.3.0...docker-build-v3.4.0) (2026-06-15)
+
+
+### Features
+
+* **docker-build:** update to a Node.js 24 compatible Trivy GitHub action ([#122](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/122)) ([ee5d4dd](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/ee5d4dd3e7c835e1ea7eda91d1de954a4a92318b))
+
 ## [3.3.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.2.0...docker-build-v3.3.0) (2026-04-14)
 
 
