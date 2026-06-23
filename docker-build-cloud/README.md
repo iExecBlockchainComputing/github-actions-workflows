@@ -10,6 +10,7 @@ This reusable GitHub Actions workflow builds and pushes a multi-platform Docker 
 - 🔐 Authenticates to DockerHub for both registry push and DBC endpoint access
 - 🏷️ Tags the image with `<image-name>:<image-tag>`
 - 🚀 No QEMU emulation, no native ARM runners — DBC handles arch-specific builds
+- 🧾 Exposes the pushed multi-arch image index digest as a `checksum` output
 
 > [!IMPORTANT]
 > Requires a Docker Build Cloud subscription and a builder configured in your DockerHub organization. The DockerHub PAT must have the **Build** scope to authenticate to the cloud endpoint.
@@ -32,6 +33,12 @@ This reusable GitHub Actions workflow builds and pushes a multi-platform Docker 
 | -------------------- | ------------------------------------------------------------------------------------------ | -------- |
 | `dockerhub-username` | Username for Docker Hub authentication                                                     | Yes      |
 | `dockerhub-password` | Personal Access Token for Docker Hub with the **Build** scope (needed for DBC endpoint)    | Yes      |
+
+## 📤 Outputs
+
+| Name       | Description                                                       |
+| ---------- | ----------------------------------------------------------------- |
+| `checksum` | Checksum (`0x<sha256-hex>`) of the pushed multi-arch image index  |
 
 ## 💻 Example Usage
 
