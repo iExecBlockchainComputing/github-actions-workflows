@@ -8,11 +8,11 @@ This reusable GitHub Actions workflow automates the process of proposing transac
 
 | **Input**                | **Description**                                               | **Required** | **Default**                         |
 | ------------------------ | ------------------------------------------------------------- | ------------ | ----------------------------------- |
-| **rpc-url**              | RPC URL for the blockchain network                            | Yes          | -                                   |
 | **safe-address**         | Address of the Safe contract                                  | Yes          | -                                   |
 | **transaction-to**       | Target address for the transaction                            | Yes          | -                                   |
 | **transaction-value**    | Value to send in the transaction (in wei)                     | No           | `0`                                 |
 | **transaction-data**     | Transaction data/calldata                                     | Yes           | -                                |
+| **rpc-url**              | RPC URL for the blockchain network                            | Yes (Secret) | -                                   |
 | **safe-proposer-private-key** | Private key of the proposer wallet                           | Yes (Secret) | -                                   |
 | **safe-api-key**         | Safe API key for transaction service                          | Yes (Secret) | -                                   |
 
@@ -38,10 +38,10 @@ This reusable GitHub Actions workflow automates the process of proposing transac
       upgrade:
         uses: ./.github/workflows/propose-safe-multisig-tx.yml
         secrets:
+          rpc-url: ${{ secrets.RPC_URL }}
           safe-proposer-private-key: ${{ secrets.SAFE_PROPOSER_PRIVATE_KEY }}
           safe-api-key: ${{ secrets.SAFE_API_KEY }}
         with:
-          rpc-url: 'https://...'
           safe-address: '0xab...'
           transaction-to: '0xcd...'
           transaction-value: '0'
@@ -50,6 +50,7 @@ This reusable GitHub Actions workflow automates the process of proposing transac
 
 2. **Configure Secrets**  
    Ensure that the required secrets are added to your repository's settings:
+   - `RPC_URL`: The RPC URL for the blockchain network
    - `SAFE_PROPOSER_PRIVATE_KEY`: The private key of the wallet that will propose the transaction
    - `SAFE_API_KEY`: Your Safe API key for the transaction service
 
