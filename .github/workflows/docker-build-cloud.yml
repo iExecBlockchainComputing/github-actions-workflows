@@ -31,6 +31,10 @@ on:
         description: "Docker build arguments (multiline format: KEY1=value1\nKEY2=value2)"
         default: ""
         type: string
+      attest:
+        description: "Generate & sign a keyless SLSA build provenance attestation for the pushed image (the CALLER must grant id-token: write and attestations: write)"
+        default: false
+        type: boolean
     secrets:
       dockerhub-username:
         description: "Username for Docker Hub authentication"
@@ -62,6 +66,7 @@ jobs:
           endpoint: ${{ inputs.cloud-builder-endpoint }}
 
       - name: Build and push multi-platform image
+        id: build
         uses: docker/build-push-action@v7
         with:
           build-args: ${{ inputs.build-args }}
@@ -70,3 +75,13 @@ jobs:
           platforms: ${{ inputs.platforms }}
           push: true
           tags: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+
+      # --- SLSA provenance attestation -----
+      # Requires the permissions id-token: write + attestations: write.
+      - name: Generate & sign SLSA provenance (keyless)
+        if: ${{ inputs.attest }}
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-name: ${{ inputs.image-name }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
