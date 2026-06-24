@@ -28,12 +28,14 @@ const envSchema = z.object({
   TRANSACTION_VALUE: z
     .string()
     .default("0")
-    .pipe(
-      z.coerce
-        .bigint()
-        .nonnegative("Transaction value must be a positive amount")
-    )
-    .transform(String),
+    .refine((val) => {
+      try {
+        return BigInt(val) >= 0n;
+      } catch {
+        return false;
+      }
+    }, "Transaction value must be a positive amount")
+    .transform((val) => BigInt(val).toString()),
 
   // Transaction data/calldata
   TRANSACTION_DATA: z
