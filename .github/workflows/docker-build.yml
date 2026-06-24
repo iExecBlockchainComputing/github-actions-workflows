@@ -31,6 +31,10 @@ on:
         description: "Push Docker Image to Registry"
         default: false
         type: boolean
+      attest:
+        description: "Generate & sign a keyless SLSA build provenance attestation for the pushed image (the CALLER must grant id-token: write and attestations: write)"
+        default: false
+        type: boolean
       security-scan:
         description: "Enable Trivy Security Scan"
         default: true
@@ -254,10 +258,21 @@ jobs:
       - name: Compute checksum of the Docker image
         id: checksum
         run: |
-          # Extract SHA256 digest and format as 0X...
+          # Extract SHA256 digest and expose it in both 0x... and sha256:... formats
           INSPECT=$(docker image inspect "$OCI_IMAGE")
           DIGEST=$(echo "$INSPECT" | jq -r 'if .[0].RepoDigests[0] then .[0].RepoDigests[0] | split("@sha256:")[1] else .[0].Id | split(":")[1] end')
           echo "checksum=0x${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "digest=sha256:${DIGEST}" >> "$GITHUB_OUTPUT"
+
+      # --- SLSA provenance attestation -----
+      # Requires the permissions id-token: write + attestations: write.
+      - name: Generate & sign SLSA provenance (keyless)
+        if: ${{ inputs.attest && inputs.push }}
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-name: ${{ inputs.image-name }}
+          subject-digest: ${{ steps.checksum.outputs.digest }}
+          push-to-registry: true # Push attestation to registry
 
       - name: Cleanup files
         if: always()

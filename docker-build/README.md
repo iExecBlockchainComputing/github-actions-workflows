@@ -13,6 +13,7 @@ Perfect for teams looking to streamline their containerization workflow with min
 - 🏷️ Intelligently tags and pushes images to a Docker Registry
 - 🔎 Scan for vulnerabilities with Trivy
 - 👍 Lint dockerfile
+- 📜 Generates & signs a keyless SLSA build provenance attestation (optional)
 - 🛡️ Handles authentication securely using GitHub Secrets
 - 🚀 Optimizes build performance with layer caching
 - 📦 Supports AMD64 and ARM64 platforms (one per workflow run)
@@ -25,6 +26,7 @@ Perfect for teams looking to streamline their containerization workflow with min
 
 | Name              | Description                                                                        | Required | Default           |
 | ----------------- | ---------------------------------------------------------------------------------- | -------- | ----------------- |
+| `attest`          | Generate & sign a keyless SLSA build provenance attestation for the pushed image (requires `push: true` and caller permissions, see notes) | No | `false` |
 | `build-args`      | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`)              | No       | `""`              |
 | `context`         | Path to Docker Build Context                                                       | No       | `"."`             |
 | `dockerfile`      | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')      | No       | `"Dockerfile"`    |
@@ -90,6 +92,12 @@ jobs:
 - 🏷️ You can specify any valid Docker tag format in the `tag` input
 - 📅 Consider using dynamic tags based on git tags, commit SHAs, or dates
 - 🧪 For testing purposes, you can use the `--dry-run` flag in your own implementation
+- 📜 When `attest: true`, the attestation is only generated if `push: true`, and the **caller** workflow must grant the following permissions:
+  ```yaml
+  permissions:
+    id-token: write
+    attestations: write
+  ```
 
 ## 🛠️ Troubleshooting
 
