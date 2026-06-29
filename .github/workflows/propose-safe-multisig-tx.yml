@@ -24,16 +24,25 @@ on:
         required: false
         default: false
         type: boolean
+      environment:
+        description: >-
+          Name of the caller's GitHub Environment to run in. When set, the job reads the
+          secrets directly from that environment (RPC_URL, SAFE_PROPOSER_PRIVATE_KEY,
+          SAFE_API_KEY) and the caller must use `secrets: inherit`. Leave empty to pass
+          the secrets explicitly via the `secrets:` block instead.
+        required: false
+        default: ''
+        type: string
     secrets:
       rpc-url:
-        description: 'RPC URL for the blockchain network'
-        required: true
+        description: 'RPC URL for the blockchain network (omit when using `environment` + `secrets: inherit`)'
+        required: false
       safe-proposer-private-key:
-        description: 'Private key of the proposer wallet'
-        required: true
+        description: 'Private key of the proposer wallet (omit when using `environment` + `secrets: inherit`)'
+        required: false
       safe-api-key:
-        description: 'Safe API key for transaction service'
-        required: true
+        description: 'Safe API key for transaction service (omit when using `environment` + `secrets: inherit`)'
+        required: false
     outputs:
       tx-hash:
         description: 'Hash of the Safe transaction'
@@ -45,6 +54,7 @@ on:
 jobs:
   propose-transaction:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     outputs:
       tx-hash: ${{ steps.safe-transaction.outputs.tx-hash }}
       tx-details: ${{ steps.safe-transaction.outputs.tx-details }}
@@ -68,16 +78,31 @@ jobs:
         run: npm run build
         working-directory: ./propose-safe-multisig-tx
 
+      - name: Check required secrets are resolved
+        env:
+          RPC_URL: ${{ secrets.rpc-url || secrets.RPC_URL }}
+          SAFE_PROPOSER_PRIVATE_KEY: ${{ secrets.safe-proposer-private-key || secrets.SAFE_PROPOSER_PRIVATE_KEY }}
+          SAFE_API_KEY: ${{ secrets.safe-api-key || secrets.SAFE_API_KEY }}
+        run: |
+          missing=()
+          if [ -z "$RPC_URL" ]; then missing+=("RPC_URL / rpc-url"); fi
+          if [ -z "$SAFE_PROPOSER_PRIVATE_KEY" ]; then missing+=("SAFE_PROPOSER_PRIVATE_KEY / safe-proposer-private-key"); fi
+          if [ -z "$SAFE_API_KEY" ]; then missing+=("SAFE_API_KEY / safe-api-key"); fi
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "::error::Missing secret(s): ${missing[*]}. Pass them via the 'secrets:' block, or set 'environment:' and use 'secrets: inherit' so they are read from that environment."
+            exit 1
+          fi
+
       - name: Propose Safe Transaction
         run: npm run propose
         working-directory: ./propose-safe-multisig-tx
         env:
-          RPC_URL: ${{ secrets.rpc-url }}
+          RPC_URL: ${{ secrets.rpc-url || secrets.RPC_URL }}
           SAFE_ADDRESS: ${{ inputs.safe-address }}
           TRANSACTION_TO: ${{ inputs.transaction-to }}
           TRANSACTION_VALUE: ${{ inputs.transaction-value }}
           TRANSACTION_DATA: ${{ inputs.transaction-data }}
-          SAFE_PROPOSER_PRIVATE_KEY: ${{ secrets.safe-proposer-private-key }}
-          SAFE_API_KEY: ${{ secrets.safe-api-key }}
+          SAFE_PROPOSER_PRIVATE_KEY: ${{ secrets.safe-proposer-private-key || secrets.SAFE_PROPOSER_PRIVATE_KEY }}
+          SAFE_API_KEY: ${{ secrets.safe-api-key || secrets.SAFE_API_KEY }}
           DRY_RUN: ${{ inputs.dry-run }}
         id: safe-transaction

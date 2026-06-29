@@ -11,10 +11,14 @@ This reusable GitHub Actions workflow automates the process of proposing transac
 | **safe-address**         | Address of the Safe contract                                  | Yes          | -                                   |
 | **transaction-to**       | Target address for the transaction                            | Yes          | -                                   |
 | **transaction-value**    | Value to send in the transaction (in wei)                     | No           | `0`                                 |
-| **transaction-data**     | Transaction data/calldata                                     | Yes           | -                                |
-| **rpc-url**              | RPC URL for the blockchain network                            | Yes (Secret) | -                                   |
-| **safe-proposer-private-key** | Private key of the proposer wallet                           | Yes (Secret) | -                                   |
-| **safe-api-key**         | Safe API key for transaction service                          | Yes (Secret) | -                                   |
+| **transaction-data**     | Transaction data/calldata                                     | Yes          | -                                   |
+| **dry-run**              | Validate and prepare the transaction without proposing it     | No           | `false`                             |
+| **environment**          | Caller GitHub Environment to run in (see below)               | No           | `''`                                |
+| **rpc-url**              | RPC URL for the blockchain network                            | No (Secret)  | -                                   |
+| **safe-proposer-private-key** | Private key of the proposer wallet                       | No (Secret)  | -                                   |
+| **safe-api-key**         | Safe API key for transaction service                          | No (Secret)  | -                                   |
+
+> The three secrets are optional inputs because they can be provided in **two ways**: passed explicitly via the `secrets:` block, or read from a GitHub Environment via the `environment` input (see "Using a GitHub Environment" below). Exactly one of the two approaches must supply each secret.
 
 ## Workflow Outputs 📤
 
@@ -53,6 +57,30 @@ This reusable GitHub Actions workflow automates the process of proposing transac
    - `RPC_URL`: The RPC URL for the blockchain network
    - `SAFE_PROPOSER_PRIVATE_KEY`: The private key of the wallet that will propose the transaction
    - `SAFE_API_KEY`: Your Safe API key for the transaction service
+
+## Using a GitHub Environment 🌐
+
+A job that calls a reusable workflow **cannot declare `environment:`**, so secrets scoped to a
+GitHub Environment in the caller repository are not visible when passed through the `secrets:`
+block. To use environment-scoped secrets (e.g. to keep mainnet credentials behind environment
+protection rules), set the `environment` input and use `secrets: inherit`:
+
+```yaml
+jobs:
+  propose:
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/propose-safe-multisig-tx.yml@propose-safe-multisig-tx-v1.2.0
+    with:
+      environment: ethereum
+      safe-address: '0xab...'
+      transaction-to: '0xcd...'
+      transaction-data: '0xef...'
+    secrets: inherit
+```
+
+With this approach the secrets (`RPC_URL`, `SAFE_PROPOSER_PRIVATE_KEY`, `SAFE_API_KEY`) are read
+from the `ethereum` environment of the caller repository, and the explicit `secrets:` block is not
+needed. `secrets: inherit` is required so the environment secrets are forwarded to the reusable
+workflow.
 
 ## Security Considerations 🛡️
 
