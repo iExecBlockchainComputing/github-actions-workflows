@@ -63,7 +63,8 @@ This reusable GitHub Actions workflow automates the process of proposing transac
 A job that calls a reusable workflow **cannot declare `environment:`**, so secrets scoped to a
 GitHub Environment in the caller repository are not visible when passed through the `secrets:`
 block. To use environment-scoped secrets (e.g. to keep mainnet credentials behind environment
-protection rules), set the `environment` input and use `secrets: inherit`:
+protection rules), set the `environment` input — the job inside this reusable workflow then runs
+in that environment and reads the secrets directly from it:
 
 ```yaml
 jobs:
@@ -74,13 +75,15 @@ jobs:
       safe-address: '0xab...'
       transaction-to: '0xcd...'
       transaction-data: '0xef...'
-    secrets: inherit
+    # No `secrets:` block: RPC_URL / SAFE_PROPOSER_PRIVATE_KEY / SAFE_API_KEY are read
+    # from the `ethereum` environment of the caller repository.
 ```
 
-With this approach the secrets (`RPC_URL`, `SAFE_PROPOSER_PRIVATE_KEY`, `SAFE_API_KEY`) are read
-from the `ethereum` environment of the caller repository, and the explicit `secrets:` block is not
-needed. `secrets: inherit` is required so the environment secrets are forwarded to the reusable
-workflow.
+The secrets must be defined in that environment under the exact names `RPC_URL`,
+`SAFE_PROPOSER_PRIVATE_KEY` and `SAFE_API_KEY` (these are declared as workflow_call secrets so the
+environment can source them — an undeclared name stays empty even if the environment has it). Do
+**not** use `secrets: inherit` for this path: inherit forwards only the caller job's secrets, which
+excludes environment-scoped ones, and shadows the environment values.
 
 ## Security Considerations 🛡️
 
