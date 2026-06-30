@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-cloud-v1.0.0...docker-build-cloud-v1.1.0) (2026-06-30)
+
+
+### Features
+
+* add slsa attest to docker builds ([#126](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/126)) ([2fd65e3](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/2fd65e36f7e8dc548f8619e1cc290a2171e32210))
+
 ## 1.0.0 (2026-05-06)
 
 
