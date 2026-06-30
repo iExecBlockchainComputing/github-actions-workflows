@@ -84,4 +84,4 @@ jobs:
         with:
           subject-name: ${{ inputs.image-name }}
           subject-digest: ${{ steps.build.outputs.digest }}
-          push-to-registry: true`
+          push-to-registry: true
