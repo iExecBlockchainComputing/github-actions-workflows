@@ -10,6 +10,7 @@ This reusable GitHub Actions workflow builds and pushes a multi-platform Docker 
 - 🔐 Authenticates to DockerHub for both registry push and DBC endpoint access
 - 🏷️ Tags the image with `<image-name>:<image-tag>`
 - 🚀 No QEMU emulation, no native ARM runners — DBC handles arch-specific builds
+- 📜 Generates & signs a keyless SLSA build provenance attestation (optional)
 
 > [!IMPORTANT]
 > Requires a Docker Build Cloud subscription and a builder configured in your DockerHub organization. The DockerHub PAT must have the **Build** scope to authenticate to the cloud endpoint.
@@ -18,6 +19,7 @@ This reusable GitHub Actions workflow builds and pushes a multi-platform Docker 
 
 | Name                     | Description                                                                       | Required | Default        |
 | ------------------------ | --------------------------------------------------------------------------------- | -------- | -------------- |
+| `attest`                 | Generate & sign a keyless SLSA build provenance attestation for the pushed image (requires caller permissions, see notes) | No | `false` |
 | `build-args`             | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`)             | No       | `""`           |
 | `cloud-builder-endpoint` | Docker Build Cloud endpoint, format `<dbc-org>/<builder>`                         | Yes      | -              |
 | `context`                | Path to Docker Build Context                                                      | No       | `"."`          |
@@ -61,6 +63,12 @@ jobs:
 - 🔒 The DockerHub PAT must have the **Build** scope, not just Read/Write — DBC endpoints will return `403 Forbidden` otherwise.
 - 🪪 The user owning the PAT must be a member of the cloud builder (Docker Hub → org → Build Cloud → builder → Members).
 - 🔁 Login to DockerHub MUST run before `setup-buildx-action` — the cloud driver reads `~/.docker/config.json` at bootstrap.
+- 📜 When `attest: true`, the **caller** workflow must grant the following permissions:
+  ```yaml
+  permissions:
+    id-token: write
+    attestations: write
+  ```
 
 ## 🛠️ Troubleshooting
 
