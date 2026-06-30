@@ -80,7 +80,7 @@ jobs:
       # Requires the permissions id-token: write + attestations: write.
       - name: Generate & sign SLSA provenance (keyless)
         if: ${{ inputs.attest }}
-        uses: actions/attest-build-provenance@v4
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # @4.1.1
         with:
           subject-name: ${{ inputs.image-name }}
           subject-digest: ${{ steps.build.outputs.digest }}
