@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.4.0...docker-build-v3.5.0) (2026-06-30)
+
+
+### Features
+
+* add slsa attest to docker builds ([#126](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/126)) ([2fd65e3](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/2fd65e36f7e8dc548f8619e1cc290a2171e32210))
+
 ## [3.4.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.3.0...docker-build-v3.4.0) (2026-06-15)
 
 
