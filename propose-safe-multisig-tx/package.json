@@ -8,7 +8,7 @@
     "propose": "node dist/index.js"
   },
   "dependencies": {
-    "@actions/core": "^3.0.1",
+    "@actions/core": "^2.0.3",
     "@safe-global/api-kit": "^5.0.1",
     "@safe-global/protocol-kit": "^8.0.1",
     "@safe-global/types-kit": "^4.0.1",
