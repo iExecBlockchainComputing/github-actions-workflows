@@ -272,7 +272,7 @@ jobs:
         with:
           subject-name: ${{ inputs.image-name }}
           subject-digest: ${{ steps.checksum.outputs.digest }}
-          push-to-registry: true # Push attestation to registry
+          push-to-registry: false # Do not push attestation to registry
 
       - name: Cleanup files
         if: always()
