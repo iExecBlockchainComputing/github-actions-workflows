@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.5.0...docker-build-v3.5.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* do not push build attestation in docker-build workflow ([#129](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/129)) ([b605fa4](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/b605fa43d28ed96c16d40807cf549191f50317fb))
+
 ## [3.5.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.4.0...docker-build-v3.5.0) (2026-06-30)
 
 
