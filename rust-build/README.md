@@ -7,9 +7,11 @@ A reusable GitHub Actions workflow for building, linting, testing, and publishin
 - Build and test Rust packages
 - Lint code using `clippy`
 - Check formatting with `cargo fmt`
+- Check documentation builds without warnings (`cargo doc`)
 - Cache dependencies for faster builds
 - Set a working directory (for monorepos or nested crates)
 - Publish to crates.io
+- All `cargo` commands run with `--locked`, so builds fail if `Cargo.lock` is out of sync instead of silently updating it
 
 ## Usage
 
