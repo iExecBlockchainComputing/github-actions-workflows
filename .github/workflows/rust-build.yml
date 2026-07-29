@@ -61,22 +61,28 @@ jobs:
 
       - name: Run linter (Clippy)
         working-directory: ${{ inputs.working-directory }}
-        run: cargo clippy --all-targets -- -D warnings
+        run: cargo clippy --locked --all-targets -- -D warnings
 
       - name: Build
         working-directory: ${{ inputs.working-directory }}
-        run: cargo build --release
+        run: cargo build --locked --release
 
       - name: Run tests
         working-directory: ${{ inputs.working-directory }}
-        run: cargo test --release
+        run: cargo test --locked --release
+
+      - name: Check documentation
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          RUSTDOCFLAGS: '-D warnings'
+        run: cargo doc --locked --no-deps --document-private-items
 
       - name: Validate package
         if: ${{ inputs.publish-crates-io }}
         working-directory: ${{ inputs.working-directory }}
-        run: cargo package
+        run: cargo package --locked
 
       - name: Publish to crates.io
         if: ${{ inputs.publish-crates-io }}
         working-directory: ${{ inputs.working-directory }}
-        run: cargo publish
+        run: cargo publish --locked
