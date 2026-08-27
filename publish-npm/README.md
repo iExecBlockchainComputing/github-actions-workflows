@@ -139,9 +139,9 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
 ## Workflow Steps in Detail 🔍
 
-1. **Download Artifacts**: If `artifact-name` is provided, downloads the specified artifact using `actions/download-artifact@v4` to the path specified by `artifact-path`.
-2. **Checkout Repository**: Uses `actions/checkout@v4` to fetch your code.
-3. **Setup Node.js**: Configures Node.js with `actions/setup-node@v4`, including registry URL and scope configuration.
+1. **Download Artifacts**: If `artifact-name` is provided, downloads the specified artifact using `actions/download-artifact@v8` to the path specified by `artifact-path`.
+2. **Checkout Repository**: Uses `actions/checkout@v7` to fetch your code.
+3. **Setup Node.js**: Configures Node.js with `actions/setup-node@v7`, including registry URL and scope configuration.
 4. **Install Dependencies**: Runs the specified install command (default: `npm ci`).
 5. **Build Package**: Builds the package using the specified build command (default: `npm run build`).
 6. **Run Type Checks**: Performs type checking using the specified command (default: `npm run check-types --if-present`).
