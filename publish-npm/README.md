@@ -8,6 +8,7 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 - **Downloads Artifacts**: Downloads specified artifacts if needed. 📦
 - **Checks Out Your Repository**: Retrieves your code. 📥
 - **Sets Up Node.js**: Installs the specified Node.js version and configures the `.npmrc` file. ⚙️
+- **Enables Socket Firewall**: Blocks installation of any package on npmjs.com confirmed as malware by Socket, for every subsequent npm/yarn/pnpm call in the job. 🛡️
 - **Installs Dependencies**: Uses the specified install command (default: `npm ci`) to install the dependencies. 📦
 - **Builds the Package**: Builds the package using the specified build command (default: `npm run build`). 🔨
 - **Performs Type Checking**: Runs type checking if configured. 🔍
