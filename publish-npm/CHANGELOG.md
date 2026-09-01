@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.6.0...publish-npm-v1.7.0) (2026-09-01)
+
+
+### Features
+
+* **publish-npm:** add Socket Firewall to block malicious package installs ([#133](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/133)) ([a507fb1](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/a507fb114c81d7e0d5c484ef4c1a3a0fbc8991c4))
+
 ## [1.6.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.5.0...publish-npm-v1.6.0) (2025-10-16)
 
 
