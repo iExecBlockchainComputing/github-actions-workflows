@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.7.0...publish-npm-v1.7.1) (2026-09-04)
+
+
+### Bug Fixes
+
+* pin third-party GitHub Actions to commit SHA ([#136](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/136)) ([a69a256](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/a69a25679b7d47df1256596f1fc9df0fdc38a8a8))
+
 ## [1.7.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.6.0...publish-npm-v1.7.0) (2026-09-01)
 
 
