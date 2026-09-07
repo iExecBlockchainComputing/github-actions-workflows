@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.5.1...docker-build-v3.5.2) (2026-09-04)
+
+
+### Bug Fixes
+
+* pin third-party GitHub Actions to commit SHA ([#136](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/136)) ([a69a256](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/a69a25679b7d47df1256596f1fc9df0fdc38a8a8))
+
 ## [3.5.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.5.0...docker-build-v3.5.1) (2026-07-01)
 
 
