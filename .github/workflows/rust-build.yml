@@ -40,6 +40,12 @@ jobs:
           toolchain: ${{ inputs.rust-version }}
           components: clippy, rustfmt
 
+      - name: Enable Socket Firewall
+        uses: SocketDev/action@be1f253a41351d59095f8d7f1425985097dd1054
+        with:
+          mode: firewall-free
+          shims: true
+
       # https://github.com/actions/cache/blob/main/examples.md#rust---cargo
       - name: Cache dependencies
         if: ${{ inputs.enable-cache }}
