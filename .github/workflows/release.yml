@@ -18,7 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       packages: ${{ steps.check-files.outputs.packages }}
-      prev_sha: ${{ steps.check-files.outputs.prev_sha }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
@@ -33,7 +32,6 @@ jobs:
           releases_with_changes=$(printf "^%s[./]\n" ${workflow_list[@]} | xargs -I{} sh -c "git diff --name-only ${{ github.sha }} ${{ github.sha }}^ | grep -om1 -e '{}' || true" | tr -d /.)
           # Set list of workflows to release
           echo "packages=$(jq -cn --args '$ARGS.positional' -- ${workflow_with_changes[@]} ${releases_with_changes[@]})" >> "$GITHUB_OUTPUT"
-          echo "prev_sha=$(git rev-parse ${{ github.sha }}^)" >> "$GITHUB_OUTPUT"
         shell: bash
 
   release-please:
@@ -60,7 +58,6 @@ jobs:
           package-name: ${{ matrix.package }}
           version-file: ${{ matrix.package }}/version.txt
           changelog-path: ${{ matrix.package }}/CHANGELOG.md
-          last-release-sha: ${{ needs.setup-release-context.outputs.prev_sha }}
           labels: ${{ matrix.package }}
           bump-patch-for-minor-pre-major: true
           bump-minor-pre-major: true
