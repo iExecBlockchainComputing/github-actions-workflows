@@ -11,6 +11,7 @@ A reusable GitHub Actions workflow for building, linting, testing, and publishin
 - Cache dependencies for faster builds
 - Set a working directory (for monorepos or nested crates)
 - Publish to crates.io
+- Enable Socket Firewall to block crates on crates.io confirmed as malware by Socket, for every subsequent cargo call in the job
 - All `cargo` commands run with `--locked`, so builds fail if `Cargo.lock` is out of sync instead of silently updating it
 
 ## Usage
