@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.0.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/rust-build-v2.1.1...rust-build-v3.0.0) (2026-09-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* **rust-build:** retroactively document breaking change shipped in 2.1.1 ([#146](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/146))
+
+### Features
+
+* **rust-build:** add Socket Firewall to block malicious crate installs ([#148](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/148)) ([527836d](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/527836dc90417d4e98c51711d295c159bae42d4e))
+
+
+### Bug Fixes
+
+* **ci:** remove last-release-sha override from release workflow ([#145](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/145)) ([5ba9c03](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/5ba9c03f10b58b22c2877aabc7b93d231fcdc662))
+* **rust-build:** retroactively document breaking change shipped in 2.1.1 ([#146](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/146)) ([31b8517](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/31b851752b8024dc0e383c536cb6a5991c023889))
+
 ## [2.1.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/rust-build-v2.1.0...rust-build-v2.1.1) (2026-09-04)
 
 
