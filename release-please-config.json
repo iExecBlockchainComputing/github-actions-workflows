@@ -1,70 +1,49 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "separate-pull-requests": true,
+  "release-type": "simple",
+  "bump-patch-for-minor-pre-major": true,
+  "bump-minor-pre-major": true,
   "packages": {
     "docker-build": {
-      "release-type": "simple",
       "version-file": "docker-build/version.txt",
       "changelog-path": "docker-build/CHANGELOG.md",
-      "extra-label": "docker-build",
-      "bump-patch-for-minor-pre-major": true,
-      "bump-minor-pre-major": true
+      "extra-label": "docker-build"
     },
     "docker-build-cloud": {
-      "release-type": "simple",
       "version-file": "docker-build-cloud/version.txt",
       "changelog-path": "docker-build-cloud/CHANGELOG.md",
-      "extra-label": "docker-build-cloud",
-      "bump-patch-for-minor-pre-major": true,
-      "bump-minor-pre-major": true
+      "extra-label": "docker-build-cloud"
     },
     "propose-safe-multisig-tx": {
-      "release-type": "simple",
       "version-file": "propose-safe-multisig-tx/version.txt",
       "changelog-path": "propose-safe-multisig-tx/CHANGELOG.md",
-      "extra-label": "propose-safe-multisig-tx",
-      "bump-patch-for-minor-pre-major": true,
-      "bump-minor-pre-major": true
+      "extra-label": "propose-safe-multisig-tx"
     },
     "publish-npm": {
-      "release-type": "simple",
       "version-file": "publish-npm/version.txt",
       "changelog-path": "publish-npm/CHANGELOG.md",
-      "extra-label": "publish-npm",
-      "bump-patch-for-minor-pre-major": true,
-      "bump-minor-pre-major": true
+      "extra-label": "publish-npm"
     },
     "release-please": {
-      "release-type": "simple",
       "version-file": "release-please/version.txt",
       "changelog-path": "release-please/CHANGELOG.md",
-      "extra-label": "release-please",
-      "bump-patch-for-minor-pre-major": true,
-      "bump-minor-pre-major": true
+      "extra-label": "release-please"
     },
     "rust-build": {
-      "release-type": "simple",
       "version-file": "rust-build/version.txt",
       "changelog-path": "rust-build/CHANGELOG.md",
-      "extra-label": "rust-build",
-      "bump-patch-for-minor-pre-major": true,
-      "bump-minor-pre-major": true
+      "extra-label": "rust-build"
     },
     "stale": {
-      "release-type": "simple",
       "version-file": "stale/version.txt",
       "changelog-path": "stale/CHANGELOG.md",
-      "extra-label": "stale",
-      "bump-patch-for-minor-pre-major": true,
-      "bump-minor-pre-major": true
+      "extra-label": "stale"
     },
     "conventional-commits": {
-      "release-type": "simple",
       "version-file": "conventional-commits/version.txt",
       "changelog-path": "conventional-commits/CHANGELOG.md",
-      "extra-label": "conventional-commits",
-      "bump-patch-for-minor-pre-major": true,
-      "bump-minor-pre-major": true
+      "extra-label": "conventional-commits"
     }
   }
 }
