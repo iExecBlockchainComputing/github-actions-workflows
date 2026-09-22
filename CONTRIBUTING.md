@@ -2,9 +2,9 @@
 
 ## Editing a reusable workflow
 
-Each reusable workflow (`.github/workflows/<name>.yml` declaring `workflow_call:`) is backed by a Component directory `<name>/` that release-please versions independently. Release-please only sees changes under `<name>/`, so a commit that only edits the workflow file is otherwise invisible to it.
+Each shared reusable workflow is backed by a Component directory `<name>/` that release-please versions independently. Release-please only sees changes under `<name>/`, so a commit that only edits the workflow file is otherwise invisible to it.
 
-After editing any `.github/workflows/<name>.yml` for one of the 8 reusable workflows, run:
+After editing any `.github/workflows/<name>.yml` for a workflow listed in `release-please-config.json`, run:
 
 ```sh
 bash scripts/compute-workflow-sha256.sh

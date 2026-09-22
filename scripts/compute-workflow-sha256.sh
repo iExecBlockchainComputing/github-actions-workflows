@@ -10,10 +10,10 @@ fi
 
 outdated=false
 
-mapfile -t workflow_files < <(grep -lE "^[[:space:]]*workflow_call:[[:space:]]*$" .github/workflows/*.yml)
+mapfile -t package_names < <(jq -r '.packages | keys[]' release-please-config.json)
 
-for workflow_file in "${workflow_files[@]}"; do
-  name="$(basename "$workflow_file" .yml)"
+for name in "${package_names[@]}"; do
+  workflow_file=".github/workflows/$name.yml"
   sha_file="$name/workflow-sha256"
   computed_sha="$(sha256sum "$workflow_file" | awk '{print $1}')"
 
