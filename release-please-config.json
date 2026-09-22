@@ -3,6 +3,7 @@
   "separate-pull-requests": true,
   "release-type": "simple",
   "tag-separator": "-",
+  "always-update": true,
   "bump-patch-for-minor-pre-major": true,
   "bump-minor-pre-major": true,
   "packages": {
