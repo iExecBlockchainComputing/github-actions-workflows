@@ -1,0 +1,19 @@
+name: verify-workflow-sha256
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-workflow-sha256-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  verify-workflow-sha256:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - name: Verify workflow-sha256 files are up to date
+        run: scripts/compute-workflow-sha256.sh --check

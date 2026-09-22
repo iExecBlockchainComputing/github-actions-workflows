@@ -14,34 +14,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  setup-release-context:
-    runs-on: ubuntu-latest
-    outputs:
-      packages: ${{ steps.check-files.outputs.packages }}
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          fetch-depth: 2
-      - name: Get list of workflows with changes
-        id: check-files
-        run: |
-          # Get list of workflows
-          workflow_list=($(basename -a -s .yml $(find .github/workflows/ -type f -print | xargs -I{} grep -l "workflow_call:$" {})))
-          # Get list of workflows to release
-          workflow_with_changes=$(printf "/%s[./]\n" ${workflow_list[@]} | xargs -I{} sh -c "git diff --name-only ${{ github.sha }} ${{ github.sha }}^ | grep -om1 -e '{}' || true" | tr -d /.)
-          releases_with_changes=$(printf "^%s[./]\n" ${workflow_list[@]} | xargs -I{} sh -c "git diff --name-only ${{ github.sha }} ${{ github.sha }}^ | grep -om1 -e '{}' || true" | tr -d /.)
-          # Set list of workflows to release
-          echo "packages=$(jq -cn --args '$ARGS.positional' -- ${workflow_with_changes[@]} ${releases_with_changes[@]})" >> "$GITHUB_OUTPUT"
-        shell: bash
-
   release-please:
-    needs: setup-release-context
-    if: ${{ needs.setup-release-context.outputs.packages != '[]' }}
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        package: ${{ fromJSON(needs.setup-release-context.outputs.packages) }}
     steps:
       - name: Get Token
         id: get_token
@@ -49,17 +23,7 @@ jobs:
         with:
           client-id: "${{ secrets.RELEASE_PLEASE_APPLICATION_ID }}"
           private-key: ${{ secrets.RELEASE_PLEASE_PRIVATE_KEY }}
-      - uses: googleapis/release-please-action@db8f2c60ee802b3748b512940dde88eabd7b7e01 # v3.7.13
-        id: release
+      - name: Run release-please
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
-          default-branch: main
           token: ${{ steps.get_token.outputs.token }}
-          release-type: simple
-          package-name: ${{ matrix.package }}
-          version-file: ${{ matrix.package }}/version.txt
-          changelog-path: ${{ matrix.package }}/CHANGELOG.md
-          labels: ${{ matrix.package }}
-          bump-patch-for-minor-pre-major: true
-          bump-minor-pre-major: true
-          monorepo-tags: true
-          release-as: ""
