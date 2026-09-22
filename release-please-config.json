@@ -7,6 +7,11 @@
   "bump-patch-for-minor-pre-major": true,
   "bump-minor-pre-major": true,
   "packages": {
+    "conventional-commits": {
+      "version-file": "conventional-commits/version.txt",
+      "changelog-path": "conventional-commits/CHANGELOG.md",
+      "extra-label": "conventional-commits"
+    },
     "docker-build": {
       "version-file": "docker-build/version.txt",
       "changelog-path": "docker-build/CHANGELOG.md",
@@ -41,11 +46,6 @@
       "version-file": "stale/version.txt",
       "changelog-path": "stale/CHANGELOG.md",
       "extra-label": "stale"
-    },
-    "conventional-commits": {
-      "version-file": "conventional-commits/version.txt",
-      "changelog-path": "conventional-commits/CHANGELOG.md",
-      "extra-label": "conventional-commits"
     }
   }
 }

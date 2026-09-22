@@ -1,10 +1,10 @@
 {
+  "conventional-commits": "1.2.1",
   "docker-build": "3.5.2",
   "docker-build-cloud": "1.1.1",
   "propose-safe-multisig-tx": "1.1.1",
   "publish-npm": "1.7.1",
   "release-please": "2.2.1",
   "rust-build": "3.0.0",
-  "stale": "1.0.1",
-  "conventional-commits": "1.2.1"
+  "stale": "1.0.1"
 }
