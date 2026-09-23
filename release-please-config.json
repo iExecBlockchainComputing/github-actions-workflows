@@ -21,6 +21,10 @@
       "component": "docker-build-cloud",
       "extra-label": "docker-build-cloud"
     },
+    "java-build": {
+      "component": "java-build",
+      "extra-label": "java-build"
+    },
     "propose-safe-multisig-tx": {
       "component": "propose-safe-multisig-tx",
       "extra-label": "propose-safe-multisig-tx"
