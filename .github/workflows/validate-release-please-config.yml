@@ -1,0 +1,24 @@
+name: Validate release-please config
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'release-please-config.json'
+      - 'scripts/check-release-please-config.sh'
+  push:
+    branches:
+      - main
+    paths:
+      - 'release-please-config.json'
+      - 'scripts/check-release-please-config.sh'
+
+jobs:
+  validate:
+    name: Validate release-please-config.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Run config validation
+        run: bash scripts/check-release-please-config.sh release-please-config.json
