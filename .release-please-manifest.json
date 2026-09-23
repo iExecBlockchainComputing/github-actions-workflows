@@ -6,5 +6,6 @@
   "publish-npm": "1.7.1",
   "release-please": "2.2.1",
   "rust-build": "3.0.0",
-  "stale": "1.0.1"
+  "stale": "1.0.1",
+  "java-build": "1.0.0"
 }
