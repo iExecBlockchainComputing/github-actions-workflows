@@ -1,6 +1,6 @@
 {
   "conventional-commits": "1.2.1",
-  "docker-build": "3.5.2",
+  "docker-build": "4.0.0",
   "docker-build-cloud": "1.1.1",
   "propose-safe-multisig-tx": "1.1.1",
   "publish-npm": "1.7.1",
