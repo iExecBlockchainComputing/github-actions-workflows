@@ -1,0 +1,151 @@
+name: Build and Test Java Project
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: "Java version to use"
+        default: "21"
+        type: string
+      refresh-dependencies:
+        description: "Run Gradle with --refresh-dependencies. Only useful for changing modules (`-SNAPSHOT`) or dynamic versions, whose resolution Gradle otherwise caches for 24h; with pinned versions it just revalidates every module for nothing"
+        default: false
+        type: boolean
+      sonar:
+        description: "Run the SonarQube analysis (requires the `sonar-token` secret)"
+        default: false
+        type: boolean
+      run-itest:
+        description: "Run the `itest` Gradle task after the unit tests"
+        default: false
+        type: boolean
+      dockerhub-login:
+        description: "Log in to Docker Hub before the build. Enable it when the tests pull images, e.g. Testcontainers, to avoid anonymous pull rate limits"
+        default: false
+        type: boolean
+      upload-jar:
+        description: "Upload the built jar as an artifact, so that a later job can build an OCI image from it"
+        default: false
+        type: boolean
+      artifact-name:
+        description: "Name of the uploaded jar artifact"
+        default: "boot-jar"
+        type: string
+      artifact-retention-days:
+        description: "Retention of the uploaded jar artifact, in days"
+        default: 1
+        type: number
+    secrets:
+      dockerhub-username:
+        description: "Docker Hub username (used only when `dockerhub-login: true`)"
+        required: false
+      dockerhub-password:
+        description: "Docker Hub token (used only when `dockerhub-login: true`)"
+        required: false
+      sonar-token:
+        description: "SonarCloud token (used only when `sonar: true`)"
+        required: false
+    outputs:
+      jar-path:
+        description: "Path of the built jar, relative to the workspace. Only set when `upload-jar: true`, empty for pure libraries. Feed it to `docker-build.yml` as `build-args: jar=<path>`"
+        value: ${{ jobs.build.outputs.jar-path }}
+      artifact-name:
+        description: "Name of the uploaded jar artifact, echoed back for convenience"
+        value: ${{ jobs.build.outputs.artifact-name }}
+
+permissions:
+  contents: read # actions/checkout
+  actions: write # actions/upload-artifact
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    outputs:
+      jar-path: ${{ steps.gradle-properties.outputs.jar-path }}
+      artifact-name: ${{ inputs.artifact-name }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          # Sonar needs the full history to attribute lines to authors, and the Gradle
+          # build derives the project version from the tag pointing at HEAD.
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java-version }}
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
+
+      - name: Login to Docker Hub
+        if: ${{ inputs.dockerhub-login }}
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          username: ${{ secrets.dockerhub-username }}
+          password: ${{ secrets.dockerhub-password }}
+
+      # Inputs are passed through the environment rather than interpolated into the
+      # script, so that a crafted input cannot inject shell commands.
+      - name: Build and run unit tests
+        env:
+          REFRESH_DEPENDENCIES: ${{ inputs.refresh-dependencies }}
+          SONAR_TOKEN: ${{ secrets.sonar-token }}
+          WITH_SONAR: ${{ inputs.sonar }}
+          GH_REPO_OWNER: ${{ github.repository_owner }}
+          GH_REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          args=("build")
+          if [ "$WITH_SONAR" = "true" ]; then
+            # The Sonar Gradle plugin reads the branch, pull request and repository from
+            # the GITHUB_* variables, so no branch or pull request property has to be passed.
+            # sonar.projectKey is derived from SonarQube Gradle plugin and Gradle project properties.
+            # sonar.organization (mandatory on SonarQube Cloud) is derived from the repository owner lowercased.
+            sonar_organization="$(echo "$GH_REPO_OWNER" | tr '[:upper:]' '[:lower:]')"
+            args+=("sonar")
+            args+=("-Dsonar.organization=$sonar_organization")
+          fi
+          if [ "$REFRESH_DEPENDENCIES" = "true" ]; then
+            args+=("--refresh-dependencies")
+          fi
+          ./gradlew "${args[@]}" -i
+
+      - name: Run integration tests
+        if: ${{ inputs.run-itest }}
+        run: ./gradlew itest -i
+
+      - name: Upload test and coverage reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: test-reports
+          path: |
+            **/build/reports/**
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Resolve project jar path
+        id: gradle-properties
+        if: ${{ inputs.upload-jar }}
+        run: |
+          # jarPathForOCI is defined by the iExec Java projects that ship an OCI image.
+          properties=$(./gradlew -q properties)
+          jar_path=$(echo "$properties" | awk '/^jarPathForOCI:/ {print $2}')
+          if [ -z "$jar_path" ]; then
+            echo "❌ Error: jarPathForOCI not defined in Gradle project"
+            exit 1
+          fi
+          echo "jar-path=$jar_path" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Upload jar artifact
+        if: ${{ inputs.upload-jar }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ steps.gradle-properties.outputs.jar-path }}
+          if-no-files-found: error
+          retention-days: ${{ inputs.artifact-retention-days }}

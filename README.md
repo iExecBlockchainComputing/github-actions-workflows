@@ -24,6 +24,10 @@ Automates the process of publishing NPM packages to the NPM registry with highly
 
 Validates that pull request titles follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for better repository management. Ensures your commit history remains clean and meaningful for improved collaboration.
 
+### ☕ [Java Build](./java-build)
+
+Builds, tests and analyses a Gradle-based Java project. Runs the unit tests and a SonarCloud analysis, and optionally hands the built jar to `docker-build` so that the artifact shipped in the image is exactly the one that was tested.
+
 ### 🦀 [Rust Build](./rust-build)
 
 Provides a standardized workflow for building, testing, and publishing Rust packages with intelligent caching and comprehensive artifact management. Optimized for Rust projects of all sizes.
