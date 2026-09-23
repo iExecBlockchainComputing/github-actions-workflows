@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "separate-pull-requests": true,
+  "release-type": "simple",
+  "tag-separator": "-",
+  "always-update": true,
+  "bump-patch-for-minor-pre-major": true,
+  "bump-minor-pre-major": true,
+  "packages": {
+    "conventional-commits": {
+      "version-file": "conventional-commits/version.txt",
+      "changelog-path": "conventional-commits/CHANGELOG.md",
+      "extra-label": "conventional-commits"
+    },
+    "docker-build": {
+      "version-file": "docker-build/version.txt",
+      "changelog-path": "docker-build/CHANGELOG.md",
+      "extra-label": "docker-build"
+    },
+    "docker-build-cloud": {
+      "version-file": "docker-build-cloud/version.txt",
+      "changelog-path": "docker-build-cloud/CHANGELOG.md",
+      "extra-label": "docker-build-cloud"
+    },
+    "propose-safe-multisig-tx": {
+      "version-file": "propose-safe-multisig-tx/version.txt",
+      "changelog-path": "propose-safe-multisig-tx/CHANGELOG.md",
+      "extra-label": "propose-safe-multisig-tx"
+    },
+    "publish-npm": {
+      "version-file": "publish-npm/version.txt",
+      "changelog-path": "publish-npm/CHANGELOG.md",
+      "extra-label": "publish-npm"
+    },
+    "release-please": {
+      "version-file": "release-please/version.txt",
+      "changelog-path": "release-please/CHANGELOG.md",
+      "extra-label": "release-please"
+    },
+    "rust-build": {
+      "version-file": "rust-build/version.txt",
+      "changelog-path": "rust-build/CHANGELOG.md",
+      "extra-label": "rust-build"
+    },
+    "stale": {
+      "version-file": "stale/version.txt",
+      "changelog-path": "stale/CHANGELOG.md",
+      "extra-label": "stale"
+    }
+  }
+}
