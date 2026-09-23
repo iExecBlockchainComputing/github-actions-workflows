@@ -2,12 +2,27 @@ name: verify-workflow-sha256
 
 on:
   pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/*.yml'
+      - 'release-please-config.json'
+      - 'scripts/compute-workflow-sha256.sh'
+      - '**/workflow-sha256'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/*.yml'
+      - 'release-please-config.json'
+      - 'scripts/compute-workflow-sha256.sh'
+      - '**/workflow-sha256'
 
 permissions:
   contents: read
 
 concurrency:
-  group: verify-workflow-sha256-${{ github.event.pull_request.number }}
+  group: verify-workflow-sha256-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

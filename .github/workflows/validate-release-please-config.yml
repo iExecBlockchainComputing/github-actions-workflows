@@ -1,0 +1,33 @@
+name: Validate release-please config
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'release-please-config.json'
+      - 'scripts/check-release-please-config.sh'
+      - '.github/workflows/validate-release-please-config.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'release-please-config.json'
+      - 'scripts/check-release-please-config.sh'
+      - '.github/workflows/validate-release-please-config.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-release-please-config-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate release-please-config.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run config validation
+        run: bash scripts/check-release-please-config.sh release-please-config.json

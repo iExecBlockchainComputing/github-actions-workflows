@@ -1,50 +1,44 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  "separate-pull-requests": true,
-  "release-type": "simple",
-  "tag-separator": "-",
   "always-update": true,
-  "bump-patch-for-minor-pre-major": true,
   "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "include-component-in-tag": true,
+  "include-v-in-tag": true,
+  "release-type": "simple",
+  "separate-pull-requests": true,
+  "tag-separator": "-",
   "packages": {
     "conventional-commits": {
-      "version-file": "conventional-commits/version.txt",
-      "changelog-path": "conventional-commits/CHANGELOG.md",
+      "component": "conventional-commits",
       "extra-label": "conventional-commits"
     },
     "docker-build": {
-      "version-file": "docker-build/version.txt",
-      "changelog-path": "docker-build/CHANGELOG.md",
+      "component": "docker-build",
       "extra-label": "docker-build"
     },
     "docker-build-cloud": {
-      "version-file": "docker-build-cloud/version.txt",
-      "changelog-path": "docker-build-cloud/CHANGELOG.md",
+      "component": "docker-build-cloud",
       "extra-label": "docker-build-cloud"
     },
     "propose-safe-multisig-tx": {
-      "version-file": "propose-safe-multisig-tx/version.txt",
-      "changelog-path": "propose-safe-multisig-tx/CHANGELOG.md",
+      "component": "propose-safe-multisig-tx",
       "extra-label": "propose-safe-multisig-tx"
     },
     "publish-npm": {
-      "version-file": "publish-npm/version.txt",
-      "changelog-path": "publish-npm/CHANGELOG.md",
+      "component": "publish-npm",
       "extra-label": "publish-npm"
     },
     "release-please": {
-      "version-file": "release-please/version.txt",
-      "changelog-path": "release-please/CHANGELOG.md",
+      "component": "release-please",
       "extra-label": "release-please"
     },
     "rust-build": {
-      "version-file": "rust-build/version.txt",
-      "changelog-path": "rust-build/CHANGELOG.md",
+      "component": "rust-build",
       "extra-label": "rust-build"
     },
     "stale": {
-      "version-file": "stale/version.txt",
-      "changelog-path": "stale/CHANGELOG.md",
+      "component": "stale",
       "extra-label": "stale"
     }
   }
