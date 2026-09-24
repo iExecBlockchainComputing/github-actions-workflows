@@ -17,6 +17,7 @@ Perfect for teams looking to streamline their containerization workflow with min
 - 🛡️ Handles authentication securely using GitHub Secrets
 - 🚀 Optimizes build performance with layer caching
 - 📦 Supports AMD64 and ARM64 platforms (one per workflow run)
+- 📥 Optionally pulls a build artifact from an earlier job into the build context, so a compiled binary or jar can be built once and copied into the image
 
 > [!IMPORTANT]
 > Due to a limitation on Trivy analysis, the workflow targets a single platform.
@@ -26,6 +27,8 @@ Perfect for teams looking to streamline their containerization workflow with min
 
 | Name              | Description                                                                        | Required | Default           |
 | ----------------- | ---------------------------------------------------------------------------------- | -------- | ----------------- |
+| `artifact-name`   | Name of an artifact to download into the build context before building, e.g. a jar produced by an earlier job (leave empty to skip) | No | `""` |
+| `artifact-path`   | Destination path for the downloaded artifact, relative to the workspace (ignored if `artifact-name` is empty) | No | `""` |
 | `attest`          | Generate & sign a keyless SLSA build provenance attestation for the pushed image (requires `push: true` and caller permissions, see notes) | No | `false` |
 | `build-args`      | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`)              | No       | `""`              |
 | `context`         | Path to Docker Build Context                                                       | No       | `"."`             |
