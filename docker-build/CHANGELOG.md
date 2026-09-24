@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.5.2...docker-build-v3.6.0) (2026-09-24)
+
+
+### Features
+
+* **docker-build:** add inputs to enable building OCI image from existing artifact ([#157](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/157)) ([4c6ec66](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/4c6ec666191cb84a5b3f30380fa777b33df3ab1c))
+
 ## [3.5.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.5.1...docker-build-v3.5.2) (2026-09-04)
 
 
