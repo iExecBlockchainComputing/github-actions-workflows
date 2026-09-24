@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/propose-safe-multisig-tx-v1.1.1...propose-safe-multisig-tx-v1.1.2) (2026-09-23)
+
+
+### Bug Fixes
+
+* **propose-safe-multisig-tx:** update deps to fix vulnerabilities in transient deps `undici` and `ws` ([#149](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/149)) ([43ce889](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/43ce889cf677e45858bae3db44bb14e48fc58c25))
+
 ## [1.1.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/propose-safe-multisig-tx-v1.1.0...propose-safe-multisig-tx-v1.1.1) (2026-09-04)
 
 
