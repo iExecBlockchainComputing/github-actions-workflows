@@ -119,7 +119,7 @@ jobs:
         run: |
           if [ -n "${{ secrets.npm-token }}" ]; then
             echo "npm-token secret is set not using OIDC"
-          elif [ $(npx semver -r ">=11.5.1" $(npm -v)) ]; then
+          elif [ -n "$(npx semver -r ">=11.5.1" "$(npm -v)")" ]; then
             echo "OIDC trusted publishing supported by current npm version"
           else
             echo "OIDC trusted publishing requires npm >= 11.5.1, updating npm"
@@ -161,21 +161,21 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+          TAG: ${{ inputs.tag }}
+          ACCESS: ${{ inputs.access }}
         run: |
-          TAG_OPT=""
-          if [ -n "${{ inputs.tag }}" ]; then
-            TAG_OPT="--tag ${{ inputs.tag }}"
+          opts=(--access "$ACCESS")
+          if [ -n "$TAG" ]; then
+            opts+=(--tag "$TAG")
           fi
 
-          DRY_RUN_OPT=""
           if [ "${{ inputs.dry-run }}" = "true" ]; then
-            npm pkg set version=$(npm pkg get version | sed 's/"//g')-dry-run
-            DRY_RUN_OPT="--dry-run --tag dry-run"
+            npm pkg set version="$(npm pkg get version | sed 's/"//g')-dry-run"
+            opts+=(--dry-run --tag dry-run)
           fi
 
-          PROVENANCE_OPT=""
           if [ "${{ inputs.provenance }}" = "true" ]; then
-            PROVENANCE_OPT="--provenance"
+            opts+=(--provenance)
           fi
 
-          npm publish --access ${{ inputs.access }} $TAG_OPT $DRY_RUN_OPT $PROVENANCE_OPT
+          npm publish "${opts[@]}"
