@@ -1,0 +1,266 @@
+name: Promote Tested Image to Release Tag
+
+# Promoting does not rebuild anything. The image CI already built, tested and scanned
+# for this commit is promoted to the release tag by copying its manifest, so the
+# promoted artifact is byte for byte the one that passed the pipeline. A rebuild would
+# not be equivalent: the Dockerfile runs `apt-get upgrade`, so the same source produces
+# a different image whenever Ubuntu has moved on.
+#
+# The caller is expected to trigger this workflow from a push of a `vX.Y.Z` tag, or of
+# a component tag such as `component-vX.Y.Z` when release-please is configured to include
+# the component name, and to pass the registry credentials. The tag is validated against
+# the version release-please recorded for that component in .release-please-manifest.json.
+
+on:
+  workflow_call:
+    inputs:
+      ci-workflow:
+        description: "Workflow file of the CI that built and pushed the tested image (used to look up its run for the commit)"
+        type: string
+        default: "ci.yaml"
+      image-name:
+        description: "OCI image name (registry/repository) to promote, e.g. docker-regis.iex.ec/iexec-result-proxy"
+        type: string
+        required: true
+      registry:
+        description: "Registry the image lives in"
+        type: string
+        default: "docker.io"
+      security-scan:
+        description: "Enable Trivy Security Scan"
+        type: boolean
+        default: true
+      trivy-version:
+        description: "Trivy security scanner version"
+        type: string
+        default: "v0.71.0"
+    secrets:
+      username:
+        description: "Registry username"
+        required: true
+      password:
+        description: "Registry password (read and write access to the registry)"
+        required: true
+
+permissions:
+  contents: read
+  # required to look up the CI run that built the tagged commit
+  actions: read
+
+jobs:
+  promote:
+    name: Promote the tested image to the release tag
+    runs-on: ubuntu-latest
+
+    # avoid shell injection through string interpolation
+    env:
+      CI_WORKFLOW: ${{ inputs.ci-workflow }}
+      IMAGE: ${{ inputs.image-name }}
+      REGISTRY: ${{ inputs.registry }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Check the tag and the project version agree
+        id: check
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if [ -z "$(git branch -r --contains "$GITHUB_SHA" 'origin/main')" ]; then
+            echo "❌ Tag $TAG is not on main. Release tags must be created on main."
+            exit 1
+          fi
+
+          # release-please records the released version of every component in
+          # .release-please-manifest.json, committed in the same PR as the version bump,
+          # so at the tagged commit it holds exactly the version being released.
+          version="${TAG##*-v}"
+          if [ "$version" = "$TAG" ]; then
+            version="${TAG#v}"
+            component="."
+          else
+            component="${TAG%-v$version}"
+          fi
+
+          if [ ! -f ".release-please-manifest.json" ]; then
+            echo "❌ No .release-please-manifest.json at the repository root."
+            echo "   The project has to be released by release-please in manifest mode."
+            exit 1
+          fi
+
+          declared=$(COMPONENT="$component" python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          component = os.environ["COMPONENT"]
+          manifest = json.loads(Path(".release-please-manifest.json").read_text())
+          if component != ".":
+              print(next((v for path, v in manifest.items() if path == component or path.rsplit("/", 1)[-1] == component), ""))
+          else:
+              keys = list(manifest)
+              print(manifest["."] if "." in manifest else manifest[keys[0]] if len(keys) == 1 else "")
+          PY
+          )
+
+          if [ -z "$declared" ]; then
+            echo "❌ No version recorded for component '$component' in .release-please-manifest.json"
+            exit 1
+          fi
+
+          if [ "$version" != "$declared" ]; then
+            echo "❌ Tag version ($version) does not match the version release-please recorded for '$component' ($declared)"
+            exit 1
+          fi
+
+          echo "✅ Tag $TAG matches $component version $declared"
+
+          echo "version=$version" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Wait for the CI run that built this commit
+        id: wait
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Both workflows start from the same push to main: release-please creates this
+          # tag within a minute, while CI needs several more to build and push the image
+          # being promoted. So the image is normally still missing when this job starts.
+          for _ in $(seq 1 60); do
+            run=$(gh run list --commit "$GITHUB_SHA" --workflow "$CI_WORKFLOW" --limit 1 \
+                    --json status,conclusion,databaseId \
+                    --jq '.[] | "\(.status) \(.conclusion) \(.databaseId)"' 2>/dev/null || true)
+            status=${run%% *}
+            rest=${run#* }
+            conclusion=${rest%% *}
+            run_id=${rest##* }
+
+            case "$status" in
+              completed)
+                if [ "$conclusion" = "success" ]; then
+                  echo "✅ CI succeeded for $GITHUB_SHA"
+                  echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+                  exit 0
+                fi
+                echo "❌ CI for $GITHUB_SHA concluded '$conclusion'; refusing to release"
+                exit 1
+                ;;
+              "")
+                echo "No CI run found yet for $GITHUB_SHA, waiting…"
+                ;;
+              *)
+                echo "CI is $status, waiting…"
+                ;;
+            esac
+            sleep 30
+          done
+
+          echo "❌ Timed out after 30 minutes waiting for the CI run on $GITHUB_SHA"
+          exit 1
+
+      - name: Download the image tag CI built for this commit
+        id: ci-tag
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: docker-image-tag
+          path: ci-image-tag
+          run-id: ${{ steps.wait.outputs.run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Resolve the source tag to promote
+        id: source-tag
+        run: |
+          if [ ! -f "ci-image-tag/image-tag.txt" ]; then
+            echo "❌ CI run did not publish the docker-image-tag artifact; cannot determine the image to promote"
+            echo "   The CI workflow ($CI_WORKFLOW) must upload a 'docker-image-tag' artifact containing the tag it pushed"
+            exit 1
+          fi
+          source_tag=$(cat "ci-image-tag/image-tag.txt")
+          echo "✅ CI recorded image tag $source_tag"
+          echo "source_tag=$source_tag" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Login to Docker Registry
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ secrets.username }}
+          password: ${{ secrets.password }}
+
+      - name: Set up Docker Buildx
+        # imagetools needs no builder, but this guarantees a buildx recent enough to support --prefer-index
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Resolve the digest CI built for this commit
+        id: tested
+        env:
+          SOURCE_TAG: ${{ steps.source-tag.outputs.source_tag }}
+        run: |
+          digest=$(docker buildx imagetools inspect "$IMAGE:$SOURCE_TAG" \
+                     --format '{{.Manifest.Digest}}')
+          echo "  $SOURCE_TAG -> $digest"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
+      # Scanning before the promotion, not after: the release tag would land on this
+      # very digest, so a vulnerability found here must stop the release rather than be
+      # reported against an image already tagged as released. The digest is unchanged by
+      # the promotion, so this is a scan of exactly what gets released.
+      - name: Re-scan the tested image for newly disclosed vulnerabilities
+        if: ${{ inputs.security-scan }}
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE }}@${{ steps.tested.outputs.digest }}
+          format: table
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          hide-progress: true
+          exit-code: 1
+          # same scanner version as the CI build, so a finding here means the
+          # vulnerability database moved, not the tool
+          version: ${{ inputs.trivy-version }}
+
+      - name: Promote the tested image to the release tag
+        env:
+          SOURCE_TAG: ${{ steps.source-tag.outputs.source_tag }}
+          VERSION: ${{ steps.check.outputs.version }}
+          DIGEST: ${{ steps.tested.outputs.digest }}
+        run: |
+          # --prefer-index=false copies the manifest verbatim. Without it buildx wraps a
+          # single-source manifest in an OCI index, which gives the release tag a new
+          # digest and defeats the point of promoting the exact image that was tested.
+          docker buildx imagetools create --prefer-index=false \
+            -t "$IMAGE:$VERSION" "$IMAGE:$SOURCE_TAG"
+
+          released=$(docker buildx imagetools inspect "$IMAGE:$VERSION" \
+                       --format '{{.Manifest.Digest}}')
+          echo "  $SOURCE_TAG -> $DIGEST"
+          echo "  $VERSION -> $released"
+
+          if [ "$released" != "$DIGEST" ]; then
+            echo "❌ $IMAGE:$VERSION does not point at the tested image."
+            echo "   A buildx too old to honour --prefer-index wraps the manifest in an index."
+            exit 1
+          fi
+
+          echo "✅ $IMAGE:$VERSION is the image CI built and tested for $GITHUB_SHA"
+
+      - name: Summarise the release
+        env:
+          SOURCE_TAG: ${{ steps.source-tag.outputs.source_tag }}
+          VERSION: ${{ steps.check.outputs.version }}
+          DIGEST: ${{ steps.tested.outputs.digest }}
+        run: |
+          {
+            echo "### 🚀 Released \`$IMAGE:$VERSION\`"
+            echo ""
+            echo "Promoted from \`$SOURCE_TAG\` without rebuilding."
+            echo ""
+            echo "<table><tbody>"
+            echo "<tr><td><b>Commit</b></td><td><code>$GITHUB_SHA</code></td></tr>"
+            echo "<tr><td><b>Source tag</b></td><td><code>$SOURCE_TAG</code></td></tr>"
+            echo "<tr><td><b>Digest</b></td><td><code>$DIGEST</code></td></tr>"
+            echo "</tbody></table>"
+          } >> "$GITHUB_STEP_SUMMARY"

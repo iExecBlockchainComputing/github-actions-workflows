@@ -4,13 +4,21 @@ This repository contains a comprehensive collection of reusable GitHub Actions w
 
 ## 📋 Available Workflows
 
-### 🐳 [Build Docker Image](./docker-build)
+### 📝 [Conventional Commits](./conventional-commits)
 
-Automates the process of building, tagging, and pushing Docker images to Docker Hub. Perfect for projects that require containerization with minimal configuration overhead.
+Validates that pull request titles follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for better repository management. Ensures your commit history remains clean and meaningful for improved collaboration.
 
 ### ☁️ [Build Docker Image via Docker Build Cloud](./docker-build-cloud)
 
 Builds and pushes a multi-platform Docker image (e.g. `linux/amd64` + `linux/arm64`) to Docker Hub in a single job using Docker Build Cloud's remote builders. No QEMU emulation, no native ARM runners.
+
+### 🐳 [Build Docker Image](./docker-build)
+
+Automates the process of building, tagging, and pushing Docker images to Docker Hub. Perfect for projects that require containerization with minimal configuration overhead.
+
+### [Promote Docker Image](./docker-promote)
+
+Promotes the exact image digest built and tested by CI to a release tag without rebuilding it, with an optional Trivy security scan before promotion.
 
 ### 📦 [Release Please](./release-please)
 
@@ -19,10 +27,6 @@ Uses the [release-please-action](https://github.com/googleapis/release-please-ac
 ### 📚 [Publish NPM Package](./publish-npm)
 
 Automates the process of publishing NPM packages to the NPM registry with highly configurable options. Simplifies the package publishing workflow while maintaining security and reliability.
-
-### 📝 [Conventional Commits](./conventional-commits)
-
-Validates that pull request titles follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for better repository management. Ensures your commit history remains clean and meaningful for improved collaboration.
 
 ### ☕ [Java Build](./java-build)
 
