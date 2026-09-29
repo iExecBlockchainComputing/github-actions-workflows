@@ -65,7 +65,7 @@ jobs:
 ## 📋 Implementation Notes
 - 🔄 The workflow runs automatically when PRs are opened, edited, or reopened to ensure continuous validation
 - ✅ It validates the PR title against the Conventional Commits specification with comprehensive checks
-- 💬 If validation fails, the workflow will comment on the PR with detailed guidance on how to fix the title
+- 💬 If validation fails, the workflow writes detailed guidance on how to fix the title to the job summary
 - 🔗 This workflow is particularly useful when combined with the release-please workflow for a fully automated release process
 - 🚀 Helps maintain a high-quality repository that's ready for automated versioning and changelog generation
 
