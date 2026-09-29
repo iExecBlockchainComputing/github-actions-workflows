@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/conventional-commits-v1.2.1...conventional-commits-v1.2.2) (2026-09-29)
+
+
+### Bug Fixes
+
+* **conventional-commits:** report PR title errors in job summary ([#162](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/162)) ([b82f839](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/b82f8393f88221c9998c2437899bd2a6456179e4))
+
 ## [1.2.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/conventional-commits-v1.2.0...conventional-commits-v1.2.1) (2026-09-04)
 
 
