@@ -26,10 +26,6 @@ on:
         description: "Registry the image lives in"
         type: string
         default: "docker.io"
-      source-tag-prefix:
-        description: "Prefix of the tag the CI tags production images with, before the short commit sha (e.g. `dev-`)"
-        type: string
-        default: "dev-"
       security-scan:
         description: "Enable Trivy Security Scan"
         type: boolean
@@ -61,7 +57,6 @@ jobs:
       CI_WORKFLOW: ${{ inputs.ci-workflow }}
       IMAGE: ${{ inputs.image-name }}
       REGISTRY: ${{ inputs.registry }}
-      SOURCE_TAG_PREFIX: ${{ inputs.source-tag-prefix }}
 
     steps:
       - name: Checkout
@@ -123,12 +118,10 @@ jobs:
 
           echo "✅ Tag $TAG matches $component version $declared"
 
-          # The CI tags images built from a production branch as
-          # <source-tag-prefix><short sha>, and the release tag points at that commit.
           echo "version=$version" | tee -a "$GITHUB_OUTPUT"
-          echo "source_tag=${SOURCE_TAG_PREFIX}$(echo "$GITHUB_SHA" | cut -c1-8)" | tee -a "$GITHUB_OUTPUT"
 
       - name: Wait for the CI run that built this commit
+        id: wait
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -137,15 +130,18 @@ jobs:
           # being promoted. So the image is normally still missing when this job starts.
           for _ in $(seq 1 60); do
             run=$(gh run list --commit "$GITHUB_SHA" --workflow "$CI_WORKFLOW" --limit 1 \
-                    --json status,conclusion \
-                    --jq '.[] | "\(.status) \(.conclusion)"' 2>/dev/null || true)
+                    --json status,conclusion,databaseId \
+                    --jq '.[] | "\(.status) \(.conclusion) \(.databaseId)"' 2>/dev/null || true)
             status=${run%% *}
-            conclusion=${run##* }
+            rest=${run#* }
+            conclusion=${rest%% *}
+            run_id=${rest##* }
 
             case "$status" in
               completed)
                 if [ "$conclusion" = "success" ]; then
                   echo "✅ CI succeeded for $GITHUB_SHA"
+                  echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi
                 echo "❌ CI for $GITHUB_SHA concluded '$conclusion'; refusing to release"
@@ -164,6 +160,28 @@ jobs:
           echo "❌ Timed out after 30 minutes waiting for the CI run on $GITHUB_SHA"
           exit 1
 
+      - name: Download the image tag CI built for this commit
+        id: ci-tag
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: docker-image-tag
+          path: ci-image-tag
+          run-id: ${{ steps.wait.outputs.run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Resolve the source tag to promote
+        id: source-tag
+        run: |
+          if [ ! -f "ci-image-tag/image-tag.txt" ]; then
+            echo "❌ CI run did not publish the docker-image-tag artifact; cannot determine the image to promote"
+            echo "   The CI workflow ($CI_WORKFLOW) must upload a 'docker-image-tag' artifact containing the tag it pushed"
+            exit 1
+          fi
+          source_tag=$(cat "ci-image-tag/image-tag.txt")
+          echo "✅ CI recorded image tag $source_tag"
+          echo "source_tag=$source_tag" | tee -a "$GITHUB_OUTPUT"
+
       - name: Login to Docker Registry
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
@@ -178,7 +196,7 @@ jobs:
       - name: Resolve the digest CI built for this commit
         id: tested
         env:
-          SOURCE_TAG: ${{ steps.check.outputs.source_tag }}
+          SOURCE_TAG: ${{ steps.source-tag.outputs.source_tag }}
         run: |
           digest=$(docker buildx imagetools inspect "$IMAGE:$SOURCE_TAG" \
                      --format '{{.Manifest.Digest}}')
@@ -206,7 +224,7 @@ jobs:
 
       - name: Promote the tested image to the release tag
         env:
-          SOURCE_TAG: ${{ steps.check.outputs.source_tag }}
+          SOURCE_TAG: ${{ steps.source-tag.outputs.source_tag }}
           VERSION: ${{ steps.check.outputs.version }}
           DIGEST: ${{ steps.tested.outputs.digest }}
         run: |
@@ -231,7 +249,7 @@ jobs:
 
       - name: Summarise the release
         env:
-          SOURCE_TAG: ${{ steps.check.outputs.source_tag }}
+          SOURCE_TAG: ${{ steps.source-tag.outputs.source_tag }}
           VERSION: ${{ steps.check.outputs.version }}
           DIGEST: ${{ steps.tested.outputs.digest }}
         run: |
