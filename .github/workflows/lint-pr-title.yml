@@ -1,0 +1,21 @@
+name: Lint PR title
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-pr-title:
+    permissions:
+      pull-requests: read
+    uses: ./.github/workflows/conventional-commits.yml
