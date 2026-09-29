@@ -53,6 +53,14 @@ Perfect for teams looking to streamline their containerization workflow with min
 | `username`           | Username for Docker Registry authentication                                                         | When `push: true`  |
 | `password`           | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | When `push: true`  |
 
+## 📤 Outputs
+
+| Name | Description |
+| --- | --- |
+| `checksum` | Checksum (`0x...`) of the Docker image |
+
+The built image tag, digest and checksum are visible on the workflow run summary.
+
 ## 💻 Example Usage
 
 ```yaml
@@ -93,6 +101,7 @@ jobs:
 - 🔒 Ensure your Docker Registry credentials are stored securely as GitHub Secrets
 - 🔄 The workflow will automatically handle the Docker build and push process
 - 🏷️ You can specify any valid Docker tag format in the `tag` input
+- 📤 When `push: true`, the applied tag is also saved as a `docker-image-tag` artifact, so `docker-promote` can promote the exact image CI built for a commit rather than reconstruct its tag
 - 📅 Consider using dynamic tags based on git tags, commit SHAs, or dates
 - 🧪 For testing purposes, you can use the `--dry-run` flag in your own implementation
 - 📜 When `attest: true`, the attestation is only generated if `push: true`, and the **caller** workflow must grant the following permissions:
