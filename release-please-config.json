@@ -40,10 +40,6 @@
     "rust-build": {
       "component": "rust-build",
       "extra-label": "rust-build"
-    },
-    "stale": {
-      "component": "stale",
-      "extra-label": "stale"
     }
   }
 }
