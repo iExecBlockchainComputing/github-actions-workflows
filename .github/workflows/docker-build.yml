@@ -90,6 +90,7 @@ jobs:
     env:
       PLATFORM: ${{ inputs.platform }}
       OCI_IMAGE: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+      IMAGE_TAG: ${{ inputs.image-tag }}
       REPORT_MODE: ${{ inputs.security-report }}
 
     steps:
@@ -274,6 +275,19 @@ jobs:
         if: ${{ inputs.push }}
         run: docker push "$OCI_IMAGE"
 
+      - name: Record the pushed image tag
+        run: |
+          echo "$IMAGE_TAG" > image-tag.txt
+
+      # The promote workflow runs from a separate tag push and reads this artifact
+      # from the CI run, instead of reconstructing the tag from a prefix.
+      - name: Upload the image tag for the promote workflow
+        if: ${{ inputs.push }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: docker-image-tag
+          path: image-tag.txt
+
       - name: Compute checksum of the Docker image
         id: checksum
         run: |
@@ -282,6 +296,27 @@ jobs:
           DIGEST=$(echo "$INSPECT" | jq -r 'if .[0].RepoDigests[0] then .[0].RepoDigests[0] | split("@sha256:")[1] else .[0].Id | split(":")[1] end')
           echo "checksum=0x${DIGEST}" >> "$GITHUB_OUTPUT"
           echo "digest=sha256:${DIGEST}" >> "$GITHUB_OUTPUT"
+
+      - name: Summarise the build
+        env:
+          PUSH: ${{ inputs.push }}
+          REGISTRY: ${{ inputs.registry }}
+          DIGEST: ${{ steps.checksum.outputs.digest }}
+          CHECKSUM: ${{ steps.checksum.outputs.checksum }}
+        run: |
+          {
+            echo "### 🐳 Built \`$OCI_IMAGE\`"
+            echo ""
+            echo "<table><tbody>"
+            echo "<tr><td><b>Platform</b></td><td>$PLATFORM</td></tr>"
+            echo "<tr><td><b>Registry</b></td><td>$REGISTRY</td></tr>"
+            echo "<tr><td><b>Digest</b></td><td><code>$DIGEST</code></td></tr>"
+            echo "<tr><td><b>Checksum</b></td><td><code>$CHECKSUM</code></td></tr>"
+            if [ "$PUSH" = "true" ]; then
+              echo "<tr><td><b>Pushed</b></td><td>✅</td></tr>"
+            fi
+            echo "</tbody></table>"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       # --- SLSA provenance attestation -----
       # Requires the permissions id-token: write + attestations: write.
@@ -296,5 +331,5 @@ jobs:
       - name: Cleanup files
         if: always()
         run: |
-          rm -f trivy.txt trivy-results.sarif
+          rm -f trivy.txt trivy-results.sarif image-tag.txt
           docker image rm -f "$OCI_IMAGE"
