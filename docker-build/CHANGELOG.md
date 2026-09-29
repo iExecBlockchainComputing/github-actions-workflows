@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.6.0...docker-build-v3.7.0) (2026-09-29)
+
+
+### Features
+
+* **docker-build:** upload image tag as an artifact and publish summary ([#163](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/163)) ([1a23c3d](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/1a23c3d126834da1af4c015266a5ac224abe968c))
+
 ## [3.6.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.5.2...docker-build-v3.6.0) (2026-09-24)
 
 
