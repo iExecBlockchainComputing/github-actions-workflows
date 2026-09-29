@@ -170,9 +170,11 @@ jobs:
         id: read_trivy
         if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'comment'
         run: |
-          echo "report<<EOF" >> "$GITHUB_OUTPUT"
-          cat trivy.txt >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          {
+            echo "report<<EOF"
+            cat trivy.txt
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Find existing Trivy comment
         if: github.event_name == 'pull_request' && inputs.security-scan && inputs.security-report == 'comment'
@@ -220,9 +222,11 @@ jobs:
         id: read_hadolint
         if: ${{ inputs.hadolint }}
         run: |
-          echo "report<<EOF" >> "$GITHUB_OUTPUT"
-          cat hadolint.txt >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          {
+            echo "report<<EOF"
+            cat hadolint.txt
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
           cat hadolint.txt
 
       - name: Find existing Hadolint comment
