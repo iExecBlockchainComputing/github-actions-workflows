@@ -254,12 +254,13 @@ jobs:
           DIGEST: ${{ steps.tested.outputs.digest }}
         run: |
           {
-            echo "### Released \`$IMAGE:$VERSION\`"
+            echo "### 🚀 Released \`$IMAGE:$VERSION\`"
             echo ""
             echo "Promoted from \`$SOURCE_TAG\` without rebuilding."
             echo ""
-            echo "| | |"
-            echo "| --- | --- |"
-            echo "| Commit | \`$GITHUB_SHA\` |"
-            echo "| Digest | \`$DIGEST\` |"
+            echo "<table><tbody>"
+            echo "<tr><td><b>Commit</b></td><td><code>$GITHUB_SHA</code></td></tr>"
+            echo "<tr><td><b>Source tag</b></td><td><code>$SOURCE_TAG</code></td></tr>"
+            echo "<tr><td><b>Digest</b></td><td><code>$DIGEST</code></td></tr>"
+            echo "</tbody></table>"
           } >> "$GITHUB_STEP_SUMMARY"
