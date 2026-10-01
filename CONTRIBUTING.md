@@ -16,7 +16,7 @@ CI enforces this on every pull request via `bash scripts/compute-workflow-sha256
 
 ## Linting
 
-Workflows are linted with [actionlint](https://github.com/rhysd/actionlint), which also runs [shellcheck](https://github.com/koalaman/shellcheck) on `run:` scripts. Both tools are pinned in `mise.toml` and `mise.lock`. Install them with [mise](https://mise.jdx.dev):
+Workflows are linted with [actionlint](https://github.com/rhysd/actionlint), which also runs [shellcheck](https://github.com/koalaman/shellcheck) on inline `run:` scripts. Shell scripts committed to the repository (`*.sh`, e.g. under `scripts/`) are linted with shellcheck directly. Both tools are pinned in `mise.toml` and `mise.lock`. Install them with [mise](https://mise.jdx.dev):
 
 ```sh
 mise install --locked

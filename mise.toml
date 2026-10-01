@@ -9,5 +9,9 @@ lockfile = true
 [tasks."lint:actionlint"]
 run = "actionlint"
 
+[tasks."lint:shellcheck"]
+shell = "bash -euo pipefail -c"
+run = "git ls-files -z --cached --others --exclude-standard '*.sh' | xargs -0 -r shellcheck"
+
 [tasks.lint]
-depends = [ "lint:actionlint" ]
+depends = [ "lint:actionlint", "lint:shellcheck" ]
