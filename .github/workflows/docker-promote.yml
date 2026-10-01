@@ -82,7 +82,7 @@ jobs:
             version="${TAG#v}"
             component="."
           else
-            component="${TAG%-v$version}"
+            component="${TAG%-v"$version"}"
           fi
 
           if [ ! -f ".release-please-manifest.json" ]; then
