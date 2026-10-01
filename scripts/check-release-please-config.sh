@@ -40,6 +40,7 @@ fi
 # --- root key ordering: $schema first, lexicographic, packages last ---
 mapfile -t root_keys < <(jq -r 'keys_unsorted[]' "$CONFIG")
 
+# shellcheck disable=SC2016 # literal key name, not an expansion
 if [[ "${root_keys[0]-}" != '$schema' ]]; then
   say_err "root key order: first key must be \"\$schema\" (got \"${root_keys[0]-<none>}\")"
   ((failures += 1))
@@ -52,6 +53,7 @@ fi
 
 mid_keys=()
 for k in "${root_keys[@]}"; do
+  # shellcheck disable=SC2016 # literal key name, not an expansion
   [[ "$k" == '$schema' || "$k" == 'packages' ]] && continue
   mid_keys+=("$k")
 done

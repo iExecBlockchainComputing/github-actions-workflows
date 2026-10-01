@@ -13,3 +13,19 @@ bash scripts/compute-workflow-sha256.sh
 This regenerates `<name>/workflow-sha256`, a checksum of the workflow file. Commit the resulting diff alongside your workflow change — this is what makes the change visible to release-please for that Component.
 
 CI enforces this on every pull request via `bash scripts/compute-workflow-sha256.sh --check`, which fails if any `workflow-sha256` file is out of date.
+
+## Linting
+
+Workflows are linted with [actionlint](https://github.com/rhysd/actionlint), which also runs [shellcheck](https://github.com/koalaman/shellcheck) on inline `run:` scripts. Shell scripts committed to the repository (`*.sh`, e.g. under `scripts/`) are linted with shellcheck directly. Both tools are pinned in `mise.toml` and `mise.lock`. Install them with [mise](https://mise.jdx.dev):
+
+```sh
+mise install --locked
+```
+
+Then:
+
+```sh
+mise run lint
+```
+
+CI runs the same command on every pull request and on every push to `main`.
