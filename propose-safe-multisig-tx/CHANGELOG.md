@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/propose-safe-multisig-tx-v1.1.2...propose-safe-multisig-tx-v1.1.3) (2026-10-02)
+
+
+### Bug Fixes
+
+* update third-party GitHub Actions ([#167](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/167)) ([396fc60](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/396fc60de4f14227e21a68d470bab7dd4d9b14f4))
+
 ## [1.1.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/propose-safe-multisig-tx-v1.1.1...propose-safe-multisig-tx-v1.1.2) (2026-09-23)
 
 
