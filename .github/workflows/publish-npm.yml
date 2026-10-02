@@ -109,7 +109,7 @@ jobs:
           scope: ${{ inputs.scope }}
 
       - name: Enable Socket Firewall
-        uses: SocketDev/action@be1f253a41351d59095f8d7f1425985097dd1054 # unreleased: pre-v1.3.2, includes shim feature
+        uses: SocketDev/action@be1f253a41351d59095f8d7f1425985097dd1054 # unreleased: post-v1.3.2, includes sfw shims
         with:
           mode: firewall-free
           shims: true
