@@ -3,7 +3,7 @@
   "docker-build": "3.7.0",
   "docker-build-cloud": "1.1.1",
   "docker-promote": "1.0.0",
-  "java-build": "1.0.0",
+  "java-build": "1.0.1",
   "propose-safe-multisig-tx": "1.1.2",
   "publish-npm": "1.7.2",
   "release-please": "2.2.1",
