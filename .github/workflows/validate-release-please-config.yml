@@ -5,16 +5,16 @@ on:
     branches:
       - main
     paths:
-      - 'release-please-config.json'
-      - 'scripts/check-release-please-config.sh'
-      - '.github/workflows/validate-release-please-config.yml'
+      - "release-please-config.json"
+      - "scripts/check-release-please-config.sh"
+      - ".github/workflows/validate-release-please-config.yml"
   push:
     branches:
       - main
     paths:
-      - 'release-please-config.json'
-      - 'scripts/check-release-please-config.sh'
-      - '.github/workflows/validate-release-please-config.yml'
+      - "release-please-config.json"
+      - "scripts/check-release-please-config.sh"
+      - ".github/workflows/validate-release-please-config.yml"
 
 permissions:
   contents: read

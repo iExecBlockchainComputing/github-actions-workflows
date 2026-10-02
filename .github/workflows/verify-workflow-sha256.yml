@@ -5,18 +5,18 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/*.yml'
-      - 'release-please-config.json'
-      - 'scripts/compute-workflow-sha256.sh'
-      - '**/workflow-sha256'
+      - ".github/workflows/*.yml"
+      - "release-please-config.json"
+      - "scripts/compute-workflow-sha256.sh"
+      - "**/workflow-sha256"
   push:
     branches:
       - main
     paths:
-      - '.github/workflows/*.yml'
-      - 'release-please-config.json'
-      - 'scripts/compute-workflow-sha256.sh'
-      - '**/workflow-sha256'
+      - ".github/workflows/*.yml"
+      - "release-please-config.json"
+      - "scripts/compute-workflow-sha256.sh"
+      - "**/workflow-sha256"
 
 permissions:
   contents: read

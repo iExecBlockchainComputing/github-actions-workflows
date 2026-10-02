@@ -5,6 +5,17 @@ lockfile = true
 [tools]
 "aqua:actionlint" = "1.7.12"
 "aqua:koalaman/shellcheck" = "0.11.0"
+"npm:prettier" = "3.9.8"
+
+[tasks.format]
+run = "prettier --write ."
+
+[tasks."update-checksums"]
+run = "scripts/compute-workflow-sha256.sh"
+depends = ["format"]
+
+[tasks."lint:format"]
+run = "prettier --check ."
 
 [tasks."lint:actionlint"]
 run = "actionlint"
@@ -14,4 +25,4 @@ shell = "bash -euo pipefail -c"
 run = "git ls-files -z --cached --others --exclude-standard '*.sh' | xargs -0 -r shellcheck"
 
 [tasks.lint]
-depends = [ "lint:actionlint", "lint:shellcheck" ]
+depends = [ "lint:format", "lint:actionlint", "lint:shellcheck" ]

@@ -2,8 +2,7 @@
 
 ## Overview 🌟
 
-This reusable GitHub Actions workflow automates the process of publishing an NPM package. It is configurable via inputs
-for the package scope, Node.js version, registry URL, and other options. The workflow performs the following actions:
+This reusable GitHub Actions workflow automates the process of publishing an NPM package. It is configurable via inputs for the package scope, Node.js version, registry URL, and other options. The workflow performs the following actions:
 
 - **Downloads Artifacts**: Downloads specified artifacts if needed. 📦
 - **Checks Out Your Repository**: Retrieves your code. 📥
@@ -15,38 +14,37 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 - **Checks Code Formatting**: Verifies code formatting if configured. 🧹
 - **Runs Linting**: Performs code linting if configured. 🧹
 - **Runs Tests**: Executes unit tests if enabled. ✅
-- **Publishes the Package**: Publishes the package with provenance (if enabled) and the specified access level using
-  `npm publish`. 🎉
+- **Publishes the Package**: Publishes the package with provenance (if enabled) and the specified access level using `npm publish`. 🎉
 
 ## Workflow Inputs 🛠️
 
-| **Input**                | **Description**                                               | **Required** | **Default**                         |
-| ------------------------ | ------------------------------------------------------------- | ------------ | ----------------------------------- |
-| **scope**                | NPM package scope (e.g., `@iexec`).                           | No           | `@iexec`                            |
-| **node-version**         | Node.js version to use.                                       | No           | `20`                                |
-| **registry**             | NPM registry URL.                                             | No           | `https://registry.npmjs.org`        |
-| **access**               | Package access (public or restricted).                        | No           | `public`                            |
-| **provenance**           | Enable npm provenance.                                        | No           | `true`                              |
-| **install-command**      | Install dependencies command.                                 | No           | `npm ci`                            |
-| **build-command**        | Build package command.                                        | No           | `npm run build`                     |
-| **run-tests**            | Execute unit tests step.                                      | No           | `false`                             |
-| **test-command**         | Run unit tests command.                                       | No           | `npm test --if-present`             |
-| **lint-command**         | Run linting command.                                          | No           | `npm run lint --if-present`         |
-| **type-check-command**   | Run type-checking command.                                    | No           | `npm run check-types --if-present`  |
-| **format-check-command** | Run format-checking command.                                  | No           | `npm run check-format --if-present` |
-| **environment**          | GitHub environment.                                           | No           | `production`                        |
-| **tag**                  | npm publish tag (e.g., latest, nightly).                      | No           | `''` (empty string)                 |
-| **working-directory**    | Directory containing package.json.                            | No           | `''` (empty string)                 |
-| **artifact-name**        | Name of an artifact to download before the build.             | No           | `''` (empty string)                 |
-| **artifact-path**        | Destination path for the downloaded artifact.                 | No           | `''` (empty string)                 |
-| **version**              | Version to publish (leave empty to use package.json version). | No           | `''` (empty string)                 |
-| **dry-run**              | Run in dry-run mode (the package will not be published).      | No           | `false`                             |
+| **Input** | **Description** | **Required** | **Default** |
+| --- | --- | --- | --- |
+| **scope** | NPM package scope (e.g., `@iexec`). | No | `@iexec` |
+| **node-version** | Node.js version to use. | No | `20` |
+| **registry** | NPM registry URL. | No | `https://registry.npmjs.org` |
+| **access** | Package access (public or restricted). | No | `public` |
+| **provenance** | Enable npm provenance. | No | `true` |
+| **install-command** | Install dependencies command. | No | `npm ci` |
+| **build-command** | Build package command. | No | `npm run build` |
+| **run-tests** | Execute unit tests step. | No | `false` |
+| **test-command** | Run unit tests command. | No | `npm test --if-present` |
+| **lint-command** | Run linting command. | No | `npm run lint --if-present` |
+| **type-check-command** | Run type-checking command. | No | `npm run check-types --if-present` |
+| **format-check-command** | Run format-checking command. | No | `npm run check-format --if-present` |
+| **environment** | GitHub environment. | No | `production` |
+| **tag** | npm publish tag (e.g., latest, nightly). | No | `''` (empty string) |
+| **working-directory** | Directory containing package.json. | No | `''` (empty string) |
+| **artifact-name** | Name of an artifact to download before the build. | No | `''` (empty string) |
+| **artifact-path** | Destination path for the downloaded artifact. | No | `''` (empty string) |
+| **version** | Version to publish (leave empty to use package.json version). | No | `''` (empty string) |
+| **dry-run** | Run in dry-run mode (the package will not be published). | No | `false` |
 
 ### Secrets 🔐
 
-| **Secret**    | **Description**                                                                                | **Required** |
-| ------------- | ---------------------------------------------------------------------------------------------- | ------------ |
-| **npm-token** | NPM auth token (required unless `dry-run: true` or workflow is called by a trusted publisher). | No           |
+| **Secret** | **Description** | **Required** |
+| --- | --- | --- |
+| **npm-token** | NPM auth token (required unless `dry-run: true` or workflow is called by a trusted publisher). | No |
 
 ## Job and Steps ⚙️
 
@@ -98,8 +96,7 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
 2. **Configure Trusted Publisher on NPM**
 
-   On [npmjs.com](https://www.npmjs.com/), configure the root publish workflow of your GitHub repository as a trusted publisher for your package.
-   ![trusted publisher](trusted-publisher.png)
+   On [npmjs.com](https://www.npmjs.com/), configure the root publish workflow of your GitHub repository as a trusted publisher for your package. ![trusted publisher](trusted-publisher.png)
 
    NB: You can have only one trusted publisher per package, if you need multiple publication triggers (workflow_dispatch, release, etc.), you need to merge them into a single workflow referenced as trusted publisher.
 
@@ -135,8 +132,7 @@ for the package scope, Node.js version, registry URL, and other options. The wor
 
 2. **Configure Secrets**
 
-   Ensure that the `NPM_TOKEN` secret is added to your repository’s settings. This token is required to authenticate
-   with the NPM registry during publishing. 🔑
+   Ensure that the `NPM_TOKEN` secret is added to your repository’s settings. This token is required to authenticate with the NPM registry during publishing. 🔑
 
 ## Workflow Steps in Detail 🔍
 

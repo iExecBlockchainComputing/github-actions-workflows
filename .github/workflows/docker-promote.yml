@@ -214,8 +214,8 @@ jobs:
           image-ref: ${{ env.IMAGE }}@${{ steps.tested.outputs.digest }}
           format: table
           ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
           hide-progress: true
           exit-code: 1
           # same scanner version as the CI build, so a finding here means the

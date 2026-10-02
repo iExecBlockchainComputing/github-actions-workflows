@@ -6,8 +6,7 @@ This reusable GitHub Actions workflow promotes an image that was already built, 
 
 The calling workflow must trigger promotion from a release tag such as `vX.Y.Z`, or `component-vX.Y.Z` when release-please includes the component name in the tag.
 
-> [!IMPORTANT]
-> Promotion never rebuilds the image. CI must have built and pushed the source tag for the tagged commit before this workflow can promote it.
+> [!IMPORTANT] Promotion never rebuilds the image. CI must have built and pushed the source tag for the tagged commit before this workflow can promote it.
 
 ## Features
 
@@ -31,10 +30,10 @@ The calling workflow must trigger promotion from a release tag such as `vX.Y.Z`,
 
 ## Secrets
 
-| Name | Description | Required |
-| --- | --- | --- |
-| `username` | Registry username | Yes |
-| `password` | Registry password with read and write access | Yes |
+| Name       | Description                                  | Required |
+| ---------- | -------------------------------------------- | -------- |
+| `username` | Registry username                            | Yes      |
+| `password` | Registry password with read and write access | Yes      |
 
 ## Example Usage
 
