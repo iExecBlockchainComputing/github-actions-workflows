@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.7.1...publish-npm-v1.7.2) (2026-10-02)
+
+
+### Bug Fixes
+
+* **publish-npm:** fix shellcheck findings in npm scripts ([#165](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/165)) ([929ad08](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/929ad0892a16827ab429a7c78599195dabc81313))
+* update third-party GitHub Actions ([#167](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/167)) ([396fc60](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/396fc60de4f14227e21a68d470bab7dd4d9b14f4))
+
 ## [1.7.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.7.0...publish-npm-v1.7.1) (2026-09-04)
 
 
