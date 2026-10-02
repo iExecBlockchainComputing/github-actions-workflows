@@ -6,22 +6,22 @@ This reusable GitHub Actions workflow automates the process of proposing transac
 
 ## Workflow Inputs 🛠️
 
-| **Input**                | **Description**                                               | **Required** | **Default**                         |
-| ------------------------ | ------------------------------------------------------------- | ------------ | ----------------------------------- |
-| **safe-address**         | Address of the Safe contract                                  | Yes          | -                                   |
-| **transaction-to**       | Target address for the transaction                            | Yes          | -                                   |
-| **transaction-value**    | Value to send in the transaction (in wei)                     | No           | `0`                                 |
-| **transaction-data**     | Transaction data/calldata                                     | Yes           | -                                |
-| **rpc-url**              | RPC URL for the blockchain network                            | Yes (Secret) | -                                   |
-| **safe-proposer-private-key** | Private key of the proposer wallet                           | Yes (Secret) | -                                   |
-| **safe-api-key**         | Safe API key for transaction service                          | Yes (Secret) | -                                   |
+| **Input** | **Description** | **Required** | **Default** |
+| --- | --- | --- | --- |
+| **safe-address** | Address of the Safe contract | Yes | - |
+| **transaction-to** | Target address for the transaction | Yes | - |
+| **transaction-value** | Value to send in the transaction (in wei) | No | `0` |
+| **transaction-data** | Transaction data/calldata | Yes | - |
+| **rpc-url** | RPC URL for the blockchain network | Yes (Secret) | - |
+| **safe-proposer-private-key** | Private key of the proposer wallet | Yes (Secret) | - |
+| **safe-api-key** | Safe API key for transaction service | Yes (Secret) | - |
 
 ## Workflow Outputs 📤
 
-| **Output**        | **Description**                           |
-| ----------------- | ----------------------------------------- |
-| **tx-hash**       | Hash of the Safe transaction created      |
-| **tx-details**    | Complete transaction details (JSON)       |
+| **Output**     | **Description**                      |
+| -------------- | ------------------------------------ |
+| **tx-hash**    | Hash of the Safe transaction created |
+| **tx-details** | Complete transaction details (JSON)  |
 
 ## How to Use This Reusable Workflow 🔄
 
@@ -29,23 +29,23 @@ This reusable GitHub Actions workflow automates the process of proposing transac
    In another workflow file, invoke this reusable workflow like so:
 
    ```yaml
-    name: Upgrade contract
+   name: Upgrade contract
 
-    on:
-      workflow_dispatch:
+   on:
+     workflow_dispatch:
 
-    jobs:
-      upgrade:
-        uses: ./.github/workflows/propose-safe-multisig-tx.yml
-        secrets:
-          rpc-url: ${{ secrets.RPC_URL }}
-          safe-proposer-private-key: ${{ secrets.SAFE_PROPOSER_PRIVATE_KEY }}
-          safe-api-key: ${{ secrets.SAFE_API_KEY }}
-        with:
-          safe-address: '0xab...'
-          transaction-to: '0xcd...'
-          transaction-value: '0'
-          transaction-data: '0xef' # Upgrade transaction calldata
+   jobs:
+     upgrade:
+       uses: ./.github/workflows/propose-safe-multisig-tx.yml
+       secrets:
+         rpc-url: ${{ secrets.RPC_URL }}
+         safe-proposer-private-key: ${{ secrets.SAFE_PROPOSER_PRIVATE_KEY }}
+         safe-api-key: ${{ secrets.SAFE_API_KEY }}
+       with:
+         safe-address: "0xab..."
+         transaction-to: "0xcd..."
+         transaction-value: "0"
+         transaction-data: "0xef" # Upgrade transaction calldata
    ```
 
 2. **Configure Secrets**  

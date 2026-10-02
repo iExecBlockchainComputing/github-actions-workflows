@@ -42,13 +42,13 @@ This file, placed at the root of your project, defines the schema, customizes th
 
 This file tracks the published versions by **release-please**. You can start with it empty if your project has no version yet, or pre-fill it with versions if necessary.
 
-*Empty initialization:*
+_Empty initialization:_
 
 ```json
 {}
 ```
 
-*Or with predefined versions:*
+_Or with predefined versions:_
 
 ```json
 {

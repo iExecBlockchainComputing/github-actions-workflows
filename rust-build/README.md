@@ -25,8 +25,8 @@ jobs:
   build-and-test:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
-      rust-version: 'stable'
-      working-directory: './my-crate'
+      rust-version: "stable"
+      working-directory: "./my-crate"
       enable-cache: true
       publish-crates-io: false
     secrets:
@@ -35,19 +35,19 @@ jobs:
 
 ## Inputs
 
-| Name                | Description                                               | Default  | Required |
-| ------------------- | --------------------------------------------------------- | -------- | -------- |
-| `rust-version`      | Rust version to use                                       | `stable` | No       |
-| `working-directory` | The directory to run jobs from                            | `.`      | No       |
-| `enable-cache`      | Enable caching of dependencies                            | `true`   | No       |
-| `publish-crates-io` | Publish the package to crates.io (only if build succeeds) | `false`  | No       |
+| Name | Description | Default | Required |
+| --- | --- | --- | --- |
+| `rust-version` | Rust version to use | `stable` | No |
+| `working-directory` | The directory to run jobs from | `.` | No |
+| `enable-cache` | Enable caching of dependencies | `true` | No |
+| `publish-crates-io` | Publish the package to crates.io (only if build succeeds) | `false` | No |
 
 Note: All builds use the release profile by default. There is no build-target input anymore
 
 ## Secrets
 
-| Name                   | Description                             | Required                              |
-| ---------------------- | --------------------------------------- | ------------------------------------- |
+| Name | Description | Required |
+| --- | --- | --- |
 | `CARGO_REGISTRY_TOKEN` | crates.io API token for `cargo publish` | Only if `publish-crates-io` is `true` |
 
 ## Examples
@@ -67,7 +67,7 @@ jobs:
   build-and-test:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/rust-build.yml@main
     with:
-      working-directory: './my-crate'
+      working-directory: "./my-crate"
 ```
 
 ### Publish to crates.io (requires CARGO_REGISTRY_TOKEN)
