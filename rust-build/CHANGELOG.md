@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/rust-build-v3.0.0...rust-build-v3.0.1) (2026-10-02)
+
+
+### Bug Fixes
+
+* update third-party GitHub Actions ([#167](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/167)) ([396fc60](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/396fc60de4f14227e21a68d470bab7dd4d9b14f4))
+
 ## [3.0.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/rust-build-v2.1.1...rust-build-v3.0.0) (2026-09-16)
 
 
