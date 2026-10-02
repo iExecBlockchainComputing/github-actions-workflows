@@ -7,16 +7,26 @@ Each shared reusable workflow is backed by a Component directory `<name>/` that 
 After editing any `.github/workflows/<name>.yml` for a workflow listed in `release-please-config.json`, run:
 
 ```sh
-bash scripts/compute-workflow-sha256.sh
+mise run update-checksums
 ```
 
-This regenerates `<name>/workflow-sha256`, a checksum of the workflow file. Commit the resulting diff alongside your workflow change — this is what makes the change visible to release-please for that Component.
+This formats the repository (see [Formatting](#formatting)), then runs `scripts/compute-workflow-sha256.sh`, which regenerates `<name>/workflow-sha256`, a checksum of the workflow file. Commit the resulting diff alongside your workflow change — this is what makes the change visible to release-please for that Component.
 
 CI enforces this on every pull request via `bash scripts/compute-workflow-sha256.sh --check`, which fails if any `workflow-sha256` file is out of date.
 
+## Formatting
+
+Files are formatted with [Prettier](https://prettier.io), using its default settings. Generated files (release-please changelogs, mise files) are excluded via `.prettierignore`. Format the repository with:
+
+```sh
+mise run format
+```
+
+Formatting can rewrite workflow files, which changes their checksum. After editing a workflow, run `mise run update-checksums` instead of `mise run format` alone, so `workflow-sha256` files are computed from the formatted content.
+
 ## Linting
 
-Workflows are linted with [actionlint](https://github.com/rhysd/actionlint), which also runs [shellcheck](https://github.com/koalaman/shellcheck) on inline `run:` scripts. Shell scripts committed to the repository (`*.sh`, e.g. under `scripts/`) are linted with shellcheck directly. Both tools are pinned in `mise.toml` and `mise.lock`. Install them with [mise](https://mise.jdx.dev):
+Workflows are linted with [actionlint](https://github.com/rhysd/actionlint), which also runs [shellcheck](https://github.com/koalaman/shellcheck) on inline `run:` scripts. Shell scripts committed to the repository (`*.sh`, e.g. under `scripts/`) are linted with shellcheck directly. Formatting is checked with `prettier --check`. All tools are pinned in `mise.toml` and `mise.lock`. Install them with [mise](https://mise.jdx.dev):
 
 ```sh
 mise install --locked
