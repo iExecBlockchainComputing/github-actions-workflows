@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.3](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.7.2...publish-npm-v1.7.3) (2026-10-05)
+
+
+### Bug Fixes
+
+* checkout with persist-credentials: false ([#181](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/181)) ([738ae7b](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/738ae7b79b6375b421ac1f5571e625482e78e161))
+* **publish-npm:** pass version input through env to prevent template injection ([#182](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/182)) ([ca31c13](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/ca31c1377305e1a7f2520246cb07ee8f314a0b01))
+
 ## [1.7.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.7.1...publish-npm-v1.7.2) (2026-10-02)
 
 
