@@ -93,4 +93,4 @@ jobs:
       - name: Publish to crates.io
         if: ${{ inputs.publish-crates-io }}
         working-directory: ${{ inputs.working-directory }}
-        run: cargo publish --locked
+        run: cargo publish --locked # zizmor: ignore[use-trusted-publishing] TODO fix this if you need to publish on crates.io
