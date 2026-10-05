@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/release-please-v2.2.1...release-please-v2.2.2) (2026-10-05)
+
+
+### Bug Fixes
+
+* **release-please:** set explicit token permissions ([#185](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/185)) ([d025cd1](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/d025cd1528b268fc3f879e240652c97318f04350))
+
 ## [2.2.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/release-please-v2.2.0...release-please-v2.2.1) (2026-09-04)
 
 
