@@ -8,10 +8,7 @@ on:
       RELEASE_PLEASE_PRIVATE_KEY:
         required: true
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+permissions: {}
 
 jobs:
   release-please:
