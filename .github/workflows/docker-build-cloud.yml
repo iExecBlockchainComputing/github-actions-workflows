@@ -28,7 +28,8 @@ on:
         default: "."
         type: string
       build-args:
-        description: "Docker build arguments (multiline format: KEY1=value1\nKEY2=value2)"
+        description:
+          "Docker build arguments (multiline format: KEY1=value1\nKEY2=value2)"
         default: ""
         type: string
       attest:

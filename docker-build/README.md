@@ -2,9 +2,7 @@
 
 ## 🔍 Overview
 
-This reusable GitHub Actions workflow automates the process of building and pushing Docker images to a Docker Registry.
-It simplifies the Docker build process in your CI/CD pipeline by handling authentication, building, and tagging in a standardized way.
-Perfect for teams looking to streamline their containerization workflow with minimal configuration.
+This reusable GitHub Actions workflow automates the process of building and pushing Docker images to a Docker Registry. It simplifies the Docker build process in your CI/CD pipeline by handling authentication, building, and tagging in a standardized way. Perfect for teams looking to streamline their containerization workflow with minimal configuration.
 
 ## ✨ Features
 
@@ -19,44 +17,42 @@ Perfect for teams looking to streamline their containerization workflow with min
 - 📦 Supports AMD64 and ARM64 platforms (one per workflow run)
 - 📥 Optionally pulls a build artifact from an earlier job into the build context, so a compiled binary or jar can be built once and copied into the image
 
-> [!IMPORTANT]
-> Due to a limitation on Trivy analysis, the workflow targets a single platform.
-> A workflow instance should be configured for each targeted platform.
+> [!IMPORTANT] Due to a limitation on Trivy analysis, the workflow targets a single platform. A workflow instance should be configured for each targeted platform.
 
-## ⚙️  Inputs
+## ⚙️ Inputs
 
-| Name              | Description                                                                        | Required | Default           |
-| ----------------- | ---------------------------------------------------------------------------------- | -------- | ----------------- |
-| `artifact-name`   | Name of an artifact to download into the build context before building, e.g. a jar produced by an earlier job (leave empty to skip) | No | `""` |
-| `artifact-path`   | Destination path for the downloaded artifact, relative to the workspace (ignored if `artifact-name` is empty) | No | `""` |
-| `attest`          | Generate & sign a keyless SLSA build provenance attestation for the pushed image (requires `push: true` and caller permissions, see notes) | No | `false` |
-| `build-args`      | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`)              | No       | `""`              |
-| `context`         | Path to Docker Build Context                                                       | No       | `"."`             |
-| `dockerfile`      | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile')      | No       | `"Dockerfile"`    |
-| `hadolint`        | Enable Hadolint                                                                    | No       | `true`            |
-| `image-name`      | Name of Docker Image (e.g., 'myimage', 'myorg/myimage')                            | true     | -                 |
-| `image-tag`       | Tag to apply to the built image (e.g., 'latest', 'v1.2.3')                         | No       | `"latest"`        |
-| `platform`        | Indicates which platform the image should be built for                             | No       | `"linux/amd64"`   |
-| `push`            | Push Docker Image to Registry                                                      | No       | `false`           |
-| `registry`        | Docker Registry                                                                    | No       | `"docker.io"`     |
-| `runner`          | GitHub Actions runner label                                                        | No       | `"ubuntu-latest"` |
-| `security-report` | Security Report Mode (`"sarif"` \| `"comment"`; ignored if `security-scan: false`) | No       | `"sarif"`         |
-| `security-scan`   | Enable Trivy Security Scan                                                         | No       | `true`            |
-| `trivy-version`   | Override Trivy security scanner version                                            | No       | `v0.71.0`         |
+| Name | Description | Required | Default |
+| --- | --- | --- | --- |
+| `artifact-name` | Name of an artifact to download into the build context before building, e.g. a jar produced by an earlier job (leave empty to skip) | No | `""` |
+| `artifact-path` | Destination path for the downloaded artifact, relative to the workspace (ignored if `artifact-name` is empty) | No | `""` |
+| `attest` | Generate & sign a keyless SLSA build provenance attestation for the pushed image (requires `push: true` and caller permissions, see notes) | No | `false` |
+| `build-args` | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`) | No | `""` |
+| `context` | Path to Docker Build Context | No | `"."` |
+| `dockerfile` | Path to the Dockerfile to build (e.g., './Dockerfile', './docker/Dockerfile') | No | `"Dockerfile"` |
+| `hadolint` | Enable Hadolint | No | `true` |
+| `image-name` | Name of Docker Image (e.g., 'myimage', 'myorg/myimage') | true | - |
+| `image-tag` | Tag to apply to the built image (e.g., 'latest', 'v1.2.3') | No | `"latest"` |
+| `platform` | Indicates which platform the image should be built for | No | `"linux/amd64"` |
+| `push` | Push Docker Image to Registry | No | `false` |
+| `registry` | Docker Registry | No | `"docker.io"` |
+| `runner` | GitHub Actions runner label | No | `"ubuntu-latest"` |
+| `security-report` | Security Report Mode (`"sarif"` \| `"comment"`; ignored if `security-scan: false`) | No | `"sarif"` |
+| `security-scan` | Enable Trivy Security Scan | No | `true` |
+| `trivy-version` | Override Trivy security scanner version | No | `v0.71.0` |
 
 ## 🔐 Secrets
 
-| Name                 | Description                                                                                         | Required           |
-| -------------------- | --------------------------------------------------------------------------------------------------- | ------------------ |
-| `dockerhub-username` | Username for Docker Hub authentication                                                              | Yes                |
-| `dockerhub-password` | Token for Docker Hub authentication (with read-only permissions)                                    | Yes                |
-| `username`           | Username for Docker Registry authentication                                                         | When `push: true`  |
-| `password`           | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | When `push: true`  |
+| Name | Description | Required |
+| --- | --- | --- |
+| `dockerhub-username` | Username for Docker Hub authentication | Yes |
+| `dockerhub-password` | Token for Docker Hub authentication (with read-only permissions) | Yes |
+| `username` | Username for Docker Registry authentication | When `push: true` |
+| `password` | Password or Personal Access Token for Docker registry authentication (with appropriate permissions) | When `push: true` |
 
 ## 📤 Outputs
 
-| Name | Description |
-| --- | --- |
+| Name       | Description                            |
+| ---------- | -------------------------------------- |
 | `checksum` | Checksum (`0x...`) of the Docker image |
 
 The built image tag, digest and checksum are visible on the workflow run summary.

@@ -1,4 +1,4 @@
-import * as core from '@actions/core';
+import * as core from "@actions/core";
 import SafeApiKit from "@safe-global/api-kit";
 import Safe from "@safe-global/protocol-kit";
 import { OperationType, MetaTransactionData } from "@safe-global/types-kit";
@@ -18,7 +18,9 @@ async function run() {
     DRY_RUN: dryRun,
   } = env;
 
-  core.info(`🚀 Starting Safe transaction ${dryRun ? 'validation (DRY RUN)' : 'proposal'}...`);
+  core.info(
+    `🚀 Starting Safe transaction ${dryRun ? "validation (DRY RUN)" : "proposal"}...`,
+  );
   core.info(`📍 Safe Address: ${safeAddress}`);
   core.info(`🎯 Target Address: ${transactionTo}`);
 
@@ -68,17 +70,20 @@ async function run() {
     core.info(`   Value: ${safeTransactionData.value}`);
     core.info(`   Data: ${safeTransactionData.data}`);
     core.info(`   Operation: ${safeTransactionData.operation}`);
-    
+
     core.setOutput("tx-hash", safeTxHash);
-    core.setOutput("tx-details", JSON.stringify({
-      to: safeTransactionData.to,
-      value: safeTransactionData.value,
-      data: safeTransactionData.data,
-      operation: safeTransactionData.operation,
-      safeTxHash: safeTxHash,
-      senderAddress: account.address,
-      dryRun: true,
-    }));
+    core.setOutput(
+      "tx-details",
+      JSON.stringify({
+        to: safeTransactionData.to,
+        value: safeTransactionData.value,
+        data: safeTransactionData.data,
+        operation: safeTransactionData.operation,
+        safeTxHash: safeTxHash,
+        senderAddress: account.address,
+        dryRun: true,
+      }),
+    );
 
     core.info(`✅ Transaction validated successfully (not proposed)`);
     core.info(`🔗 Transaction Hash (would be): ${safeTxHash}`);
@@ -100,7 +105,9 @@ async function run() {
     core.info(`✅ Transaction proposed successfully!`);
     core.info(`🔗 Transaction Hash: ${safeTxHash}`);
     core.info(`⏳ Waiting for other owners to sign and execute...`);
-    core.info(`📋 Transaction Details: ${JSON.stringify(transaction, null, 2)}`);
+    core.info(
+      `📋 Transaction Details: ${JSON.stringify(transaction, null, 2)}`,
+    );
   }
 }
 

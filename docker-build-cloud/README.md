@@ -12,28 +12,27 @@ This reusable GitHub Actions workflow builds and pushes a multi-platform Docker 
 - 🚀 No QEMU emulation, no native ARM runners — DBC handles arch-specific builds
 - 📜 Generates & signs a keyless SLSA build provenance attestation (optional)
 
-> [!IMPORTANT]
-> Requires a Docker Build Cloud subscription and a builder configured in your DockerHub organization. The DockerHub PAT must have the **Build** scope to authenticate to the cloud endpoint.
+> [!IMPORTANT] Requires a Docker Build Cloud subscription and a builder configured in your DockerHub organization. The DockerHub PAT must have the **Build** scope to authenticate to the cloud endpoint.
 
-## ⚙️  Inputs
+## ⚙️ Inputs
 
-| Name                     | Description                                                                       | Required | Default        |
-| ------------------------ | --------------------------------------------------------------------------------- | -------- | -------------- |
-| `attest`                 | Generate & sign a keyless SLSA build provenance attestation for the pushed image (requires caller permissions, see notes) | No | `false` |
-| `build-args`             | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`)             | No       | `""`           |
-| `cloud-builder-endpoint` | Docker Build Cloud endpoint, format `<dbc-org>/<builder>`                         | Yes      | -              |
-| `context`                | Path to Docker Build Context                                                      | No       | `"."`          |
-| `dockerfile`             | Path to the Dockerfile (e.g. `'./Dockerfile'`, `'./docker/Dockerfile'`)           | No       | `"Dockerfile"` |
-| `image-name`             | Name of Docker Image, fully qualified (e.g. `iexechub/my-image`)                  | Yes      | -              |
-| `image-tag`              | Tag to apply to the built image (e.g. `1.0.0`, no v prefix)                       | Yes      | -              |
-| `platforms`              | Comma-separated build platforms (e.g. `linux/amd64,linux/arm64`)                  | Yes      | -              |
+| Name | Description | Required | Default |
+| --- | --- | --- | --- |
+| `attest` | Generate & sign a keyless SLSA build provenance attestation for the pushed image (requires caller permissions, see notes) | No | `false` |
+| `build-args` | Docker build arguments (multiline format: `KEY1=value1\nKEY2=value2`) | No | `""` |
+| `cloud-builder-endpoint` | Docker Build Cloud endpoint, format `<dbc-org>/<builder>` | Yes | - |
+| `context` | Path to Docker Build Context | No | `"."` |
+| `dockerfile` | Path to the Dockerfile (e.g. `'./Dockerfile'`, `'./docker/Dockerfile'`) | No | `"Dockerfile"` |
+| `image-name` | Name of Docker Image, fully qualified (e.g. `iexechub/my-image`) | Yes | - |
+| `image-tag` | Tag to apply to the built image (e.g. `1.0.0`, no v prefix) | Yes | - |
+| `platforms` | Comma-separated build platforms (e.g. `linux/amd64,linux/arm64`) | Yes | - |
 
 ## 🔐 Secrets
 
-| Name                 | Description                                                                                | Required |
-| -------------------- | ------------------------------------------------------------------------------------------ | -------- |
-| `dockerhub-username` | Username for Docker Hub authentication                                                     | Yes      |
-| `dockerhub-password` | Personal Access Token for Docker Hub with the **Build** scope (needed for DBC endpoint)    | Yes      |
+| Name | Description | Required |
+| --- | --- | --- |
+| `dockerhub-username` | Username for Docker Hub authentication | Yes |
+| `dockerhub-password` | Personal Access Token for Docker Hub with the **Build** scope (needed for DBC endpoint) | Yes |
 
 ## 💻 Example Usage
 
@@ -43,7 +42,7 @@ name: Build and Push Release Image
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
 jobs:
   build-multiplatform:

@@ -1,45 +1,45 @@
-name: 'Propose Safe Multisig Transaction'
+name: "Propose Safe Multisig Transaction"
 on:
   workflow_call:
     inputs:
       safe-address:
-        description: 'Address of the Safe contract'
+        description: "Address of the Safe contract"
         required: true
         type: string
       transaction-to:
-        description: 'Target address of the transaction'
+        description: "Target address of the transaction"
         required: true
         type: string
       transaction-value:
-        description: 'Value to send in the transaction (in wei, default: 0)'
+        description: "Value to send in the transaction (in wei, default: 0)"
         required: false
-        default: '0'
+        default: "0"
         type: string
       transaction-data:
-        description: 'Transaction data/calldata'
+        description: "Transaction data/calldata"
         required: true
         type: string
       dry-run:
-        description: 'If true, validate and prepare the transaction without proposing it'
+        description: "If true, validate and prepare the transaction without proposing it"
         required: false
         default: false
         type: boolean
     secrets:
       rpc-url:
-        description: 'RPC URL for the blockchain network'
+        description: "RPC URL for the blockchain network"
         required: true
       safe-proposer-private-key:
-        description: 'Private key of the proposer wallet'
+        description: "Private key of the proposer wallet"
         required: true
       safe-api-key:
-        description: 'Safe API key for transaction service'
+        description: "Safe API key for transaction service"
         required: true
     outputs:
       tx-hash:
-        description: 'Hash of the Safe transaction'
+        description: "Hash of the Safe transaction"
         value: ${{ jobs.propose-transaction.outputs.tx-hash }}
       tx-details:
-        description: 'Created transaction details'
+        description: "Created transaction details"
         value: ${{ jobs.propose-transaction.outputs.tx-details }}
 
 jobs:
@@ -48,7 +48,7 @@ jobs:
     outputs:
       tx-hash: ${{ steps.safe-transaction.outputs.tx-hash }}
       tx-details: ${{ steps.safe-transaction.outputs.tx-details }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -58,7 +58,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Install dependencies
         run: npm ci

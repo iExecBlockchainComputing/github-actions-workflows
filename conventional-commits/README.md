@@ -1,10 +1,13 @@
 # 📝 Conventional Commits Workflow
 
 ## 🔍 Overview
+
 This reusable GitHub Actions workflow validates that pull request titles follow the [Conventional Commits](https://www.conventionalcommits.org/) specification. Conventional Commits provide a standardized format for commit messages, making it easier to generate changelogs, automate versioning, and understand the purpose of changes at a glance. By enforcing this standard, your repository maintains a clean and meaningful history that benefits both developers and automated tools.
 
 ## 📚 What are Conventional Commits?
+
 Conventional Commits follow this structured format:
+
 ```
 <type>[optional scope]: <description>
 
@@ -14,6 +17,7 @@ Conventional Commits follow this structured format:
 ```
 
 ### 🏷️ Common Types Include:
+
 - `✨ feat`: A new feature that adds functionality to your codebase
 - `🐛 fix`: A bug fix that resolves an issue or problem
 - `📖 docs`: Documentation changes or improvements
@@ -25,6 +29,7 @@ Conventional Commits follow this structured format:
 - `🔒 security`: Fixing security vulnerabilities or enhancing security
 
 ## 🌟 Benefits
+
 - **📋 Automated Changelog Generation**: Works seamlessly with tools like release-please to create detailed, organized changelogs without manual effort
 - **🔢 Semantic Versioning Automation**: Helps determine version bumps based on commit types (major, minor, patch) following SemVer principles
 - **📊 Improved Repository History**: Makes your project history more readable, structured, and navigable for all team members
@@ -37,10 +42,11 @@ Conventional Commits follow this structured format:
 ### 🔐 Secrets
 
 | Name | Description | Required |
-|------|-------------|----------|
+| --- | --- | --- |
 | `GITHUB_TOKEN` | GitHub token for authentication and PR interactions | Yes |
 
 ### 🛡️ Permissions
+
 The workflow requires `pull-requests: read` permission to access PR information and validate titles effectively.
 
 ## 💻 Example Usage
@@ -63,6 +69,7 @@ jobs:
 ```
 
 ## 📋 Implementation Notes
+
 - 🔄 The workflow runs automatically when PRs are opened, edited, or reopened to ensure continuous validation
 - ✅ It validates the PR title against the Conventional Commits specification with comprehensive checks
 - 💬 If validation fails, the workflow writes detailed guidance on how to fix the title to the job summary
@@ -70,6 +77,7 @@ jobs:
 - 🚀 Helps maintain a high-quality repository that's ready for automated versioning and changelog generation
 
 ## 🛠️ Troubleshooting
+
 - If PR titles are consistently failing validation, consider providing team training on Conventional Commits
 - For complex projects, you may want to define custom scopes that align with your project's architecture
 - Remember that only the PR title needs to follow the convention, not every commit message (though that's also beneficial)
