@@ -22,7 +22,7 @@ Files are formatted with [Prettier](https://prettier.io), using its default sett
 mise run format
 ```
 
-Formatting can rewrite workflow files, which changes their checksum. After editing a workflow, run `mise run update-checksums` instead of `mise run format` alone, so `workflow-sha256` files are computed from the formatted content.
+> [!IMPORTANT] Formatting can rewrite workflow files, which changes their checksum. After editing a workflow, run `mise run update-checksums` instead of `mise run format` alone, so `workflow-sha256` files are computed from the formatted content.
 
 ## Linting
 
