@@ -62,7 +62,7 @@ _Or with predefined versions:_
 
 ## 2. ⚙️ Usage in Your Repository
 
-Place the following YAML file (e.g., `.github/workflows/release.yml`) in your repository to directly call the reusable workflow. It triggers the workflow on a push to the `main` branch, applies the necessary permissions, and inherits secrets.
+Place the following YAML file (e.g., `.github/workflows/release.yml`) in your repository to directly call the reusable workflow. It triggers the workflow on a push to the `main` branch and inherits secrets. No `GITHUB_TOKEN` permission is needed (see [2.1. Token Scope](#21-token-scope)).
 
 ```yaml
 on:
@@ -70,10 +70,7 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+permissions: {}
 
 name: release-please
 
@@ -82,6 +79,26 @@ jobs:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/release-please.yml@release-please-v2.0.0
     secrets: inherit
 ```
+
+### 2.1. Token Scope
+
+The workflow does not use the `GITHUB_TOKEN`. It authenticates as a GitHub App with the `RELEASE_PLEASE_APPLICATION_ID` and `RELEASE_PLEASE_PRIVATE_KEY` secrets, because [events created with the `GITHUB_TOKEN` do not trigger new workflow runs](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow): CI would not run on release PRs, and release tags would not trigger publish workflows.
+
+The App installation token is:
+
+- **Short-lived:**  
+  It expires after one hour.
+
+- **Limited to the calling repository:**  
+  It only grants access to the repository running the workflow.
+
+- **Restricted to the permissions release-please needs:**  
+  Even if the App itself is granted more, the token only carries:
+  - `contents: write` to push the release branch and create tags and releases;
+  - `pull-requests: write` to open and update the release PR;
+  - `issues: write` to label and comment on the release PR.
+
+The App must be granted at least these permissions on the repository.
 
 ## 3. Release Types
 
