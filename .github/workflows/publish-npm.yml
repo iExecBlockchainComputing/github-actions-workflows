@@ -135,8 +135,10 @@ jobs:
       - name: Override version
         if: ${{ inputs.version != '' }}
         working-directory: ${{ inputs.working-directory }}
+        env:
+          INPUTS_VERSION: ${{ inputs.version }}
         run: |
-          npm pkg set version="${{ inputs.version }}"
+          npm pkg set version="${INPUTS_VERSION}"
 
       - name: Run build
         working-directory: ${{ inputs.working-directory }}
