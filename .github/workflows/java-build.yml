@@ -72,6 +72,7 @@ jobs:
           # Sonar needs the full history to attribute lines to authors, and the Gradle
           # build derives the project version from the tag pointing at HEAD.
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Set up JDK
         uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
