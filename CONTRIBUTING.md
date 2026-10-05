@@ -1,5 +1,30 @@
 # Contributing
 
+## Verifying your changes
+
+All dev tools are pinned in `mise.toml` and `mise.lock`. Install them with [mise](https://mise.jdx.dev):
+
+```sh
+mise install --locked
+```
+
+Then, before pushing, run:
+
+```sh
+mise run verify-all
+```
+
+CI runs the same command on every pull request and on every push to `main`. It runs these tasks:
+
+- `lint`: runs all linters (see [Linting](#linting))
+  - `lint:format`: checks formatting with Prettier
+  - `lint:actionlint`: lints GitHub Actions workflows with actionlint
+  - `lint:shellcheck`: lints shell scripts with shellcheck
+- `check-checksums`: checks that `workflow-sha256` files match their workflows (see [Editing a reusable workflow](#editing-a-reusable-workflow))
+- `check-release-please-config`: validates `release-please-config.json`, checking that every package declares a component and that keys are ordered
+
+You can run any of these on its own, e.g. `mise run lint:shellcheck`. Run `mise tasks` to list all tasks.
+
 ## Editing a reusable workflow
 
 Each shared reusable workflow is backed by a Component directory `<name>/` that release-please versions independently. Release-please only sees changes under `<name>/`, so a commit that only edits the workflow file is otherwise invisible to it.
@@ -12,7 +37,7 @@ mise run update-checksums
 
 This formats the repository (see [Formatting](#formatting)), then runs `scripts/compute-workflow-sha256.sh`, which regenerates `<name>/workflow-sha256`, a checksum of the workflow file. Commit the resulting diff alongside your workflow change — this is what makes the change visible to release-please for that Component.
 
-CI enforces this on every pull request via `bash scripts/compute-workflow-sha256.sh --check`, which fails if any `workflow-sha256` file is out of date.
+`mise run verify-all` enforces this through the `check-checksums` task, which fails if any `workflow-sha256` file is out of date.
 
 ## Formatting
 
@@ -26,19 +51,13 @@ mise run format
 
 ## Linting
 
-Workflows are linted with [actionlint](https://github.com/rhysd/actionlint), which also runs [shellcheck](https://github.com/koalaman/shellcheck) on inline `run:` scripts. Shell scripts committed to the repository (`*.sh`, e.g. under `scripts/`) are linted with shellcheck directly. Formatting is checked with `prettier --check`. All tools are pinned in `mise.toml` and `mise.lock`. Install them with [mise](https://mise.jdx.dev):
-
-```sh
-mise install --locked
-```
-
-Then:
+Workflows are linted with [actionlint](https://github.com/rhysd/actionlint), which also runs [shellcheck](https://github.com/koalaman/shellcheck) on inline `run:` scripts. Shell scripts committed to the repository (`*.sh`, e.g. under `scripts/`) are linted with shellcheck directly. Formatting is checked with `prettier --check`. Run all linters with:
 
 ```sh
 mise run lint
 ```
 
-CI runs the same command on every pull request and on every push to `main`.
+`mise run verify-all` includes this step.
 
 ## Updating dependencies
 

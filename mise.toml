@@ -8,21 +8,39 @@ lockfile = true
 "npm:prettier" = "3.9.8"
 
 [tasks.format]
+description = "Format files with prettier"
 run = "prettier --write ."
 
 [tasks."update-checksums"]
+description = "Format, then regenerate each workflow's workflow-sha256 file"
 run = "scripts/compute-workflow-sha256.sh"
 depends = ["format"]
 
+[tasks."check-checksums"]
+description = "Check that workflow-sha256 files match their workflows"
+run = "scripts/compute-workflow-sha256.sh --check"
+
+[tasks."check-release-please-config"]
+description = "Validate release-please-config.json (components, key order)"
+run = "scripts/check-release-please-config.sh"
+
 [tasks."lint:format"]
+description = "Check formatting with prettier"
 run = "prettier --check ."
 
 [tasks."lint:actionlint"]
+description = "Lint GitHub Actions workflows with actionlint"
 run = "actionlint"
 
 [tasks."lint:shellcheck"]
+description = "Lint shell scripts with shellcheck"
 shell = "bash -euo pipefail -c"
 run = "git ls-files -z --cached --others --exclude-standard '*.sh' | xargs -0 -r shellcheck"
 
 [tasks.lint]
+description = "Run all linters"
 depends = [ "lint:format", "lint:actionlint", "lint:shellcheck" ]
+
+[tasks."verify-all"]
+description = "Run all lints and checks (as in CI)"
+depends = [ "lint", "check-checksums", "check-release-please-config"]
