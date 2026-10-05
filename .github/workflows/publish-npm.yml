@@ -9,7 +9,7 @@ on:
         type: string
       node-version:
         description: "Node.js version to use"
-        default: "20"
+        default: "24"
         type: string
       registry:
         description: "NPM registry URL"
@@ -121,11 +121,11 @@ jobs:
         run: |
           if [ -n "${{ secrets.npm-token }}" ]; then
             echo "npm-token secret is set not using OIDC"
-          elif [ -n "$(npx semver -r ">=11.5.1" "$(npm -v)")" ]; then
+          elif [ -n "$(npx semver@7.8.5 -r ">=11.5.1" "$(npm -v)")" ]; then
             echo "OIDC trusted publishing supported by current npm version"
           else
-            echo "OIDC trusted publishing requires npm >= 11.5.1, updating npm"
-            npm install -g npm@11
+            echo "OIDC trusted publishing requires npm >= 11.5.1 (Node.js >= 24.5.0), current npm is $(npm -v)"
+            exit 1
           fi
 
       - name: Install dependencies

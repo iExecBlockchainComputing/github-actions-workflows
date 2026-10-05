@@ -21,7 +21,7 @@ This reusable GitHub Actions workflow automates the process of publishing an NPM
 | **Input** | **Description** | **Required** | **Default** |
 | --- | --- | --- | --- |
 | **scope** | NPM package scope (e.g., `@iexec`). | No | `@iexec` |
-| **node-version** | Node.js version to use. | No | `20` |
+| **node-version** | Node.js version to use. | No | `24` |
 | **registry** | NPM registry URL. | No | `https://registry.npmjs.org` |
 | **access** | Package access (public or restricted). | No | `public` |
 | **provenance** | Enable npm provenance. | No | `true` |
@@ -61,7 +61,7 @@ This reusable GitHub Actions workflow automates the process of publishing an NPM
 
 ### With Trusted Publishers (preferred)
 
-> ⚠️ this method uses npm >= 11.5.1 ensure your project supports a compatible version of npm if not please use the method with npm token.
+> ⚠️ this method requires npm >= 11.5.1, shipped with Node.js >= 24.5.0. Use a compatible `node-version`, or use the method with npm token.
 
 1. **Call the Reusable Workflow**
 
@@ -82,7 +82,7 @@ This reusable GitHub Actions workflow automates the process of publishing an NPM
      publish:
        uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/publish-npm.yml@main
        with:
-         node-version: "22"
+         node-version: "24"
          build-command: "npm run build:prod"
          run-tests: true
          test-command: "npm run test:ci"
@@ -116,7 +116,7 @@ This reusable GitHub Actions workflow automates the process of publishing an NPM
      publish:
        uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/publish-npm.yml@main
        with:
-         node-version: "22"
+         node-version: "24"
          build-command: "npm run build:prod"
          run-tests: true
          test-command: "npm run test:ci"
