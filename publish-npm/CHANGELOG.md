@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.7.3...publish-npm-v2.0.0) (2026-10-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **publish-npm:** the default node-version is now 24 instead of 20. Callers using OIDC trusted publishing must use Node.js >= 24.5.0: npm is no longer upgraded automatically.
+* **publish-npm:** install-command, build-command, test-command, lint-command, type-check-command and format-check-command now only accept a single command with its arguments. Multi-line scripts, `&&`, `;`, pipes, redirections, quotes and inline env assignments (`FOO=bar cmd`) are no longer supported; move such logic into an npm script and call it with `npm run <script>`.
+
+### Bug Fixes
+
+* **publish-npm:** pass command inputs through env to prevent template injection ([#183](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/183)) ([6c75d58](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/6c75d58f314949c61bd4c68becbfeb5520a6a3f7))
+* **publish-npm:** stop installing npm at runtime and default to node 24 ([#184](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/184)) ([486fdd6](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/486fdd698ee0e839fa8fca59f30f221b4658e3c3))
+
 ## [1.7.3](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/publish-npm-v1.7.2...publish-npm-v1.7.3) (2026-10-05)
 
 
