@@ -25,13 +25,13 @@ This reusable GitHub Actions workflow automates the process of publishing an NPM
 | **registry** | NPM registry URL. | No | `https://registry.npmjs.org` |
 | **access** | Package access (public or restricted). | No | `public` |
 | **provenance** | Enable npm provenance. | No | `true` |
-| **install-command** | Install dependencies command. | No | `npm ci` |
-| **build-command** | Build package command. | No | `npm run build` |
+| **install-command** | Install dependencies command (single command, no shell operators or multi-line scripts). | No | `npm ci` |
+| **build-command** | Build package command (single command, no shell operators or multi-line scripts). | No | `npm run build` |
 | **run-tests** | Execute unit tests step. | No | `false` |
-| **test-command** | Run unit tests command. | No | `npm test --if-present` |
-| **lint-command** | Run linting command. | No | `npm run lint --if-present` |
-| **type-check-command** | Run type-checking command. | No | `npm run check-types --if-present` |
-| **format-check-command** | Run format-checking command. | No | `npm run check-format --if-present` |
+| **test-command** | Run unit tests command (single command, no shell operators or multi-line scripts). | No | `npm test --if-present` |
+| **lint-command** | Run linting command (single command, no shell operators or multi-line scripts). | No | `npm run lint --if-present` |
+| **type-check-command** | Run type-checking command (single command, no shell operators or multi-line scripts). | No | `npm run check-types --if-present` |
+| **format-check-command** | Run format-checking command (single command, no shell operators or multi-line scripts). | No | `npm run check-format --if-present` |
 | **environment** | GitHub environment. | No | `production` |
 | **tag** | npm publish tag (e.g., latest, nightly). | No | `''` (empty string) |
 | **working-directory** | Directory containing package.json. | No | `''` (empty string) |

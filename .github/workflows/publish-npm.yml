@@ -24,11 +24,11 @@ on:
         default: true
         type: boolean
       install-command:
-        description: "Install dependencies command"
+        description: "Install dependencies command (single command, no shell operators or multi-line scripts)"
         default: "npm ci"
         type: string
       build-command:
-        description: "Build package command"
+        description: "Build package command (single command, no shell operators or multi-line scripts)"
         default: "npm run build"
         type: string
       run-tests:
@@ -36,19 +36,19 @@ on:
         default: false
         type: boolean
       test-command:
-        description: "Run unit tests command"
+        description: "Run unit tests command (single command, no shell operators or multi-line scripts)"
         default: "npm test --if-present"
         type: string
       lint-command:
-        description: "Run linting command"
+        description: "Run linting command (single command, no shell operators or multi-line scripts)"
         default: "npm run lint --if-present"
         type: string
       type-check-command:
-        description: "Run type-checking command"
+        description: "Run type-checking command (single command, no shell operators or multi-line scripts)"
         default: "npm run check-types --if-present"
         type: string
       format-check-command:
-        description: "Run format-checking command"
+        description: "Run format-checking command (single command, no shell operators or multi-line scripts)"
         default: "npm run check-format --if-present"
         type: string
       environment:
@@ -130,7 +130,9 @@ jobs:
 
       - name: Install dependencies
         working-directory: ${{ inputs.working-directory }}
-        run: ${{ inputs.install-command }}
+        run: ${INPUTS_INSTALL_COMMAND}
+        env:
+          INPUTS_INSTALL_COMMAND: ${{ inputs.install-command }}
 
       - name: Override version
         if: ${{ inputs.version != '' }}
@@ -142,24 +144,34 @@ jobs:
 
       - name: Run build
         working-directory: ${{ inputs.working-directory }}
-        run: ${{ inputs.build-command }}
+        run: ${INPUTS_BUILD_COMMAND}
+        env:
+          INPUTS_BUILD_COMMAND: ${{ inputs.build-command }}
 
       - name: Run type checks
         working-directory: ${{ inputs.working-directory }}
-        run: ${{ inputs.type-check-command }}
+        run: ${INPUTS_TYPE_CHECK_COMMAND}
+        env:
+          INPUTS_TYPE_CHECK_COMMAND: ${{ inputs.type-check-command }}
 
       - name: check format
         working-directory: ${{ inputs.working-directory }}
-        run: ${{ inputs.format-check-command }}
+        run: ${INPUTS_FORMAT_CHECK_COMMAND}
+        env:
+          INPUTS_FORMAT_CHECK_COMMAND: ${{ inputs.format-check-command }}
 
       - name: Run linting
         working-directory: ${{ inputs.working-directory }}
-        run: ${{ inputs.lint-command }}
+        run: ${INPUTS_LINT_COMMAND}
+        env:
+          INPUTS_LINT_COMMAND: ${{ inputs.lint-command }}
 
       - name: Run unit tests
         if: ${{ inputs.run-tests }}
         working-directory: ${{ inputs.working-directory }}
-        run: ${{ inputs.test-command }}
+        run: ${INPUTS_TEST_COMMAND}
+        env:
+          INPUTS_TEST_COMMAND: ${{ inputs.test-command }}
 
       - name: Publish package
         working-directory: ${{ inputs.working-directory }}
