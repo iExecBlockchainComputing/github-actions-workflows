@@ -61,7 +61,7 @@ This reusable GitHub Actions workflow automates the process of publishing an NPM
 
 ### With Trusted Publishers (preferred)
 
-> ⚠️ this method requires npm >= 11.5.1, shipped with Node.js >= 24.5.0. Use a compatible `node-version`, or use the method with npm token.
+> ⚠️ this method requires npm >= 11.5.1, shipped with Node.js >= 24.5.0. Use a compatible `node-version`, or provide the `npm-token` secret.
 
 1. **Call the Reusable Workflow**
 
