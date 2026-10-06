@@ -5,6 +5,7 @@ lockfile = true
 [tools]
 "aqua:actionlint" = "1.7.12"
 "aqua:koalaman/shellcheck" = "0.11.0"
+"aqua:zizmor" = "1.30.1"
 "npm:prettier" = "3.9.8"
 
 [tasks.format]
@@ -32,6 +33,9 @@ run = "prettier --check ."
 description = "Lint GitHub Actions workflows with actionlint"
 run = "actionlint"
 
+[tasks."lint:zizmor"]
+run = "zizmor .github"
+
 [tasks."lint:shellcheck"]
 description = "Lint shell scripts with shellcheck"
 shell = "bash -euo pipefail -c"
@@ -39,7 +43,7 @@ run = "git ls-files -z --cached --others --exclude-standard '*.sh' | xargs -0 -r
 
 [tasks.lint]
 description = "Run all linters"
-depends = [ "lint:format", "lint:actionlint", "lint:shellcheck" ]
+depends = [ "lint:format", "lint:actionlint", "lint:shellcheck", "lint:zizmor" ]
 
 [tasks."verify-all"]
 description = "Run all lints and checks (as in CI)"
