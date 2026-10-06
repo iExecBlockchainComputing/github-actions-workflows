@@ -18,4 +18,4 @@ jobs:
   lint-pr-title:
     permissions:
       pull-requests: read
-    uses: ./.github/workflows/conventional-commits.yml
+    uses: $/.github/workflows/conventional-commits.yml
