@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.7.0...docker-build-v3.7.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* checkout with persist-credentials: false ([#181](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/181)) ([738ae7b](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/738ae7b79b6375b421ac1f5571e625482e78e161))
+
 ## [3.7.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.6.0...docker-build-v3.7.0) (2026-09-29)
 
 
