@@ -55,11 +55,12 @@ The workflow requires `pull-requests: read` permission to access PR information 
 name: Lint PR Title
 
 on:
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - edited
       - reopened
+      - synchronize
 
 jobs:
   lint-pr-title:
