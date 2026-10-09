@@ -77,7 +77,9 @@ name: release-please
 jobs:
   release-please:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/release-please.yml@release-please-v2.0.0
-    secrets: inherit
+    secrets:
+      RELEASE_PLEASE_APPLICATION_ID: ${{ secrets.RELEASE_PLEASE_APPLICATION_ID }}
+      RELEASE_PLEASE_PRIVATE_KEY: ${{ secrets.RELEASE_PLEASE_PRIVATE_KEY }}
 ```
 
 ### 2.1. Token Scope
