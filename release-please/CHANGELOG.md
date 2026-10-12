@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/release-please-v2.2.2...release-please-v2.2.3) (2026-10-12)
+
+
+### Bug Fixes
+
+* **release-please:** avoid secret inherit in usage example ([#192](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/192)) ([d3ad24e](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/d3ad24eab3602137c6e35db3fd98a2ea207296e1))
+
 ## [2.2.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/release-please-v2.2.1...release-please-v2.2.2) (2026-10-05)
 
 
