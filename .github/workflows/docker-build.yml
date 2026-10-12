@@ -36,6 +36,10 @@ on:
         description: "Generate & sign a keyless SLSA build provenance attestation for the pushed image (the CALLER must grant id-token: write and attestations: write)"
         default: false
         type: boolean
+      dockerhub-login:
+        description: "Log in to Docker Hub before the build, to avoid anonymous pull rate limits on base images. Ignored when `push: true` and `registry` already points at Docker Hub, since the push login covers that host"
+        default: true
+        type: boolean
       security-scan:
         description: "Enable Trivy Security Scan"
         default: true
@@ -70,9 +74,9 @@ on:
         type: string
     secrets:
       dockerhub-username:
-        required: true
+        required: false
       dockerhub-password:
-        required: true
+        required: false
       username:
         required: false
       password:
@@ -89,9 +93,11 @@ jobs:
 
     # avoid shell injection through string interpolation
     env:
-      PLATFORM: ${{ inputs.platform }}
-      OCI_IMAGE: ${{ inputs.image-name }}:${{ inputs.image-tag }}
       IMAGE_TAG: ${{ inputs.image-tag }}
+      OCI_IMAGE: ${{ inputs.image-name }}:${{ inputs.image-tag }}
+      PLATFORM: ${{ inputs.platform }}
+      PUSH: ${{ inputs.push }}
+      REGISTRY: ${{ inputs.registry }}
       REPORT_MODE: ${{ inputs.security-report }}
 
     steps:
@@ -116,6 +122,43 @@ jobs:
 
           echo "✅ Security report mode validation passed: $REPORT_MODE"
 
+      # Resolves whether the Docker Hub pull login is still needed, and fails fast
+      # when the push credentials required by `push: true` are missing.
+      - name: Validate registry credentials
+        id: validate-credentials
+        env:
+          DOCKERHUB_LOGIN: ${{ inputs.dockerhub-login }}
+          DOCKERHUB_USERNAME: ${{ secrets.dockerhub-username }}
+          DOCKERHUB_PASSWORD: ${{ secrets.dockerhub-password }}
+          REGISTRY_USERNAME: ${{ secrets.username }}
+          REGISTRY_PASSWORD: ${{ secrets.password }}
+        run: |
+          set -euo pipefail
+
+          if [ "$PUSH" = "true" ] && { [ -z "$REGISTRY_USERNAME" ] || [ -z "$REGISTRY_PASSWORD" ]; }; then
+            echo "❌ Error: push is enabled but 'username'/'password' are missing"
+            echo "Pass the secrets of the target registry ($REGISTRY), or set push: false"
+            exit 1
+          fi
+
+          NEEDS_DOCKERHUB_LOGIN=false
+          if [ "$DOCKERHUB_LOGIN" != "true" ]; then
+            echo "✅ Docker Hub login disabled by input"
+          elif [ "$PUSH" = "true" ] && { [ "$REGISTRY" = "docker.io" ] || [ "$REGISTRY" = "index.docker.io" ] || [ "$REGISTRY" = "registry-1.docker.io" ]; }; then
+            # The Docker Registry login below would authenticate the same host as
+            # Docker Hub login and would just overwrite credentials in ~/.docker/config.json.
+            # So pushing to Docker Hub does not require the Docker Hub secrets at all.
+            echo "✅ Skipping the Docker Hub login: pushing to $REGISTRY already authenticates that host"
+          elif [ -z "$DOCKERHUB_USERNAME" ] || [ -z "$DOCKERHUB_PASSWORD" ]; then
+            echo "❌ Error: dockerhub-login is enabled but 'dockerhub-username'/'dockerhub-password' are missing"
+            echo "Pass the Docker Hub secrets, or set dockerhub-login: false"
+            exit 1
+          else
+            NEEDS_DOCKERHUB_LOGIN=true
+          fi
+
+          echo "needs-dockerhub-login=$NEEDS_DOCKERHUB_LOGIN" >> "$GITHUB_OUTPUT"
+
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -131,7 +174,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
+      # Only needed to raise the pull rate limit on Docker Hub hosted base images
+      # when push `registry` is not Docker Hub.
       - name: Login to Docker Hub
+        if: ${{ steps.validate-credentials.outputs.needs-dockerhub-login == 'true' }}
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           username: ${{ secrets.dockerhub-username }}
@@ -279,6 +325,7 @@ jobs:
         run: docker push "$OCI_IMAGE"
 
       - name: Record the pushed image tag
+        if: ${{ inputs.push }}
         run: |
           echo "$IMAGE_TAG" > image-tag.txt
 
