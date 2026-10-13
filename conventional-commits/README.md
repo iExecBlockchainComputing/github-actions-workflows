@@ -69,9 +69,17 @@ jobs:
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/conventional-commits.yml@conventional-commits-v1.0.1
 ```
 
+### ⚠️ Use `pull_request`, not `pull_request_target`
+
+Trigger this workflow with `pull_request`. It only reads the PR title, so it needs neither repository secrets nor a write-capable token, and the read-only `GITHUB_TOKEN` that `pull_request` grants to fork PRs is enough.
+
+Avoid `pull_request_target`: it runs with the base repository's secrets and a privileged token, which exposes the repository to "pwn request" attacks from forks. GitHub also applies a [default policy that blocks `pull_request_target` in public repositories](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target#default-policy-for-pull_request_target), so workflows still relying on it will stop running once the policy is enforced.
+
+Include the `synchronize` type so the check re-runs on every push to the PR. Otherwise, required status checks can be left pending on the new head commit.
+
 ## 📋 Implementation Notes
 
-- 🔄 The workflow runs automatically when PRs are opened, edited, or reopened to ensure continuous validation
+- 🔄 The workflow runs automatically when PRs are opened, edited, reopened, or synchronized to ensure continuous validation
 - ✅ It validates the PR title against the Conventional Commits specification with comprehensive checks
 - 💬 If validation fails, the workflow writes detailed guidance on how to fix the title to the job summary
 - 🔗 This workflow is particularly useful when combined with the release-please workflow for a fully automated release process
