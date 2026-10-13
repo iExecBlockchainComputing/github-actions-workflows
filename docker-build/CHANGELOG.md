@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.0](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.7.1...docker-build-v3.8.0) (2026-10-13)
+
+
+### Features
+
+* **docker-build:** make the Docker Hub pull login opt-out and skip it when pushing to Docker Hub ([#194](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/194)) ([65d1a21](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/65d1a214e63ca00d3a88928108d100d6fcc107ea))
+
 ## [3.7.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/docker-build-v3.7.0...docker-build-v3.7.1) (2026-10-12)
 
 
