@@ -8,10 +8,6 @@ This repository contains a comprehensive collection of reusable GitHub Actions w
 
 Validates that pull request titles follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for better repository management. Ensures your commit history remains clean and meaningful for improved collaboration.
 
-### ☁️ [Build Docker Image via Docker Build Cloud](./docker-build-cloud)
-
-Builds and pushes a multi-platform Docker image (e.g. `linux/amd64` + `linux/arm64`) to Docker Hub in a single job using Docker Build Cloud's remote builders. No QEMU emulation, no native ARM runners.
-
 ### 🐳 [Build Docker Image](./docker-build)
 
 Automates the process of building, tagging, and pushing Docker images to Docker Hub. Perfect for projects that require containerization with minimal configuration overhead.
