@@ -66,7 +66,7 @@ jobs:
   lint-pr-title:
     permissions:
       pull-requests: read
-    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/conventional-commits.yml@conventional-commits-v1.0.1
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/conventional-commits.yml@main # ⚠️ use tagged version here
 ```
 
 ### ⚠️ Use `pull_request`, not `pull_request_target`
