@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/conventional-commits-v1.2.2...conventional-commits-v1.2.3) (2026-10-13)
+
+
+### Bug Fixes
+
+* **conventional-commit:** avoid dangerous trigger in example ([#193](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/193)) ([8e21583](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/8e215836cdbe520331d8e7c1a9048cd7f1fdbcba))
+
 ## [1.2.2](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/conventional-commits-v1.2.1...conventional-commits-v1.2.2) (2026-09-29)
 
 
