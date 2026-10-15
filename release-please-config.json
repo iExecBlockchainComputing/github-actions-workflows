@@ -17,10 +17,6 @@
       "component": "docker-build",
       "extra-label": "docker-build"
     },
-    "docker-build-cloud": {
-      "component": "docker-build-cloud",
-      "extra-label": "docker-build-cloud"
-    },
     "docker-promote": {
       "component": "docker-promote",
       "extra-label": "docker-promote"

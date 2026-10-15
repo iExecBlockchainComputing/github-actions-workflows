@@ -99,7 +99,7 @@ else
 fi
 
 # --- tag format: must resolve to <component>-vX.Y.Z tags ---
-# Existing releases use e.g. docker-build-v2.5.2 / docker-build-cloud-v1.1.1; any
+# Existing releases use e.g. docker-build-v2.5.2 / docker-promote-v1.0.0; any
 # deviation silently orphans tag matching and walks all history in the next run.
 tag_include_component=$(jq -r 'if has("include-component-in-tag") then ."include-component-in-tag" else true end' "$CONFIG")
 tag_include_v=$(jq -r 'if has("include-v-in-tag") then ."include-v-in-tag" else true end' "$CONFIG")
