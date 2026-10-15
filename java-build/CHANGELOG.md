@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1](https://github.com/iExecBlockchainComputing/github-actions-workflows/compare/java-build-v1.0.0...java-build-v1.0.1) (2026-10-15)
+
+
+### Bug Fixes
+
+* checkout with persist-credentials: false ([#181](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/181)) ([738ae7b](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/738ae7b79b6375b421ac1f5571e625482e78e161))
+* **java-build:** update setup-gradle action to v6.4.0 ([#173](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/173)) ([df459f5](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/df459f5bff18815d082572217dcbcdf78758307b))
+* update third-party GitHub Actions ([#167](https://github.com/iExecBlockchainComputing/github-actions-workflows/issues/167)) ([396fc60](https://github.com/iExecBlockchainComputing/github-actions-workflows/commit/396fc60de4f14227e21a68d470bab7dd4d9b14f4))
+
 ## 1.0.0 (2026-09-23)
 
 
