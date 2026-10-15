@@ -45,7 +45,7 @@ It serves both services and pure libraries, so anything only a service needs —
 
 ## 💻 Example Usage
 
-Building and testing a service, then building an OCI image from the very same jar. `upload-jar` is opt-in because the workflow also serves pure libraries, which have no image to build and nothing to hand over:
+Building and testing a service, then building an OCI image from the very same jar. `upload-jar` is opt-in because the workflow also serves pure libraries, which have no image to build and nothing to hand over. A `prepare` job computes the image tag (`dev-<short-sha>` on `main`, `feature-<short-sha>` elsewhere) instead of hard-coding `image-tag: dev-${{ github.sha }}`:
 
 ```yaml
 name: CI
@@ -70,13 +70,42 @@ jobs:
       dockerhub-password: ${{ secrets.DOCKERHUB_TOKEN_PULL_ONLY }}
       sonar-token: ${{ secrets.SONAR_TOKEN }}
 
-  build-image:
+  prepare:
+    name: Determine image tag
     needs: build-and-test
+    runs-on: ubuntu-latest
+    # Prevent execution on forks
+    if: github.repository_owner == 'iExecBlockchainComputing'
+    outputs:
+      image_tag: ${{ steps.determine-tag.outputs.image_tag }}
+    steps:
+      - name: Determine base tag
+        id: determine-tag
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name  }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          short_sha=$(echo "$HEAD_SHA" | cut -c1-8)
+
+          case "$BRANCH" in
+            main) echo "image_tag=dev-${short_sha}" | tee -a "$GITHUB_OUTPUT" ;;
+            feat/*|fix/*) echo "image_tag=feature-${short_sha}" | tee -a "$GITHUB_OUTPUT" ;;
+            release-branch--*) : ;;
+            *)
+              echo "❌ Branch does not respect naming rules: $BRANCH"
+              echo "Expected one of: main, feat/*, fix/*, release-please--*"
+              exit 1
+              ;;
+          fi
+
+  build-image:
+    needs: [build-and-test, prepare]
+    if: needs.prepare.outputs.image_tag != ''
     # ⚠️ use tagged version here
     uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@main
     with:
       image-name: docker-regis.iex.ec/my-service
-      image-tag: dev-${{ github.sha }}
+      image-tag: ${{ needs.prepare.outputs.image_tag }}
       registry: docker-regis.iex.ec
       push: true
       # the jar built above is downloaded into the build context
